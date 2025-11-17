@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+  .input-field {
+    @apply w-full rounded-md p-2 bg-white text-gray-800 border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition;
+  }
+
+  .pagetitle-heading {
+    @apply text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 text-[#840227];
+  }
+
+  .user-details-lables {
+    @apply block text-base font-bold text-[#840227]
+  }
+
+
+  /* User profile button */
+  .edit-save-btns {
+    @apply h-10 w-20 flex justify-center items-center gap-2 rounded-lg bg-[#3f3f3f] text-white shadow-xl cursor-pointer hover:bg-[#3f3f3fd3]
+  }
+
+  .watermark {
+    animation: floating-watermark 30s infinite linear alternate;
+    will-change: transform;
+    color: rgba(255, 255, 255, 0.15);
+    font-weight: 700;
+    pointer-events: none;
+  }
+}
+
+
+@keyframes floating-watermark {
+  0% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  /* move towards top-right but zig a bit */
+  12% {
+    transform: translate(40%, -10%) scale(1.05);
+  }
+  25% {
+    transform: translate(70%, 0%) scale(1.08);
+  }
+  /* move downward but zag sideways */
+  37% {
+    transform: translate(80%, 30%) scale(1.02);
+  }
+  50% {
+    transform: translate(70%, 70%) scale(1);
+  }
+  /* move left but zig slightly */
+  62% {
+    transform: translate(30%, 80%) scale(1.05);
+  }
+  75% {
+    transform: translate(0%, 70%) scale(1.08);
+  }
+  /* move up but zag */
+  87% {
+    transform: translate(-10%, 30%) scale(1.02);
+  }
+  100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+}
+
+
+
+
+.pdf-viewer-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.pdf-viewer-container::-webkit-scrollbar-thumb {
+  background-color: #a0aec0;
+  border-radius: 4px;
+}
+
+
+
+
+
+/* Chrome, Edge, Opera */
+video::-webkit-media-controls-fullscreen-button {
+  display: none !important;
+}
+
+/* Firefox */
+video::-moz-fullscreen-button {
+  display: none !important;
+}
+
+/* Safari */
+video::-webkit-media-controls-enclosure {
+  overflow: hidden !important;
+}
+
+video::picture-in-picture {
+  display: hidden !important;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.noselect {
+  -ms-user-select: none;          /* standard */
+  -webkit-user-select: none;  /* Safari */
+  user-select: none;      /* IE/Edge */
+}
+
+
+
+body {
+  background-color: #FFFBF0ff;
+}
+
+.dark body {
+  background-color: #0b1222;
+}
