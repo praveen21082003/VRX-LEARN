@@ -173,7 +173,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
               muted
               playsInline
               disablePictureInPicture
-              src="./welcome.mp4"
+              src="/welcome.mp4"
               className="absolute inset-0 w-full h-full object-cover"
             >
               Your browser does not support the video tag.
@@ -196,7 +196,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
       <div className="bg-[#840227] rounded-lg shadow-xl flex justify-center flex-col lg:flex-row text-white my-8 gap-20">
         <div className="flex justify-center lg:w-[40%]">
           <img
-            src="./images/image3.jpg"
+            src="/images/image3.jpg"
             alt="Young woman holding books"
             className="h-96 w-auto lg:ml-10 mt-0 rounded-b-full shadow-lg"
           />

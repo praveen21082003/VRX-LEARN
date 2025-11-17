@@ -76,6 +76,7 @@ function MyCourses({ searchQuery }) {
                 />
             ) : displayCourses.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-4 p-5 sm:p-2 justify-center items-center">
+                    
                     {displayCourses.map((course, index) => (
                         <Course
                             key={index}
