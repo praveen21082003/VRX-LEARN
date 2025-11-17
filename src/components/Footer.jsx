@@ -1,10 +1,9 @@
 
 import React from 'react';
 import { Linkedin, Github, Youtube, Globe, PhoneCall } from 'lucide-react';
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Footer() {
-    const navigate = useNavigate();
     return (
         <footer className="bg-[#3f3f3f] text-white py-6 px-6 mt-5 rounded-lg">
             <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">

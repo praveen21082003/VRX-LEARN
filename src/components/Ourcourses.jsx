@@ -21,8 +21,7 @@ function Ourcourses({ searchQuery = "" }) {
         if (!courseData) {
           const response = await axiosInstance.get("/all_courses");
           setCourseData(response.data);
-          setCourses(response.data)
-          console.log(response.status)
+          setCourses(response.data);
         } else {
           setCourses(courseData || []);
         }

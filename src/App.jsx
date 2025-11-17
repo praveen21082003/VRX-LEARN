@@ -31,13 +31,6 @@ function App() {
   const isLoginPage = location.pathname === "/" || location.pathname === "/login";
 
 
-
-
-
-
-
-
-
   useEffect(() => {
     if (isLoginPage) {
       setCheckedAuth(true);
@@ -64,7 +57,7 @@ function App() {
     };
 
     fetchUser();
-  }, []);
+  }, [isLoginPage]);
 
   if (!checkedAuth && !isLoginPage) {
     return (

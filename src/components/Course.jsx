@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { LockKeyholeOpen, LockKeyhole, GraduationCap, BookOpenText } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +10,6 @@ function Course({ id, url, name, description, author, enrollment }) {
         if (courseId){
             sessionStorage.setItem("fromLearnButton", id);
         }
-        console.log(sessionStorage.getItem("fromLearnButton"));
         navigate(`/learn/${id}`);
     };
 

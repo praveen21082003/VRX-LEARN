@@ -25,8 +25,6 @@ function PdfViewer({ fileId }) {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const dynamicMargin = Math.max(0, (scale - 1) * 900);
-  console.log(dynamicMargin);
-  console.log(scale);
 
 
   // -------- FULLSCREEN ----------

@@ -6,10 +6,7 @@ export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   const backendURL = env.VITE_API_PROD_BACKEND;
-  const frontendURL = env.VITE_API_LOCAL_FRONTEND;
-
-
-  const allowedHosts = [backendURL, frontendURL]
+  const frontendURL = env.VITE_API_PROD_FRONTEND;
 
 
   return defineConfig({
@@ -26,9 +23,15 @@ export default ({ mode }) => {
       },
     },
     server: {
-      allowedHosts,
+      allowedHosts: [backendURL, frontendURL],
       port: 5173,
       open: true,
+      host: true,
     },
+
+    preview: {
+      host:true,
+      port: 4173,
+    }
   });
 };

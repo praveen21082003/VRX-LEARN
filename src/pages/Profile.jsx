@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef,  } from 'react'
 // import axiosInstance from '../api/axiosInstance';
 import Userprofile from '../components/Userprofile';
 
@@ -7,8 +7,8 @@ import { Loader, BookCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function Profile() {
-    const fileInputRef = useRef(null);
-    const navigate = useNavigate();
+    // const fileInputRef = useRef(null);
+    // const navigate = useNavigate();
 
 
     // const [profile, setProfile] = useState([]);

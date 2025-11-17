@@ -10,7 +10,7 @@ import DailyQuote from "../components/DailyQuot";
 const Dashboard = forwardRef(({ user, error }, ref) => {
   const [count, setCount] = useState(5);
   const [dots, setDots] = useState("");
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  // const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchQuery, setsearchQuery] = useState("");
   const navigate = useNavigate();
   const coursesRef = useRef(null);

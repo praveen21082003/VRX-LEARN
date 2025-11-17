@@ -23,7 +23,6 @@ function LearnPage({ user }) {
   const [currentVideo, setCurrentVideo] = useState("");
   const [currentPDF, setCurrentPDF] = useState("");
   const [activeVideo, setActiveVideo] = useState(null);
-  const [isHidden, setIsHidden] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorData, setErrorData] = useState({
     code: null,
@@ -32,16 +31,27 @@ function LearnPage({ user }) {
     show: false
   });
 
-  const { learnData, setLearnData } = useLearn();
+  const [learnData, setLearnData] = useState({});
   const { course_id } = useParams();
 
   useEffect(() => {
     setLoading(true);
+
+    if (learnData[course_id]) {
+      setData(learnData[course_id]);
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const res = await axiosInstance.get(`/course_materials/${course_id}`);
-        setLearnData(res.data);
-        console.log(res.data);
+
+        setLearnData(prev => ({
+          ...prev,
+          [course_id]: res.data     // cache per course
+        }));
+
         setData(res.data);
       } catch (error) {
         const status = error.response?.status;
@@ -52,17 +62,14 @@ function LearnPage({ user }) {
           message: "Request failed",
           detail: detail,
           show: true
-        })
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [course_id]);
-
-  console.log(errorData);
-
+  }, [course_id, learnData, setLearnData]);
 
   const isBingApp = () => {
     const ua = navigator.userAgent.toLowerCase();
@@ -73,7 +80,7 @@ function LearnPage({ user }) {
   useEffect(() => {
     if (isBingApp()) {
       alert("⚠️ Some features like fullscreen landscape mode may not work in the Bing App. For best experience, please open the site in Chrome or Edge Browser.");
-  }
+    }
   }, []);
 
 
@@ -100,37 +107,24 @@ function LearnPage({ user }) {
         navigate("/");
       }
     };
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden" && videoRef.current) {
-        videoRef.current.pause();
-      }
-      if (document.hidden) {
-        setIsHidden(true);
-      } else {
-        // User came back
-        setIsHidden(false);
-      }
-    };
     const handleContextMenu = (e) => {
       e.preventDefault();
       alert("This action is disabled!");
     };
 
 
-    const disableSelect = () => {
+    const disableSelect = (e) => {
       e.preventDefault();
     }
 
 
     window.addEventListener("keyup", handleKeyUp);
     window.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
     document.addEventListener("contextmenu", handleContextMenu);
     document.addEventListener("selectstart", disableSelect);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.removeEventListener("contextmenu", handleContextMenu);
       document.removeEventListener("selectstart", disableSelect);
     };

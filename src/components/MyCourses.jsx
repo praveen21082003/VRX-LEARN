@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import Course from '../components/Course';
 import axiosInstance from '../api/axiosInstance';
 import Courseloading from '../components/loading/Courseloading';
@@ -16,6 +17,8 @@ function MyCourses({ searchQuery }) {
     });
     const image_url = "https://i.pinimg.com/1200x/aa/fe/c1/aafec1ee67e230a77f89463e421b006b.jpg";
     const { myCourseData, setMyCourseData } = useLearn();
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -25,7 +28,6 @@ function MyCourses({ searchQuery }) {
                     const response = await axiosInstance.get("/my_courses");
                     setMyCourseData(response.data);
                     setCourses(response.data)
-                    console.log(response.data);
                 } else {
                     setCourses(myCourseData || []);
                 }

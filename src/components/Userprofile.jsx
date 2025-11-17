@@ -34,7 +34,7 @@ function Userprofile() {
     const [isEdit, setIsEdit] = useState(false);
     const [userDetails, setUserDetails] = useState(featchedUserDetails);
     const words = (userDetails.summary).trim().split(/\s+/).length;
-    const [role, setRole] = useState("student");
+    // const [role, setRole] = useState("student");
     const [skillInput, setSkillInput] = useState("");
 
     if (words.length <= 70) {

@@ -57,7 +57,6 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
 
   const handleLearnClick = (e) => {
     e.preventDefault();
-    const courseId = sessionStorage.getItem("fromLearnButton");
     setShowWarning(true);
     navigate("/dashboard");
     myCoursesRef.current?.scrollIntoView({ behavior: "smooth" });
