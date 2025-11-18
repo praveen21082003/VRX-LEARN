@@ -285,7 +285,7 @@ function LearnPage({ user }) {
         </div >
 
         {/* Viewer Section */}
-        < div className="w-full h-[30%] sm:h-full md:px-10 sm:flex items-center justify-center" >
+        < div className="w-full h-[30%] md:h-full md:px-10 md:flex items-center justify-center" >
 
           {
             currentPDF ? (
