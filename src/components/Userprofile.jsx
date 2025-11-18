@@ -15,14 +15,14 @@ function Userprofile({ user }) {
     }, [user.email_id]);
 
     return (
-        <div className="flex justify-between gap-1 items-center">
+        <div className="flex w-[40%] gap-1 items-center">
             {/* Avatar */}
             <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white">
                 <User size={18} />
             </div>
 
             {/* Name + Email */}
-            <div className="overflow-hidden w-32 sm:w-auto">
+            <div className="overflow-hidden sm:w-auto">
                 <p className="text-sm font-semibold text-gray-800">
                     {user.fullname}
                 </p>

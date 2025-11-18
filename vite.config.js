@@ -6,7 +6,7 @@ export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   const backendURL = env.VITE_API_PROD_BACKEND;
-  const frontendURL = env.VITE_API_PROD_FRONTEND;
+  const frontendURL = env.VITE_API_LOCAL_FRONTEND;
 
 
   return defineConfig({
