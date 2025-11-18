@@ -97,7 +97,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
       >
         {/* Logo */}
         <div className="flex items-center justify-between pt-16 sm:pt-5 px-3 py-4 border-b">
-          <div className="flex items-center gap-2 dark:bg-gray-400 rounded-sm">
+          <div className="flex items-center gap-2 dark:bg-[#fffbf0e1] dark:px-1 rounded-sm">
             <img src="/logo.png" alt="logo" className="h-6 w-auto sm:h-8" />
             {!collapsed && (
               <img
@@ -109,7 +109,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
           </div>
 
           <button
-            className="flex h-6 w-6 m-[-20px] bg-blue-950 text-white items-center justify-center rounded-full"
+            className="flex h-6 w-6 m-[-20px] bg-blue-950 dark:bg-slate-500 text-white items-center justify-center rounded-full"
             onClick={() => setCollapsed(!collapsed)}
           >
             {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}

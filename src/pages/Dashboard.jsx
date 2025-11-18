@@ -5,6 +5,7 @@ import { forwardRef } from "react";
 import MyCourses from "../components/MyCourses";
 import Footer from "../components/Footer";
 import DailyQuote from "../components/DailyQuot";
+import Userprofile from "../components/Userprofile";
 // import Ourcourses from "../components/Ourcourses";
 
 const Dashboard = forwardRef(({ user, error }, ref) => {
@@ -84,8 +85,8 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   return (
     <>
       {/* Top Bar */}
-      <div className="flex justify-between items-center">
-        <div className="relative w-[60%] text-[10px] sm:text-sm" onKeyDown={handleKeyPress}>
+      <div className="flex justify-between gap-2 items-center">
+        <div className="relative w-full sm:w-[60%] text-[10px] sm:text-sm" onKeyDown={handleKeyPress}>
           <Search className="absolute scale-50 sm:scale-100 sm:left-3 top-[15px] sm:top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
@@ -100,23 +101,11 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
           </div>
 
         </div>
+        {/* Profile */}
+        <Userprofile user={user} />
 
-        <div className="flex gap-1 sm:gap-10 items-center">
-          {/* Profile */}
-          <div className="flex gap-2 items-center">
-            <div className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-white">
-              <User size={18} />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-gray-800 dark:text-gray-600">
-                {user.fullname}
-              </p>
-              <p className="sm:block text-xs text-gray-500 -mt-1">{user.email_id}</p>
-            </div>
-          </div>
-
-          {/* Notification Bell */}
-          {/* <div className="relative">
+        {/* <div className="flex sm:gap-10 items-center">
+          <div className="relative">
             <button
               className="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-0 hover:dark:bg-[#1F2937]"
               aria-label="Notifications"
@@ -144,8 +133,8 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
                 </div>
               </div>
             )}
-          </div> */}
-        </div>
+          </div>
+        </div> */}
       </div>
 
       {/* Welcome Section */}

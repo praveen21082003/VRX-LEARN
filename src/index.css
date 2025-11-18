@@ -36,31 +36,39 @@
   0% {
     transform: translate(0%, 0%) scale(1);
   }
+
   /* move towards top-right but zig a bit */
   12% {
     transform: translate(40%, -10%) scale(1.05);
   }
+
   25% {
     transform: translate(70%, 0%) scale(1.08);
   }
+
   /* move downward but zag sideways */
   37% {
     transform: translate(80%, 30%) scale(1.02);
   }
+
   50% {
     transform: translate(70%, 70%) scale(1);
   }
+
   /* move left but zig slightly */
   62% {
     transform: translate(30%, 80%) scale(1.05);
   }
+
   75% {
     transform: translate(0%, 70%) scale(1.08);
   }
+
   /* move up but zag */
   87% {
     transform: translate(-10%, 30%) scale(1.02);
   }
+
   100% {
     transform: translate(0%, 0%) scale(1);
   }
@@ -109,8 +117,15 @@ input[type="number"]::-webkit-outer-spin-button {
 
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fadeIn {
@@ -118,9 +133,13 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .noselect {
-  -ms-user-select: none;          /* standard */
-  -webkit-user-select: none;  /* Safari */
-  user-select: none;      /* IE/Edge */
+  -ms-user-select: none;
+  /* standard */
+  -webkit-user-select: none;
+  /* Safari */
+  user-select: none;
+  /* IE/Edge */
+  -webkit-touch-callout: none;
 }
 
 
@@ -131,4 +150,21 @@ body {
 
 .dark body {
   background-color: #0b1222;
+}
+
+
+@keyframes marquee {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* smooth continuous scroll */
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 7s linear infinite;
 }

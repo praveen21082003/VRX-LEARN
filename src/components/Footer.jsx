@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Linkedin, Github, Youtube, Globe, PhoneCall } from 'lucide-react';
+import { Linkedin, Github, Youtube, Globe, PhoneCall, Mail } from 'lucide-react';
 import { Link } from "react-router-dom";
 
 function Footer() {
@@ -18,24 +18,30 @@ function Footer() {
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-sm text-gray-300">
-                    <Link className="hover:text-white transition-colors font-bold">Dashboard</Link>
-                    <Link to="/courses" className="hover:text-white transition-colors">Courses</Link>
-                    <Link to="/learn" className="hover:text-white transition-colors">Learn</Link>
-                    <Link to="/inbox" className="hover:text-white transition-colors">Inbox</Link>
+                    <Link to="/dashboard" className="hover:text-white transition-colors font-bold">Dashboard</Link>
+                    <Link to="/courses" className="hover:text-white transition-colors font-bold">Courses</Link>
+                    <Link to="/learn" className="hover:text-white transition-colors font-bold">Learn</Link>
+                    <Link to="/inbox" className="hover:text-white transition-colors font-bold">Inbox</Link>
                 </div>
 
 
                 <div className="flex flex-col justify-center gap-5">
                     <div className='flex gap-4'>
-                        <a href="#" className="hover:text-blue-700"><Linkedin size={20} /></a>
-                        <a href="#" className="hover:text-blue-500"><Globe size={20} /></a>
-                        <a href="#" className="hover:text-gray-300"><Github size={20} /></a>
-                        <a href="#" className="hover:text-red-500"><Youtube size={20} /></a>
+                        <a href="https://www.linkedin.com/company/vrnexgen/" className="hover:text-blue-700" target="_blank" rel="noopener noreferrer"><Linkedin size={20} /></a>
+                        <a href="https://vrnexgen1.com" className="hover:text-blue-500" target="_blank" rel="noopener noreferrer"><Globe size={20} /></a>
+                        <a href="#" className="hover:text-gray-300" target="_blank" rel="noopener noreferrer"><Github size={20} /></a>
+                        <a href="https://www.youtube.com/@VRNeXGen1" className="hover:text-red-500" target="_blank" rel="noopener noreferrer"><Youtube size={20} /></a>
                     </div>
                     <div className='text-sm text-gray-300'>
-                        <h1 className='font-bold flex gap-2'><PhoneCall size={20} />Contact Us? </h1>
-                        <p>+91 98xxxx7x79</p>
-                        <p>vrnexgen1@gmail.com</p>
+                        <h1 className='font-bold flex gap-2'>Contact Us? </h1>
+                        <a href="tel:+919150139611" className="flex items-center hover:text-blue-500">
+                            <PhoneCall size={20} className="mr-1" />
+                            +91 91501 39611
+                        </a>
+                        <a href="mailto:vrnexgen1@gmail.com" className="flex items-center hover:text-blue-500">
+                            <Mail size={20} className="mr-1" />
+                            vrnexgen1@gmail.com
+                        </a>
                     </div>
                 </div>
 

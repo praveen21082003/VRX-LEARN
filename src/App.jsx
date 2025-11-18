@@ -7,7 +7,7 @@ import Logout from "./pages/Logout";
 import Sidebar from "./components/Sidebar";
 import Courses from "./pages/Courses";
 import LearnPage from "./pages/LearnPage";
-import Profile from "./pages/Profile";
+// import Profile from "./pages/Profile";
 import DialogueBox from "./components/DialogueBox";
 // import Inbox from "./pages/Inbox";
 // import Accountsettings from "./pages/Accountsettings";
@@ -32,31 +32,39 @@ function App() {
 
 
   useEffect(() => {
-    if (isLoginPage) {
-      setCheckedAuth(true);
-      return;
-    }
-    const fetchUser = async () => {
+    const checkAuth = async () => {
       try {
         const res = await axiosInstance.get("/auth/me");
         setUser(res.data);
         setAuthorized(true);
-      } catch (error) {
-        const status = error.response?.status;
-        const detail = error.response?.data?.detail || "Unexpected error";
 
-        setErrorData({
-          code: status,
-          message: "Request failed",
-          detail: detail,
-          show: true
-        })
+        // If user is on login page but token already valid → redirect to dashboard
+        if (isLoginPage) {
+          navigate("/dashboard", { replace: true });
+        }
+
+      } catch (error) {
+        setAuthorized(false);
+
+        // If on protected pages → show error popup
+        if (!isLoginPage) {
+          const status = error.response?.status;
+          const detail = error.response?.data?.detail || "Unexpected error";
+
+          setErrorData({
+            code: status,
+            message: "Request failed",
+            detail: detail,
+            show: true
+          });
+        }
+
       } finally {
         setCheckedAuth(true);
       }
     };
 
-    fetchUser();
+    checkAuth();
   }, [isLoginPage]);
 
   if (!checkedAuth && !isLoginPage) {
@@ -82,8 +90,7 @@ function App() {
       )}
       <Routes>
         {/* Public Route */}
-        <Route path="/" element={<Login />} />
-
+        <Route path="/" element={authorized ? <Navigate to="/dashboard" /> : <Login />} />
         {/* Protected Routes */}
         <Route
           path="/*"
@@ -107,7 +114,7 @@ function App() {
                     <Route path="/courses" element={<Courses />} />
                     <Route path="/learn" element={<Navigate to="/dashboard" />} />
                     <Route path="/learn/:course_id" element={<LearnPage user={user || "VRNexGen"} />} />
-                    {/* <Route path="/profile" element={<Profile />} /> */}
+                    {/* <Route path="/profile" element={<Profile />} />D */}
                     {/* <Route path="/settings" element={<Accountsettings />} /> */}
                     {/* <Route path="/inbox" element={<Inbox />} /> */}
                     <Route path="/logout" element={<Logout />} />

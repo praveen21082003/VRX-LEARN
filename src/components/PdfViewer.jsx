@@ -64,7 +64,7 @@ function PdfViewer({ fileId }) {
   }, []);
 
   // -------- ZOOM ----------
-  const zoomIn = () => {setScale(prev => Math.min(prev + 0.2, 2))};
+  const zoomIn = () => { setScale(prev => Math.min(prev + 0.2, 2)) };
   const zoomOut = () => setScale(prev => Math.max(prev - 0.2, 0.2));
   const resetZoom = () => setScale(1);
 
@@ -94,7 +94,7 @@ function PdfViewer({ fileId }) {
     if (fileId) fetchPdf();
   }, [fileId]);
 
-  
+
   // -------- PAGE DETECTION (works in ANY zoom) ----------
   // Use a ref to track if the scroll was initiated by a page jump
   const isJumping = useRef(false);
@@ -139,7 +139,7 @@ function PdfViewer({ fileId }) {
       scrollEl.removeEventListener("scroll", handleScroll);
       clearTimeout(timeout);
     };
-  }, [numPages, setPageNumber]); 
+  }, [numPages, setPageNumber]);
 
   // ... (existing code up to handlePageInputChange)
 
@@ -148,22 +148,22 @@ function PdfViewer({ fileId }) {
     const val = Number(e.target.value);
     if (!val || val < 1 || val > numPages) return;
 
-   
+
     setPageNumber(val);
 
-    
+
     isJumping.current = true;
 
-    
+
     pageRefs.current[val - 1]?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
 
-    
+
     setTimeout(() => {
       isJumping.current = false;
-    }, 200); 
+    }, 200);
   };
 
 
@@ -186,6 +186,7 @@ function PdfViewer({ fileId }) {
     }
   }, []);
 
+
   return (
     <div ref={containerRef} className="sm:fixed w-full h-full sm:h-[90%] sm:w-[60%]">
 
@@ -195,7 +196,7 @@ function PdfViewer({ fileId }) {
           <button onClick={zoomOut} className="p-1 bg-white/10 rounded-full"><ZoomOut size={20} /></button>
           <span className="text-sm">Zoom: {(scale * 100).toFixed(0)}%</span>
           <button onClick={zoomIn} className="p-1 bg-white/10 rounded-full"><ZoomIn size={20} /></button>
-          <button onClick={resetZoom} className="px-3 py-1 bg-gray-300 text-black rounded-md">Reset</button>
+          <button onClick={resetZoom} className="px-3 bg-gray-300 text-black rounded-md">Reset</button>
         </div>
 
         <div className="flex items-center gap-1">
@@ -208,8 +209,8 @@ function PdfViewer({ fileId }) {
           />
           <span>of {numPages}</span>
 
-          <button onClick={handleFullScreen} className="ml-4 p-1 bg-white/10 rounded-full">
-            {isFullScreen ? <Minimize size={15} /> : <Expand size={15} />}
+          <button onClick={handleFullScreen} className="ml-4 p-2 text-white bg-white/10 font-bold rounded-full" title='fullscreen'>
+            {isFullScreen ? <Minimize size={20} /> : <Expand className='animate-ping md:animate-none md:hover:animate-ping' size={15} />}
           </button>
         </div>
       </div>

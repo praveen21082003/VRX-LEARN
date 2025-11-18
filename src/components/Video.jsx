@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import {
   Play,
   Pause,
+  Volume,
+  Volume1,
   Volume2,
   VolumeX,
   Maximize,
@@ -22,9 +24,20 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
   const [showControls, setShowControls] = useState(true);
   const [waiting, setWaiting] = useState(false);
   const [error, setError] = useState("");
+  const [volume, setVolume] = useState(0);
+  const [showVolumeUI, setShowVolumeUI] = useState(false);
+
 
   const containerRef = useRef(null);
   const hideTimeout = useRef(null);
+
+
+  const getVolumeIcon = () => {
+    if (isMuted || volume === 0) return <VolumeX size={22} />;
+    if (volume > 0.7) return <Volume2 size={22} />;
+    if (volume > 0.3) return <Volume1 size={22} />;
+    return <Volume size={22} />
+  };
 
   /** Reset state on URL change */
   useEffect(() => {
@@ -83,19 +96,43 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
       if (!video) return;
       if (e.key === "ArrowLeft") {
         video.currentTime = Math.max(0, video.currentTime - 10);
-      } else if (e.key === "ArrowRight") {
+      }
+
+      else if (e.key === "ArrowRight") {
         video.currentTime = Math.min(video.duration, video.currentTime + 10);
-      } else if (e.key === "ArrowUp") {
-        video.volume = Math.min(1, video.volume + 0.1);
-      } else if (e.key === "ArrowDown") {
-        video.volume = Math.max(0, video.volume - 0.1);
-      } else if (e.key === " ") {
+      }
+
+      else if (e.key === "ArrowUp") {
+        const newVolume = Math.min(1, (video.volume || 0) + 0.1);
+        video.volume = newVolume;
+        setVolume(newVolume);
+        setIsMuted(newVolume === 0);
+
+        setShowVolumeUI(true);
+        setTimeout(() => setShowVolumeUI(false), 1200);
+      }
+
+      else if (e.key === "ArrowDown") {
+        const newVolume = Math.max(0, (video.volume || 0) - 0.1);
+        video.volume = newVolume;
+        setVolume(newVolume);
+        setIsMuted(newVolume === 0);
+
+        setShowVolumeUI(true);
+        setTimeout(() => setShowVolumeUI(false), 1200);
+      }
+
+      else if (e.key === " ") {
         e.preventDefault();
         handlePlayPause();
-      } else if (e.key === "m") {
+      }
+
+      else if (e.key === "m") {
         e.preventDefault();
         handleMute();
-      } else if (e.key === "f") {
+      }
+
+      else if (e.key === "f") {
         handleFullScreen();
       }
     };
@@ -153,6 +190,8 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
       }, 500);
     }
   }, [video_URL]);
+
+
 
   /** Controls */
   const handlePlayPause = () => {
@@ -270,6 +309,48 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
           />
 
           <div
+            onClick={handlePlayPause}
+            className={`
+              absolute inset-0 flex justify-center items-center 
+              transition-opacity duration-300 
+              ${showControls || !isPlaying ? "opacity-100" : "opacity-0 pointer-events-none"}
+            `}
+          >
+            {!isPlaying && (
+              <div className={`
+              bg-black/10
+              text-white flex justify-center items-center
+              rounded-full shadow-sm
+              p-5 sm:p-7 cursor-pointer
+              active:scale-95
+              transition-all duration-300
+              ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}
+            `}>
+                <Play size={30} className="drop-shadow-md" />
+              </div>
+            )}
+          </div>
+
+          {showVolumeUI && (
+            <div
+              className="
+              absolute
+              bg-black/10 
+              text-white flex justify-center items-center
+              rounded-full shadow-sm
+              p-5 sm:p-7 cursor-pointer
+              active:scale-95
+              transition-all duration-300
+            "
+            >
+              {getVolumeIcon()}
+            </div>
+          )}
+
+
+
+
+          <div
             className={`absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent rounded-b-lg px-1 sm:px-4 py-3 transition-opacity duration-500 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"
               }`}
           >
@@ -287,11 +368,11 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
               <div className="flex items-center">
                 <button
                   onClick={handlePlayPause}
-                  className="bg-black h-7 w-7 sm:h-10 sm:w-10 flex justify-center items-center rounded-full z-50"
+                  className="bg-black h-8 w-8 sm:h-10 sm:w-10 flex justify-center items-center rounded-full z-50"
                 >
                   {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                 </button>
-                <div className="ml-[-5px] text-xs sm:text-sm bg-black px-2 py-1 rounded-r-full opacity-70 z-40">
+                <div className="ml-[-5px] text-xs sm:text-sm bg-black px-2 py-[3px] sm:py-1 rounded-r-full opacity-70 z-40">
                   {formatTime(currentTime)} / {formatTime(duration)}
                 </div>
               </div>
