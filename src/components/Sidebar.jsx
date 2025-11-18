@@ -134,7 +134,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
                   className={`w-full flex items-center gap-3 px-2 py-2 rounded-md text-sm font-medium transition
                   ${isActive
                       ? "bg-red-50 dark:bg-[#1F2937] text-red-600 shadow-sm"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 hover:dark:bg-[#1F2937] hover:text-gray-500 hover:dark:text-black"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 hover:dark:bg-[#1F2937] hover:text-gray-500"
                     }`}
                 >
                   <Icon size={20} />
@@ -152,7 +152,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
                 className={`flex items-center gap-3 px-2 py-2 rounded-md text-sm font-medium transition
                 ${isActive
                     ? "bg-red-50 dark:bg-[#1F2937] text-red-600 shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 hover:dark:bg-[#1F2937] hover:text-gray-500 hover:dark:text-black"
+                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 hover:dark:bg-[#1F2937] hover:text-gray-500"
                   }`}
               >
                 <Icon size={20} />
