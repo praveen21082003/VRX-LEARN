@@ -85,7 +85,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   return (
     <>
       {/* Top Bar */}
-      <div className="flex justify-between gap-1 items-center">
+      <div className="flex justify-between gap-1 sm:gap-10 items-center">
         <div className="relative w-[60%] text-[10px] sm:text-sm" onKeyDown={handleKeyPress}>
           <Search className="absolute scale-50 sm:scale-100 sm:left-3 top-[15px] sm:top-1/2 -translate-y-1/2 text-gray-400" />
           <input

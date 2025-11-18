@@ -15,7 +15,7 @@ function Userprofile({ user }) {
     }, [user.email_id]);
 
     return (
-        <div className="flex w-[40%] gap-1 items-center">
+        <div className="flex w-[40%] sm:w-auto gap-1 items-center">
             {/* Avatar */}
             <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white">
                 <User size={18} />
