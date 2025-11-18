@@ -193,7 +193,7 @@ function LearnPage({ user }) {
       }
       < div className="noselect h-full w-full flex flex-col md:flex-row bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg" >
         {/* Sidebar */}
-        < div className="h-[60%] sm:h-auto overflow-y-scroll sm:overflow-y-auto w-full sm:w-[40%] md:w-[35%] lg:w-[30%] border-r-2 border-gray-200 dark:border-gray-700 p-4" >
+        < div className="h-[60%] sm:h-auto overflow-y-scroll sm:overflow-y-auto w-full md:w-[35%] lg:w-[30%] border-r-2 border-gray-200 dark:border-gray-700 p-4" >
 
           <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4 flex items-center gap-2">
             <BookOpen className="w-6 h-6" /> Learn
