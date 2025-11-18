@@ -191,7 +191,7 @@ function LearnPage({ user }) {
           />
         )
       }
-      < div className="noselect h-full w-full flex flex-col sm:flex-row bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg" >
+      < div className="noselect h-full w-full flex flex-col md:flex-row bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg" >
         {/* Sidebar */}
         < div className="h-[60%] sm:h-auto overflow-y-scroll sm:overflow-y-auto w-full sm:w-[40%] md:w-[35%] lg:w-[30%] border-r-2 border-gray-200 dark:border-gray-700 p-4" >
 
@@ -285,7 +285,7 @@ function LearnPage({ user }) {
         </div >
 
         {/* Viewer Section */}
-        < div className="w-full h-[30%] md:h-full md:px-10 md:flex items-center justify-center" >
+        < div className="w-full h-[30%] sm:h-full md:px-10 sm:flex items-center justify-center" >
 
           {
             currentPDF ? (
