@@ -49,9 +49,9 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   }
 
 
-  const handleStartLearning = ()=>{
+  const handleStartLearning = () => {
     const courseId = sessionStorage.getItem("fromLearnButton");
-    if (courseId){
+    if (courseId) {
       navigate(`/learn/${courseId}`);
     }
   }
@@ -85,26 +85,31 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   return (
     <>
       {/* Top Bar */}
-      <div className="flex justify-between gap-1 sm:gap-10 items-center">
-        <div className="relative w-[60%] text-[10px] sm:text-sm" onKeyDown={handleKeyPress}>
-          <Search className="absolute scale-50 sm:scale-100 sm:left-3 top-[15px] sm:top-1/2 -translate-y-1/2 text-gray-400" />
+      <div className="flex justify-between items-center w-full">
+        {/* Search Bar */}
+        <div className="relative w-[63%] sm:w-[75%] text-[10px] sm:text-sm" onKeyDown={handleKeyPress}>
+          <Search className="absolute scale-50 sm:scale-100 left-1 sm:left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             placeholder="Search (e.g., Python, Mainframe, etc.)"
             value={searchQuery}
             onChange={(e) => setsearchQuery(e.target.value)}
-            className="w-full text-[10px] sm:text-sm pl-5 sm:pl-10 pr-2 py-2 border rounded-md outline-none focus:ring-2 focus:ring-indigo-100 dark:bg-[#0A0A0A] dark:focus:ring-gray-600 dark:border-gray-700 dark:text-slate-500"
+            className="w-full text-[10px] sm:text-sm pl-5 sm:pl-10 pr-2 py-2 border rounded-md outline-none 
+                      focus:ring-2 focus:ring-indigo-100 dark:bg-[#0A0A0A] dark:focus:ring-gray-600 dark:border-gray-700 dark:text-slate-300"
           />
-          <div className="flex text-sm absolute right-0 sm:right-3 top-[19px] sm:top-1/2 -translate-y-1/2 text-gray-400">
+          <div className="flex text-sm absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400">
             <p className="hidden md:block">Press Enter</p>
-            <CornerDownLeft className="scale-50 sm:scale-75" />
+            <CornerDownLeft className="scale-50 sm:scale-75 ml-1" />
           </div>
-
         </div>
-        {/* Profile */}
-        <Userprofile user={user} />
 
-        {/* <div className="flex sm:gap-10 items-center">
+        {/* Profile Section */}
+        <div className="flex w-[30%] sm:w-[25%] md:w-[20%] justify-end items-center">
+          <Userprofile user={user} />
+        </div>
+    
+
+      {/* <div className="flex sm:gap-10 items-center">
           <div className="relative">
             <button
               className="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-0 hover:dark:bg-[#1F2937]"
@@ -135,10 +140,10 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
             )}
           </div>
         </div> */}
-      </div>
+    </div >
 
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg shadow-xl p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row items-center justify-between text-white mt-5 w-full dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 dark:text-gray-400">
+      {/* Welcome Section */ }
+      < div className = "bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg shadow-xl p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row items-center justify-between text-white mt-5 w-full dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 dark:text-gray-400" >
         <div className="lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4">
             Welcome to Your Learning Journey!
@@ -169,20 +174,20 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
             </video>
           </div>
         </div>
-      </div>
+      </div >
 
-      {/* Courses Section */}
-      <div ref={coursesRef}>
-        <div ref={ref}>
-          <MyCourses searchQuery={searchQuery} />
-        </div>
-        {/* <Ourcourses searchQuery={searchQuery} /> */}
-      </div>
+  {/* Courses Section */ }
+  < div ref = { coursesRef } >
+    <div ref={ref}>
+      <MyCourses searchQuery={searchQuery} />
+    </div>
+{/* <Ourcourses searchQuery={searchQuery} /> */ }
+      </div >
 
 
 
-      {/* Closing Section */}
-      <div className="bg-[#840227] rounded-lg shadow-xl flex justify-center flex-col lg:flex-row text-white my-8 gap-20">
+  {/* Closing Section */ }
+  < div className = "bg-[#840227] rounded-lg shadow-xl flex justify-center flex-col lg:flex-row text-white my-8 gap-20" >
         <div className="flex justify-center lg:w-[40%]">
           <img
             src="/images/image3.jpg"
@@ -204,9 +209,9 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
           </p>
           <DailyQuote />
         </div>
-      </div>
+      </div >
 
-      <Footer />
+  <Footer />
     </>
   );
 });

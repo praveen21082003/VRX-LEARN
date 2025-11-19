@@ -1,48 +1,44 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { User } from 'lucide-react';
+import React, { useEffect, useRef, useState } from "react";
+import { User } from "lucide-react";
 
 function Userprofile({ user }) {
+  const emailRef = useRef(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
 
-    const emailRef = useRef(null);
-    const [isOverflowing, setIsOverflowing] = useState(false);
+  useEffect(() => {
+    const el = emailRef.current;
+    if (!el) return;
+    setIsOverflowing(el.scrollWidth > el.clientWidth);
+  }, [user.email_id]);
 
-    useEffect(() => {
-        const el = emailRef.current;
-        if (!el) return;
+  return (
+    <div className="flex items-center gap-2">
+      {/* Avatar */}
+      <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white">
+        <User size={18} />
+      </div>
 
-        // Check if email width > container width
-        setIsOverflowing(el.scrollWidth > el.clientWidth);
-    }, [user.email_id]);
+      {/* Name + Email */}
+      <div className="overflow-hidden w-[80px] xs:w-[110px] sm:w-[140px] md:w-[170px] lg:w-[200px]">
+        <p className="text-[11px] sm:text-sm font-semibold text-gray-800 dark:text-gray-300 leading-tight">
+          {user.fullname}
+        </p>
 
-    return (
-        <div className="flex w-[40%] sm:w-auto gap-1 items-center">
-            {/* Avatar */}
-            <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white">
-                <User size={18} />
-            </div>
-
-            {/* Name + Email */}
-            <div className="overflow-hidden sm:w-auto">
-                <p className="text-sm font-semibold text-gray-800">
-                    {user.fullname}
-                </p>
-
-                {/* Email with conditional marquee */}
-                <p
-                    ref={emailRef}
-                    className={`
-                        text-xs text-gray-500 dark:text-gray-400 -mt-1 whitespace-nowrap
-                        ${isOverflowing ? "animate-marquee" : ""}
-                    `}
-                >
-                    {user.email_id}
-                </p>
-            </div>
-        </div>
-    );
+        <p
+          ref={emailRef}
+          className={`text-[9px] sm:text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ${
+            isOverflowing ? "animate-marquee" : ""
+          }`}
+        >
+          {user.email_id}
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default Userprofile;
+
 
 
 
