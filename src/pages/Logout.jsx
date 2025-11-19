@@ -39,42 +39,44 @@ function Logout() {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-      {
-        error.show && (
-          <DialogueBox
-            errorCode={error.code}
-            errorMessage={error.message}
-            error={error.detail}
-            onClose={() => {
-              setError(prev => ({ ...prev, show: false }));
-              navigate(-1);
-            }}
-          />
-        )
-      }
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-[90%] sm:w-[400px] text-center">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-          Are you sure you want to log out?
-        </h2>
+    <>
+      <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+        {
+          error.show && (
+            <DialogueBox
+              errorCode={error.code}
+              errorMessage={error.message}
+              error={error.detail}
+              onClose={() => {
+                setError(prev => ({ ...prev, show: false }));
+                navigate(-1);
+              }}
+            />
+          )
+        }
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-[90%] sm:w-[400px] text-center">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+            Are you sure you want to log out?
+          </h2>
 
-        <div className="flex justify-center gap-6 mt-4">
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-all"
-          >
-            Logout
-          </button>
+          <div className="flex justify-center gap-6 mt-4">
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-all"
+            >
+              Logout
+            </button>
 
-          <button
-            onClick={onClose}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-6 rounded-lg transition-all"
-          >
-            Cancel
-          </button>
+            <button
+              onClick={onClose}
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-6 rounded-lg transition-all"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

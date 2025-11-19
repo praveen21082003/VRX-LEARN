@@ -17,13 +17,13 @@ import DialogueBox from "../components/DialogueBox";
 function LearnPage({ user }) {
   const navigate = useNavigate();
   const videoRef = useRef(null);
-  const [openCourses, setOpenCourses] = useState({});
   const [openModules, setOpenModules] = useState({});
   const [data, setData] = useState([]);
   const [currentVideo, setCurrentVideo] = useState("");
   const [currentPDF, setCurrentPDF] = useState("");
   const [activeVideo, setActiveVideo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const [errorData, setErrorData] = useState({
     code: null,
     message: "",
@@ -103,8 +103,9 @@ function LearnPage({ user }) {
     };
     const handleKeyUp = (e) => {
       if (e.key === "PrintScreen" || (e.ctrlKey && e.shiftKey && e.key === "i")) {
+        setShowWarning(true);
         e.preventDefault();
-        navigate("/");
+        navigate("/logout");
       }
     };
     const handleContextMenu = (e) => {
@@ -139,13 +140,6 @@ function LearnPage({ user }) {
     return acc;
   }, {});
 
-  const toggleCourse = (courseName) => {
-    setOpenCourses((prev) => ({
-      ...prev,
-      [courseName]: !prev[courseName],
-    }));
-  };
-
   const toggleModule = (moduleKey) => {
     setOpenModules((prev) => ({
       ...prev,
@@ -171,13 +165,13 @@ function LearnPage({ user }) {
 
   return (
     <>
-      {
-        loading && (
-          <div className="h-full w-full flex justify-center items-center">
-            <p>Loading course content...</p>
-          </div>
-        )
-      }
+      {showWarning && (
+        <WarningPopup
+          message="⚠️ Screenshots are not allowed! You will be redirected."
+          show={true}
+          onClose={() => setShowWarning(false)}
+        />
+      )}
       {
         errorData.show && (
           <DialogueBox
@@ -193,27 +187,44 @@ function LearnPage({ user }) {
       }
       < div className="noselect h-full w-full flex flex-col md:flex-row bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg" >
         {/* Sidebar */}
-        < div className="h-[60%] sm:h-auto overflow-y-scroll sm:overflow-y-auto w-full md:w-[35%] lg:w-[30%] border-r-2 border-gray-200 dark:border-gray-700 p-4" >
 
-          <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4 flex items-center gap-2">
-            <BookOpen className="w-6 h-6" /> Learn
-          </h1>
+        {loading ? (
+          < div className="space-y-4 animate-pulse h-[60%] sm:h-auto overflow-y-scroll sm:overflow-y-auto w-full md:w-[35%] lg:w-[30%] border-r-2 border-gray-200 dark:border-gray-700 p-4" >
+            {/* Course Title Skeleton */}
+            <div>
+              <div className="h-4 w-24 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="mt-3 space-y-2">
+                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
+                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
+                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
+              </div>
+            </div>
 
-          {
-            Object.entries(groupedData).map(([courseName, modules], idx) => {
-              const isCourseOpen = openCourses[courseName];
-              return (
-                <div key={idx} className="mb-5">
+            {/* Another Course Skeleton (Optional if multiple courses exist) */}
+            <div>
+              <div className="h-4 w-28 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="mt-3 space-y-2">
+                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
+                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
+              </div>
+            </div>
 
-                  <h2
-                    className="text-lg font-semibold text-indigo-600 dark:text-indigo-400 cursor-pointer flex items-center justify-between"
-                    onClick={() => toggleCourse(courseName)}
-                  >
-                    {courseName}
-                    {isCourseOpen ? <ChevronUp /> : <ChevronDown />}
-                  </h2>
+          </div>
+        ) : (
+          < div className="h-[60%] sm:h-auto overflow-y-scroll sm:overflow-y-auto w-full md:w-[35%] lg:w-[30%] border-r-2 border-gray-200 dark:border-gray-700 p-4" >
 
-                  {isCourseOpen && (
+            <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4 flex items-center gap-2">
+              <BookOpen className="w-6 h-6" /> Learn
+            </h1>
+
+            {
+              Object.entries(groupedData).map(([courseName, modules], idx) => {
+                return (
+                  <div key={idx} className="mb-5">
+
+                    <h2 className="text-lg font-semibold text-indigo-600 dark:text-indigo-400 mb-2">
+                      {courseName}
+                    </h2>
                     <div className="mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm divide-y">
 
                       {Object.entries(modules).map(([moduleName, resources], i) => {
@@ -275,14 +286,13 @@ function LearnPage({ user }) {
                       })}
 
                     </div>
-                  )}
 
-                </div>
-              );
-            })
-          }
+                  </div>
+                );
+              })
+            }
 
-        </div >
+          </div >)}
 
         {/* Viewer Section */}
         < div className="w-full h-[30%] sm:h-full md:px-10 sm:flex items-center justify-center" >
