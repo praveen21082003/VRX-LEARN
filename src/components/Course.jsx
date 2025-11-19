@@ -16,12 +16,12 @@ function Course({ id, url, name, description, author, enrollment }) {
 
     return (
         <div className="
-        bg-slate-100 hover:bg-white rounded-lg shadow-md overflow-hidden flex flex-col
-        dark:bg-[#0A0A0A]
-        transition-all duration-100
-        hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.01]
-        dark:hover:shadow-gray-700
-">
+                    bg-slate-100 hover:bg-white rounded-lg shadow-md overflow-hidden flex flex-col
+                    dark:bg-[#0A0A0A]
+                    transition-all duration-100
+                    hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.01]
+                    dark:hover:shadow-gray-700
+            ">
             <div className="relative">
                 <img
                     src={url}

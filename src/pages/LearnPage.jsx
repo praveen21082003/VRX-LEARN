@@ -13,6 +13,7 @@ import Video from "../components/Video";
 import PdfViewer from "../components/PdfViewer";
 import { useLearn } from "../components/context/ContextProvider";
 import DialogueBox from "../components/DialogueBox";
+import Coursecontentloading from "../components/loading/Coursecontentloading";
 
 function LearnPage({ user }) {
   const navigate = useNavigate();
@@ -189,27 +190,7 @@ function LearnPage({ user }) {
         {/* Sidebar */}
 
         {loading ? (
-          < div className="space-y-4 animate-pulse h-[60%] sm:h-auto overflow-y-scroll sm:overflow-y-auto w-full md:w-[35%] lg:w-[30%] border-r-2 border-gray-200 dark:border-gray-700 p-4" >
-            {/* Course Title Skeleton */}
-            <div>
-              <div className="h-4 w-24 bg-gray-300 dark:bg-gray-700 rounded"></div>
-              <div className="mt-3 space-y-2">
-                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
-                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
-                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
-              </div>
-            </div>
-
-            {/* Another Course Skeleton (Optional if multiple courses exist) */}
-            <div>
-              <div className="h-4 w-28 bg-gray-300 dark:bg-gray-700 rounded"></div>
-              <div className="mt-3 space-y-2">
-                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
-                <div className="h-10 bg-gray-200 dark:bg-gray-800 rounded"></div>
-              </div>
-            </div>
-
-          </div>
+          <Coursecontentloading/>
         ) : (
           < div className="h-[60%] sm:h-auto overflow-y-scroll sm:overflow-y-auto w-full md:w-[35%] lg:w-[30%] border-r-2 border-gray-200 dark:border-gray-700 p-4" >
 
