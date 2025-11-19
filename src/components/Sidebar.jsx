@@ -76,7 +76,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
       )}
 
       {/* Mobile toggle */}
-      <div className="sm:hidden fixed flex gap-3 bg-[#FFFBF0ff] dark:bg-[#fffbf09a] items-center top-0 left-0 w-full -z-30 border-b-2 text-black 
+      <div className="sm:hidden fixed flex gap-3 bg-[#FFFBF0ff] dark:bg-[#fffbf09a] items-center top-0 left-0 w-full z-40 border-b-2 text-black 
                 px-14 py-2 text-lg font-semibold shadow-md"
         onClick={() => setMobileOpen((prev) => !prev)}>
        <MoveRight size={30} />{getPageTitle()}
