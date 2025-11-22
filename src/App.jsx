@@ -112,6 +112,7 @@ function App() {
                   <Routes>
                     <Route path="/dashboard" element={<Dashboard ref={myCoursesRef} user={user} error={errorData} />} />
                     <Route path="/courses" element={<Courses />} />
+                    <Route path="/courses/:id" element={<Courses />} />
                     <Route path="/learn" element={<Navigate to="/dashboard" />} />
                     <Route path="/learn/:course_id" element={<LearnPage user={user || "VRNexGen"} />} />
                     {/* <Route path="/profile" element={<Profile />} />D */}

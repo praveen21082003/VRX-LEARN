@@ -10,7 +10,7 @@ function Footer() {
 
                 <div className="text-center sm:text-left">
                     <img
-                        src="./images/VRNEXGEN.png"
+                        src="/images/VRNEXGEN.png"
                         alt="VRNexGen"
                         className="h-9 w-auto bg-white p-1 rounded-sm"
                     />

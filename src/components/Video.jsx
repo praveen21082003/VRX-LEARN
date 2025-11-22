@@ -10,10 +10,12 @@ import {
   Minimize,
   Timer,
   Loader,
+  CirclePlay,
+  MoveRight
 } from "lucide-react";
 import Watermark from "./Watermark";
 
-function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
+function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -231,7 +233,6 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
     if (!video) return;
     const newTime = (e.target.value / 100) * video.duration;
     video.currentTime = newTime;
-    setProgress(e.target.value);
   };
 
   const formatTime = (time) => {
@@ -256,68 +257,72 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="relative flex justify-center items-center overflow-hidden"
-    >
-      {/* Video element */}
-      {video_URL && (
-        <video
-          ref={videoRef}
-          key={video_URL}
-          src={video_URL}
-          className="rounded-lg object-contain w-full h-full"
-          controls={false}
-          disablePictureInPicture
-          onLoadStart={() => setWaiting(true)}
-          onCanPlay={() => setWaiting(false)}
-          onPlaying={() => setWaiting(false)}
-          onWaiting={() => setWaiting(true)}
-          onError={handleVideoError}
-        />
-      )}
-
-      {/* Loading overlay */}
-      {waiting && !error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 z-40">
-          <Loader className="animate-spin text-white w-10 h-10" />
-          <p className="text-white ml-2">Loading...</p>
-        </div>
-      )}
-
-      {/* Error message */}
-      {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg z-50">
-          <p className="text-red-400 font-semibold text-sm px-6 text-center">
-            ⚠️ {error}
-          </p>
-        </div>
-      )}
-
-      {/* Watermark */}
-      <div className="watermark absolute h-[80%] w-[80%]">
-        <Watermark user={user} />
-      </div>
-
-      {/* Controls */}
-      {!waiting && !error && (
-        <>
-          <img
-            src="/logo.png"
-            alt="logo"
-            className="absolute top-4 right-4 w-8 bg-white p-1 rounded-sm opacity-80"
+    <>
+      <div
+        ref={containerRef}
+        className="relative flex justify-center overflow-hidden"
+      >
+        {/* Video element */}
+        {video_URL && (
+          <video
+            ref={videoRef}
+            key={video_URL}
+            src={video_URL}
+            className="rounded-lg object-contain w-full h-full"
+            controls={false}
+            disablePictureInPicture
+            onEnded={() => {
+              setIsPlaying(!isPlaying)
+            }}
+            onLoadStart={() => setWaiting(true)}
+            onCanPlay={() => setWaiting(false)}
+            onPlaying={() => setWaiting(false)}
+            onWaiting={() => setWaiting(true)}
+            onError={handleVideoError}
           />
+        )}
 
-          <div
-            onClick={handlePlayPause}
-            className={`
+        {/* Loading overlay */}
+        {waiting && !error && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 z-40">
+            <Loader className="animate-spin text-white w-10 h-10" />
+            <p className="text-white ml-2">Loading...</p>
+          </div>
+        )}
+
+        {/* Error message */}
+        {error && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg z-50">
+            <p className="text-red-400 font-semibold text-sm px-6 text-center">
+              ⚠️ {error}
+            </p>
+          </div>
+        )}
+
+        {/* Watermark */}
+        <div className="watermark absolute mt-16 h-[90%] w-[80%]">
+          <Watermark user={user} />
+        </div>
+
+        {/* Controls */}
+        {!waiting && !error && (
+          <>
+            <img
+              src="/logo.png"
+              alt="logo"
+              className="absolute top-4 right-4 w-8 bg-white p-1 rounded-sm opacity-80"
+            />
+
+            <div
+              onClick={handlePlayPause}
+              className={`
               absolute inset-0 flex justify-center items-center 
               transition-opacity duration-300 
               ${showControls || !isPlaying ? "opacity-100" : "opacity-0 pointer-events-none"}
             `}
-          >
-            {!isPlaying && (
-              <div className={`
+            >
+              {!isPlaying && (
+                <div className={`
               bg-black/10
               text-white flex justify-center items-center
               rounded-full shadow-sm
@@ -326,14 +331,14 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
               transition-all duration-300
               ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}
             `}>
-                <Play size={30} className="drop-shadow-md" />
-              </div>
-            )}
-          </div>
+                  <Play size={30} className="drop-shadow-md" />
+                </div>
+              )}
+            </div>
 
-          {showVolumeUI && (
-            <div
-              className="
+            {showVolumeUI && (
+              <div
+                className="
               absolute
               bg-black/10 
               text-white flex justify-center items-center
@@ -342,64 +347,71 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user }) {
               active:scale-95
               transition-all duration-300
             "
+              >
+                {getVolumeIcon()}
+              </div>
+            )}
+
+
+
+
+            <div
+              className={`absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent rounded-b-lg px-1 sm:px-4 py-3 transition-opacity duration-500 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
             >
-              {getVolumeIcon()}
-            </div>
-          )}
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={progress}
+                onChange={handleSeek}
+                className="w-full h-1 accent-white cursor-pointer hover:h-[6px]"
+              />
 
+              <div className="flex justify-between px-1 sm:px-5 items-center text-white">
+                {/* Left controls */}
+                <div className="flex items-center">
+                  <button
+                    onClick={handlePlayPause}
+                    className="bg-black h-8 w-8 sm:h-10 sm:w-10 flex justify-center items-center rounded-full z-50"
+                  >
+                    {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+                  </button>
+                  <div className="ml-[-5px] text-xs sm:text-sm bg-black px-2 py-[3px] sm:py-1 rounded-r-full opacity-70 z-40">
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </div>
+                </div>
 
-
-
-          <div
-            className={`absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent rounded-b-lg px-1 sm:px-4 py-3 transition-opacity duration-500 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"
-              }`}
-          >
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={progress}
-              onChange={handleSeek}
-              className="w-full h-1 accent-white cursor-pointer hover:h-[6px]"
-            />
-
-            <div className="flex justify-between px-1 sm:px-5 items-center text-white">
-              {/* Left controls */}
-              <div className="flex items-center">
-                <button
-                  onClick={handlePlayPause}
-                  className="bg-black h-8 w-8 sm:h-10 sm:w-10 flex justify-center items-center rounded-full z-50"
-                >
-                  {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-                </button>
-                <div className="ml-[-5px] text-xs sm:text-sm bg-black px-2 py-[3px] sm:py-1 rounded-r-full opacity-70 z-40">
-                  {formatTime(currentTime)} / {formatTime(duration)}
+                {/* Right controls */}
+                <div className="flex gap-5 bg-black px-4 py-1 rounded-full opacity-80 items-center">
+                  <img
+                    src="/VRNEXGEN-01.png"
+                    alt="brand"
+                    className="w-8 sm:w-12 bg-white rounded-sm p-1"
+                  />
+                  <button onClick={handleMute}>
+                    {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                  </button>
+                  <button onClick={handleFullScreen}>
+                    {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
+                  </button>
+                  <button onClick={handleSpeedChange} className="flex items-center gap-1">
+                    <Timer size={18} />
+                    <span className="text-sm">{speed}x</span>
+                  </button>
                 </div>
               </div>
-
-              {/* Right controls */}
-              <div className="flex gap-5 bg-black px-4 py-1 rounded-full opacity-80 items-center">
-                <img
-                  src="/VRNEXGEN-01.png"
-                  alt="brand"
-                  className="w-8 sm:w-12 bg-white rounded-sm p-1"
-                />
-                <button onClick={handleMute}>
-                  {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                </button>
-                <button onClick={handleFullScreen}>
-                  {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
-                </button>
-                <button onClick={handleSpeedChange} className="flex items-center gap-1">
-                  <Timer size={18} />
-                  <span className="text-sm">{speed}x</span>
-                </button>
-              </div>
             </div>
-          </div>
-        </>
-      )}
-    </div>
+          </>
+
+        )}
+      </div>
+
+      <div className="h-5">
+        {progress > 99 &&
+          <button className="bg-green-700 flex justify-center md:gap-1 items-center text-xs lg:text-base text-white px-4 py-1 md:px-4 md:py-2 rounded-lg" onClick={onNextVideo}><CirclePlay size={20} />Next<MoveRight size={15} /></button>}
+      </div>
+    </>
   );
 }
 

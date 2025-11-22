@@ -1,242 +1,205 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { useLearn } from './context/ContextProvider';
+import React, { useRef, useState, useEffect } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
 import { ZoomIn, ZoomOut, Expand, Minimize } from "lucide-react";
-import { pdfjs, Document, Page } from 'react-pdf';
 import axiosInstance from "../api/axiosInstance";
+import { useLearn } from "./context/ContextProvider";
 
 pdfjs.GlobalWorkerOptions.workerSrc =
-  "https://unpkg.com/pdfjs-dist@5.4.296/build/pdf.worker.min.mjs";
+  `https://unpkg.com/pdfjs-dist@5.4.296/build/pdf.worker.min.mjs`;
 
 function PdfViewer({ fileId }) {
-
   const {
     numPages, setNumPages,
     pageNumber, setPageNumber,
     scale, setScale,
     pdfBlobUrl, setPdfBlobUrl,
-    loading, setLoading,
+    loading, setLoading
   } = useLearn();
 
   const containerRef = useRef(null);
   const scrollRef = useRef(null);
   const pageRefs = useRef([]);
 
-  const [pageWidth, setPageWidth] = useState(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [pageWidth, setPageWidth] = useState(300);
 
-  const dynamicMargin = Math.max(0, (scale - 1) * 900);
-
-
-  // -------- FULLSCREEN ----------
-  const handleFullScreen = () => {
-    const elem = containerRef.current;
-    if (!elem) return;
-
-    if (!document.fullscreenElement) {
-      elem.requestFullscreen()
-        .then(() => setIsFullScreen(true));
-    } else {
-      document.exitFullscreen()
-        .then(() => setIsFullScreen(false));
-    }
-  };
-
+  /* ----------------------------------------
+     FETCH PDF
+  ------------------------------------------ */
   useEffect(() => {
-    const handleFSChange = () => {
-      if (!document.fullscreenElement) {
-        setIsFullScreen(false);
-      }
-    };
-    document.addEventListener("fullscreenchange", handleFSChange);
-    return () => document.removeEventListener("fullscreenchange", handleFSChange);
-  }, []);
-
-  // -------- CONTAINER WIDTH ----------
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setPageWidth(containerRef.current.offsetWidth);
-      }
-    };
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, []);
-
-  // -------- ZOOM ----------
-  const zoomIn = () => { setScale(prev => Math.min(prev + 0.2, 2)) };
-  const zoomOut = () => setScale(prev => Math.max(prev - 0.2, 0.2));
-  const resetZoom = () => setScale(1);
-
-  // -------- LOAD PDF ----------
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-    if (pageNumber > numPages) setPageNumber(1);
-  };
-
-  useEffect(() => {
-    const fetchPdf = async () => {
+    const fetchPDF = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const response = await axiosInstance.get(
-          `/media/pdf/${fileId}`,
-          { responseType: "arraybuffer" }
-        );
-        const blob = new Blob([response.data], { type: "application/pdf" });
-        setPdfBlobUrl(URL.createObjectURL(blob));
-      } catch (error) {
-        console.error("Error fetching PDF:", error);
+        const res = await axiosInstance.get(`/media/pdf/${fileId}`, {
+          responseType: "arraybuffer",
+        });
+        const blob = new Blob([res.data], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
+        setPdfBlobUrl(url);
+      } catch (err) {
+        console.error("PDF Load Error:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (fileId) fetchPdf();
+    if (fileId) fetchPDF();
   }, [fileId]);
 
+  /* ----------------------------------------
+     GET PARENT WIDTH  
+  ------------------------------------------ */
+  useEffect(() => {
+    if (!containerRef.current) return;
 
-  // -------- PAGE DETECTION (works in ANY zoom) ----------
-  // Use a ref to track if the scroll was initiated by a page jump
-  const isJumping = useRef(false);
+    const observe = () => {
+      setPageWidth(containerRef.current.clientWidth - 20);
+    };
 
+    observe();
+    window.addEventListener("resize", observe);
+    return () => window.removeEventListener("resize", observe);
+  }, []);
+
+  /* ----------------------------------------
+     FULLSCREEN HANDLER
+  ------------------------------------------ */
+  const toggleFullscreen = () => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    if (!document.fullscreenElement) {
+      el.requestFullscreen();
+      setIsFullScreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullScreen(false);
+    }
+  };
+
+  /* ----------------------------------------
+     ZOOM CONTROLS
+  ------------------------------------------ */
+  const zoomIn = () => setScale((prev) => Math.min(prev + 0.2, 3));
+  const zoomOut = () => setScale((prev) => Math.max(prev - 0.2, 0.6));
+  const resetZoom = () => setScale(1);
+
+  /* ----------------------------------------
+     PAGE SCROLL DETECTION
+  ------------------------------------------ */
   useEffect(() => {
     const scrollEl = scrollRef.current;
-    if (!scrollEl || !numPages) return;
+    if (!scrollEl) return;
 
-    let timeout = null;
+    const handler = () => {
+      const midpoint = scrollEl.scrollTop + scrollEl.clientHeight / 2;
 
-    const handleScroll = () => {
-      // If a jump was just initiated, ignore the scroll event for a brief period
-      if (isJumping.current) {
-        return;
-      }
+      for (let i = 0; i < numPages; i++) {
+        const el = pageRefs.current[i];
+        if (!el) continue;
 
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        const scrollTop = scrollEl.scrollTop;
-        const middle = scrollTop + scrollEl.clientHeight / 2;
+        const top = el.offsetTop;
+        const bottom = top + el.clientHeight;
 
-        for (let i = 0; i < numPages; i++) {
-          const el = pageRefs.current[i];
-          // Ensure element exists and is visible (or at least has offset info)
-          if (!el || el.offsetHeight === 0) continue;
-
-          const top = el.offsetTop;
-          const bottom = top + el.offsetHeight;
-
-          if (middle >= top && middle <= bottom) {
-            if (pageNumber !== i + 1) {
-              setPageNumber(i + 1);
-            }
-            break;
-          }
+        if (midpoint >= top && midpoint <= bottom) {
+          setPageNumber(i + 1);
+          break;
         }
-      }, 100); // Increased debounce time for better performance and stability
+      }
     };
 
-    scrollEl.addEventListener("scroll", handleScroll);
-    return () => {
-      scrollEl.removeEventListener("scroll", handleScroll);
-      clearTimeout(timeout);
-    };
-  }, [numPages, setPageNumber]);
+    scrollEl.addEventListener("scroll", handler);
+    return () => scrollEl.removeEventListener("scroll", handler);
+  }, [numPages]);
 
-  // ... (existing code up to handlePageInputChange)
-
-  // -------- PAGE JUMP ----------
-  const handlePageInputChange = (e) => {
-    const val = Number(e.target.value);
-    if (!val || val < 1 || val > numPages) return;
-
-
+  /* ----------------------------------------
+     PAGE NUMBER CHANGE (input)
+  ------------------------------------------ */
+  const onPageChange = (e) => {
+    let val = Number(e.target.value);
+    if (val < 1 || val > numPages) return;
     setPageNumber(val);
-
-
-    isJumping.current = true;
-
 
     pageRefs.current[val - 1]?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
-
-
-    setTimeout(() => {
-      isJumping.current = false;
-    }, 200);
   };
 
-
-
-  // -------- EFFECTIVE WIDTH ----------
-  const effectiveWidth = pageWidth
-    ? Math.max(pageWidth * scale, 320)
-    : 320;
-
-  // -------- PINCH TO ZOOM SUPPORT (native + extra option) ----------
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-
-    el.style.touchAction = "pan-y pinch-zoom";
-
-    return () => {
-      el.style.touchAction = "auto";
-    }
-  }, []);
-
+  /* ----------------------------------------
+     EFFECTIVE PAGE WIDTH (safe)
+  ------------------------------------------ */
+  const effectiveWidth = pageWidth * scale;
 
   return (
-    <div ref={containerRef} className="sm:fixed w-full h-full sm:h-[90%] sm:w-[60%]">
+    <div
+      ref={containerRef}
+      className="w-full h-full flex flex-col bg-[#00000010] rounded-lg overflow-hidden"
+    >
 
-      {/* Toolbar */}
-      <div className="flex justify-between items-center p-1 bg-black/40 text-white rounded-t-xl border border-white/10 sm:h-[10%]">
-        <div className="flex sm:gap-3 items-center">
-          <button onClick={zoomOut} className="p-1 bg-white/10 rounded-full"><ZoomOut size={20} /></button>
-          <span className="text-sm">Zoom: {(scale * 100).toFixed(0)}%</span>
-          <button onClick={zoomIn} className="p-1 bg-white/10 rounded-full"><ZoomIn size={20} /></button>
-          <button onClick={resetZoom} className="px-3 bg-gray-300 text-black rounded-md">Reset</button>
+      {/* ----------- TOP CONTROLS ----------- */}
+      <div className="w-full flex justify-between items-center bg-black/40 text-white py-2 px-3">
+        {/* ZOOM */}
+        <div className="flex gap-2 items-center">
+          <button onClick={zoomOut} className="p-2 bg-white/10 rounded-full">
+            <ZoomOut size={20} />
+          </button>
+          <span className="text-sm">
+            {(scale * 100).toFixed(0)}%
+          </span>
+          <button onClick={zoomIn} className="p-2 bg-white/10 rounded-full">
+            <ZoomIn size={20} />
+          </button>
+          <button onClick={resetZoom} className="px-3 bg-gray-300 text-black rounded-md">
+            Reset
+          </button>
         </div>
 
+        {/* PAGE NAVIGATION */}
         <div className="flex items-center gap-1">
           <span>Page</span>
           <input
             type="number"
             value={pageNumber}
-            onChange={handlePageInputChange}
-            className="w-5 text-center text-black rounded"
+            onChange={onPageChange}
+            className="w-10 text-center text-black rounded"
           />
-          <span>of {numPages}</span>
+          <span> of {numPages}</span>
 
-          <button onClick={handleFullScreen} className="ml-4 p-2 text-white bg-white/10 font-bold rounded-full" title='fullscreen'>
-            {isFullScreen ? <Minimize size={20} /> : <Expand className='animate-ping md:animate-none md:hover:animate-ping' size={15} />}
+          {/* FULLSCREEN */}
+          <button
+            onClick={toggleFullscreen}
+            className="ml-4 p-2 bg-white/10 rounded-full"
+          >
+            {isFullScreen ? <Minimize /> : <Expand />}
           </button>
         </div>
       </div>
 
-      {/* Scroll Area */}
+      {/* ----------- PDF SCROLL AREA ----------- */}
       <div
         ref={scrollRef}
-        className="flex justify-center w-full h-full sm:h-[90%] bg-black/10 overflow-auto"
+        className="w-full h-full overflow-auto flex flex-col items-center py-3"
       >
         {loading && (
-          <div className="flex items-center justify-center h-full text-white">
-            Loading PDF...
-          </div>
+          <p className="text-center text-gray-300">Loading PDF...</p>
         )}
 
         {pdfBlobUrl && (
-          <Document file={pdfBlobUrl} onLoadSuccess={onDocumentLoadSuccess}>
-            {Array.from({ length: numPages || 0 }, (_, i) => (
+          <Document
+            file={pdfBlobUrl}
+            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+          >
+            {Array.from({ length: numPages }, (_, idx) => (
               <div
-                key={i}
-                ref={(el) => (pageRefs.current[i] = el)}
-                style={{ marginLeft: dynamicMargin }}
-                className={`mb-3 flex justify-center ${pageNumber === i + 1 ? "ring-2 ring-indigo-500" : ""} overflow-auto`}
+                key={idx}
+                ref={(el) => (pageRefs.current[idx] = el)}
+                className={`mb-4 shadow-lg rounded-md ${
+                  pageNumber === idx + 1 ? "ring-2 ring-indigo-500" : ""
+                }`}
               >
                 <Page
-                  pageNumber={i + 1}
+                  pageNumber={idx + 1}
                   width={effectiveWidth}
                   renderAnnotationLayer={false}
                   renderTextLayer={false}

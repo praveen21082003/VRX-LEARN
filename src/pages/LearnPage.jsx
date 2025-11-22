@@ -164,6 +164,22 @@ function LearnPage({ user }) {
     }
   };
 
+  const handlePlayNextVideo = () => {
+    if (!activeVideo) return;
+
+    const videoItems = data.filter(item => item.resource_type === "video");
+    const currentIndex = videoItems.findIndex(
+      item => item.file_id === activeVideo
+    );
+
+    if (currentIndex === -1 || currentIndex === videoItems.length - 1) {
+      return;
+    }
+
+    const nextVideoId = videoItems[currentIndex + 1].file_id;
+    handleVideoPlay(nextVideoId);
+  };
+
   return (
     <>
       {showWarning && (
@@ -173,130 +189,160 @@ function LearnPage({ user }) {
           onClose={() => setShowWarning(false)}
         />
       )}
-      {
-        errorData.show && (
-          <DialogueBox
-            errorCode={errorData.code}
-            errorMessage={errorData.message}
-            error={errorData.detail}
-            onClose={() => {
-              setErrorData(prev => ({ ...prev, show: false }));
-              navigate(-1);
-            }}
-          />
-        )
-      }
-      < div className="noselect h-full w-full flex flex-col md:flex-row bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg" >
-        {/* Sidebar */}
 
+      {errorData.show && (
+        <DialogueBox
+          errorCode={errorData.code}
+          errorMessage={errorData.message}
+          error={errorData.detail}
+          onClose={() => {
+            setErrorData(prev => ({ ...prev, show: false }));
+            navigate(-1);
+          }}
+        />
+      )}
+
+      <div
+        className="
+      noselect 
+      w-full h-full 
+      flex flex-col      /* mobile stacked */
+      md:flex-row        /* medium & large = side-by-side */
+      bg-gray-50 dark:bg-gray-900 
+      rounded-lg shadow-lg
+    "
+      >
+
+        {/* SIDEBAR — 60% on md/lg */}
         {loading ? (
-          <Coursecontentloading/>
+          <Coursecontentloading />
         ) : (
-          < div className="h-[60%] sm:h-auto overflow-y-scroll sm:overflow-y-auto w-full md:w-[35%] lg:w-[30%] border-r-2 border-gray-200 dark:border-gray-700 p-4" >
-
+          <div
+            className="
+          w-full          /* mobile = full width */
+          md:w-[45%]      /* medium screens = 60% */
+          lg:w-[30%]      /* large screens = 60% */
+          h-auto md:h-full
+          overflow-y-auto
+          border-r border-gray-300 dark:border-gray-700
+          p-4
+        "
+          >
             <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4 flex items-center gap-2">
               <BookOpen className="w-6 h-6" /> Learn
             </h1>
 
-            {
-              Object.entries(groupedData).map(([courseName, modules], idx) => {
-                return (
-                  <div key={idx} className="mb-5">
+            {Object.entries(groupedData).map(([courseName, modules], idx) => (
+              <div key={idx} className="mb-5">
 
-                    <h2 className="text-lg font-semibold text-indigo-600 dark:text-indigo-400 mb-2">
-                      {courseName}
-                    </h2>
-                    <div className="mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm divide-y">
+                <h2 className="text-lg font-semibold text-indigo-600 dark:text-indigo-400 mb-2">
+                  {courseName}
+                </h2>
 
-                      {Object.entries(modules).map(([moduleName, resources], i) => {
-                        const moduleKey = `${courseName}-${moduleName}`;
-                        const isModuleOpen = openModules[moduleKey];
+                <div className="mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm divide-y">
+                  {Object.entries(modules).map(([moduleName, resources], i) => {
+                    const moduleKey = `${courseName}-${moduleName}`;
+                    const isModuleOpen = openModules[moduleKey];
 
-                        return (
-                          <div key={i} className="p-2">
+                    return (
+                      <div key={i} className="p-2">
+                        <h3
+                          className="text-md font-medium text-[#840227] mb-2 flex items-center justify-between cursor-pointer dark:text-gray-400"
+                          onClick={() => toggleModule(moduleKey)}
+                        >
+                          {moduleName}
+                          {isModuleOpen ? <ChevronUp /> : <ChevronDown />}
+                        </h3>
 
-                            <h3
-                              className="text-md font-medium text-[#840227] mb-2 flex items-center justify-between cursor-pointer dark:text-gray-500"
-                              onClick={() => toggleModule(moduleKey)}
-                            >
-                              {moduleName}
-                              {isModuleOpen ? <ChevronUp /> : <ChevronDown />}
-                            </h3>
+                        {isModuleOpen && (
+                          <div className="pl-2">
+                            {resources.map((res, j) => {
+                              const isActive = activeVideo === res.file_id;
+                              const isPDF = res.resource_type === "pdf";
 
-                            {isModuleOpen && (
-                              <div className="pl-2">
-                                {resources.map((res, j) => {
-                                  const isActive = activeVideo === res.file_id;
-                                  const isPDF = res.resource_type === "pdf";
+                              return (
+                                <div
+                                  key={j}
+                                  className={`
+                                flex justify-between items-center 
+                                px-2 py-2 text-sm rounded 
+                                transition-all 
+                                ${isActive
+                                      ? "bg-red-50 dark:bg-[#1F2937] text-red-600 shadow-sm"
+                                      : "bg-white dark:bg-gray-800 hover:bg-indigo-100 dark:hover:bg-indigo-900"
+                                    }
+                              `}
+                                  onClick={() => {
+                                    if (isPDF) {
+                                      setCurrentPDF(res.file_id);
+                                      setCurrentVideo("");
+                                      return;
+                                    }
+                                    setCurrentPDF("");
+                                    handleVideoPlay(res.file_id);
+                                  }}
+                                >
+                                  <span className="truncate dark:text-gray-300">
+                                    {res.resource_name}
+                                  </span>
 
-                                  return (
-                                    <div
-                                      key={j}
-                                      className={`flex justify-between items-center px-2 py-2 text-sm rounded transition-all ${isActive
-                                        ? "bg-red-50 dark:bg-[#1F2937] text-red-600 shadow-sm"
-                                        : "bg-white dark:bg-gray-800 hover:bg-indigo-100 dark:hover:bg-indigo-900"
-                                        }`}
-                                      onClick={() => {
-                                        if (isPDF) {
-                                          setCurrentPDF(res.file_id);
-                                          setCurrentVideo("");
-                                          return;
-                                        }
-
-                                        setCurrentPDF("");
-                                        handleVideoPlay(res.file_id);
-                                      }}
-                                    >
-                                      <span className="truncate dark:text-gray-300">{res.resource_name}</span>
-
-                                      {isPDF ? (
-                                        <span className="text-blue-600 font-bold">PDF</span>
-                                      ) : isActive ? (
-                                        <MonitorPause className="text-green-800 w-4 h-4" />
-                                      ) : (
-                                        <MonitorPlay className="text-gray-500 w-4 h-4" />
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-
+                                  {isPDF ? (
+                                    <span className="text-blue-600 font-bold">PDF</span>
+                                  ) : isActive ? (
+                                    <MonitorPause className="text-green-800 w-4 h-4" />
+                                  ) : (
+                                    <MonitorPlay className="text-gray-500 w-4 h-4" />
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
-                        );
-                      })}
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-                    </div>
+        {/* VIEWER */}
+        <div
+          className="
+        w-full        
+        md:w-[70%]        
+        lg:w-[70%]       
+        h-[40%] md:h-full
+        md:px-2 py-3
+        flex flex-col gap-4 items-center justify-center
+      "
+        >
+          {currentPDF ? (
+            <PdfViewer fileId={currentPDF} />
+          ) : currentVideo ? (
+            <Video
+              videoRef={videoRef}
+              video_URL={currentVideo}
+              user={user}
+              onNextVideo={handlePlayNextVideo}
+            />
+          ) : (
+            <p className="text-gray-500 flex gap-3 items-center">
+              <MousePointerClick className="w-5 h-5" />
+              Welcome to the training panel. Select a Video or PDF.
+            </p>
+          )}
+        </div>
 
-                  </div>
-                );
-              })
-            }
-
-          </div >)}
-
-        {/* Viewer Section */}
-        < div className="w-full h-[30%] sm:h-full md:px-10 sm:flex items-center justify-center" >
-
-          {
-            currentPDF ? (
-              <PdfViewer fileId={currentPDF} />
-
-            ) : currentVideo ? (
-              <Video videoRef={videoRef} video_URL={currentVideo} user={user} />
-            ) : (
-              <p className="text-gray-500 flex gap-3 items-center">
-                <MousePointerClick className="w-5 h-5" />
-                Welcome to the training panel. Select a Video or PDF.
-              </p>
-            )
-          }
-
-        </div >
-
-      </div >
+      </div>
     </>
+
   );
 }
 
 export default LearnPage;
+
+
+
+

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
 import DialogueBox from "../components/DialogueBox";
+import { LoaderCircle } from "lucide-react";
 
 function Logout() {
   const navigate = useNavigate();
@@ -12,12 +13,15 @@ function Logout() {
     detail: "",
     show: false
   });
+  const [loading, logoutLoading] = useState(false);
 
 
 
 
   async function handleLogout() {
+    
     try {
+      logoutLoading(true);
       await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
       navigate("/");
       return true;
@@ -31,6 +35,8 @@ function Logout() {
         show: true
       });
       return false;
+    } finally {
+      logoutLoading(false);
     }
   }
 
@@ -63,8 +69,9 @@ function Logout() {
             <button
               onClick={handleLogout}
               className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-all"
+              disabled={loading}
             >
-              Logout
+              {loading ? <div className="flex gap-2"><LoaderCircle className="animate-spin" /><p>Loging out...</p></div> : "Logout"}
             </button>
 
             <button
