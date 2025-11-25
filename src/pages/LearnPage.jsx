@@ -14,6 +14,7 @@ import PdfViewer from "../components/PdfViewer";
 import { useLearn } from "../components/context/ContextProvider";
 import DialogueBox from "../components/DialogueBox";
 import Coursecontentloading from "../components/loading/Coursecontentloading";
+import Logout from "./Logout";
 
 function LearnPage({ user }) {
   const navigate = useNavigate();
@@ -24,7 +25,6 @@ function LearnPage({ user }) {
   const [currentPDF, setCurrentPDF] = useState("");
   const [activeVideo, setActiveVideo] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
   const [errorData, setErrorData] = useState({
     code: null,
     message: "",
@@ -34,6 +34,7 @@ function LearnPage({ user }) {
 
   const [learnData, setLearnData] = useState({});
   const { course_id } = useParams();
+  const [showLogout, setShowLogout] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -50,7 +51,7 @@ function LearnPage({ user }) {
 
         setLearnData(prev => ({
           ...prev,
-          [course_id]: res.data     // cache per course
+          [course_id]: res.data
         }));
 
         setData(res.data);
@@ -72,17 +73,21 @@ function LearnPage({ user }) {
     fetchData();
   }, [course_id, learnData, setLearnData]);
 
-  const isBingApp = () => {
-    const ua = navigator.userAgent.toLowerCase();
-    return ua.includes("bing") || ua.includes("edga") || ua.includes("webview");
-  };
-
 
   useEffect(() => {
-    if (isBingApp()) {
-      alert("⚠️ Some features like fullscreen landscape mode may not work in the Bing App. For best experience, please open the site in Chrome or Edge Browser.");
-    }
-  }, []);
+    const ua = navigator.userAgent.toLowerCase();
+
+    const isBing = 
+      ua.includes("bing") ||
+      ua.includes("bingwebview") ||
+      ua.includes("bingpreview") ||
+      ua.includes("wv") && ua.includes("bing");
+
+      if (isBing){
+        alert("⚠️ Some features may not work in the Bing App. For best experience, please open the site in Chrome or Edge Browser.")
+      }
+  },[]);
+
 
 
 
@@ -104,9 +109,9 @@ function LearnPage({ user }) {
     };
     const handleKeyUp = (e) => {
       if (e.key === "PrintScreen" || (e.ctrlKey && e.shiftKey && e.key === "i")) {
-        setShowWarning(true);
         e.preventDefault();
-        navigate("/logout");
+        setShowLogout(true);
+        // navigate("/");
       }
     };
     const handleContextMenu = (e) => {
@@ -180,14 +185,16 @@ function LearnPage({ user }) {
     handleVideoPlay(nextVideoId);
   };
 
+  const handleClose = () => {
+    setShowLogout(false);
+  };
+
+
+
   return (
     <>
-      {showWarning && (
-        <WarningPopup
-          message="⚠️ Screenshots are not allowed! You will be redirected."
-          show={true}
-          onClose={() => setShowWarning(false)}
-        />
+      {showLogout && (
+        <Logout handleClose={handleClose} />
       )}
 
       {errorData.show && (

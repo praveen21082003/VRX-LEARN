@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DarkModeToggle from "./DarkModeToggle";
 import WarningPopup from "./WarningPopup";
+import Logout from "../pages/Logout";
 
 import {
   LayoutDashboard,
@@ -21,6 +22,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
   const location = useLocation();
   const [showWarning, setShowWarning] = useState(false);
   const navigate = useNavigate();
+  const [showLogout, setShowLogout] = useState(false);
 
   useEffect(() => {
     if (location.pathname.startsWith("/learn")) {
@@ -49,11 +51,11 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
     // { name: "Inbox", icon: Mail, href: "/inbox" },
   ];
 
-  const settingsLinks = [
-    // { name: "Settings", icon: Settings, href: "/settings" },
-    // { name: "Profile", icon: User, href: "/profile", title: "profile" },
-    { name: "Logout", icon: LogOut, href: "/logout", title: "logout" },
-  ];
+  // const settingsLinks = [
+  //   // { name: "Settings", icon: Settings, href: "/settings" },
+  //   // { name: "Profile", icon: User, href: "/profile", title: "profile" },
+  //   { name: "Logout", icon: LogOut, href: "/logout", title: "logout" },
+  // ];
 
   const handleLearnClick = (e) => {
     e.preventDefault();
@@ -61,6 +63,11 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
     navigate("/dashboard");
     myCoursesRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const handleClose = () => {
+    setShowLogout(false);
+  };
+
 
 
 
@@ -76,14 +83,14 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
       )}
 
       {/* Mobile toggle */}
-      <div className="sm:hidden fixed flex gap-3 bg-[#FFFBF0ff] dark:bg-[#fffbf09a] items-center top-0 left-0 w-full z-40 border-b-2 text-black 
+      <div className="sm:hidden fixed flex gap-3 bg-[#FFFBF0ff] dark:bg-[#fffbf0b6] items-center top-0 left-0 w-full z-40 border-b-2 text-black 
                 px-14 py-2 text-lg font-semibold shadow-md"
         onClick={() => setMobileOpen((prev) => !prev)}>
-       <MoveRight size={30} />{getPageTitle()}
+        <MoveRight size={30} />{getPageTitle()}
       </div>
 
       <button
-        className="sm:hidden fixed flex top-1 z-50 text-black p-2 rounded-md"
+        className="sm:hidden fixed flex top-1 z-50 text-black dark:text-white p-2 rounded-md"
         onClick={() => setMobileOpen((prev) => !prev)}
       >
         <Menu size={20} />
@@ -91,7 +98,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
 
       {/* Sidebar container */}
       <div
-        className={`fixed top-0 left-0 h-screen bg-white dark:bg-[#1a1818] shadow-lg flex flex-col transition-all duration-300 z-40
+        className={`fixed top-0 left-0 sm:h-screen h-full bg-white dark:bg-[#1a1818] shadow-lg flex flex-col transition-all duration-300 z-40
         ${collapsed ? "w-16" : "w-56"} 
         ${mobileOpen ? "translate-x-0" : "-translate-x-60 sm:translate-x-0"}`}
       >
@@ -166,7 +173,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
 
         {/* Settings */}
         <div className="border-t px-2 py-4 space-y-2">
-          {settingsLinks.map((item) => {
+          {/* {settingsLinks.map((item) => {
             const Icon = item.icon;
             return (
               <Link
@@ -179,7 +186,18 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
                 {!collapsed && <span>{item.name}</span>}
               </Link>
             );
-          })}
+          })} */}
+          <button
+            className="flex w-full items-center gap-3 px-2 py-2 mb-6 rounded-md text-gray-600 dark:text-gray-400 hover:bg-gray-100 hover:text-gray-900 transition hover:dark:text-black hover:dark:bg-[#1F2937]"
+            onClick={() => setShowLogout(true)}
+          >
+            <LogOut size={20} />
+
+            {!collapsed && "Logout"}
+          </button>
+          {showLogout && <Logout handleClose={handleClose} />}
+
+
         </div>
       </div>
     </>

@@ -272,7 +272,8 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
             controls={false}
             disablePictureInPicture
             onEnded={() => {
-              setIsPlaying(!isPlaying)
+              setIsPlaying(!isPlaying);
+              handleFullScreen();
             }}
             onLoadStart={() => setWaiting(true)}
             onCanPlay={() => setWaiting(false)}
@@ -373,11 +374,11 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
                 <div className="flex items-center">
                   <button
                     onClick={handlePlayPause}
-                    className="bg-black h-8 w-8 sm:h-10 sm:w-10 flex justify-center items-center rounded-full z-50"
+                    className="bg-black h-8 w-8 sm:h-10 sm:w-10 flex justify-center items-center rounded-full z-30"
                   >
                     {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                   </button>
-                  <div className="ml-[-5px] text-xs sm:text-sm bg-black px-2 py-[3px] sm:py-1 rounded-r-full opacity-70 z-40">
+                  <div className="ml-[-5px] text-xs sm:text-sm bg-black px-2 py-[3px] sm:py-1 rounded-r-full opacity-70 z-20">
                     {formatTime(currentTime)} / {formatTime(duration)}
                   </div>
                 </div>

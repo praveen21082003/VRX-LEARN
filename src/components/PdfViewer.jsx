@@ -23,10 +23,23 @@ function PdfViewer({ fileId }) {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [pageWidth, setPageWidth] = useState(300);
 
+  const pdfCache = useRef(new Map());
+
+
   /* ----------------------------------------
      FETCH PDF
   ------------------------------------------ */
   useEffect(() => {
+
+
+    if (!fileId) return;
+
+    
+    if (pdfCache.current.has(fileId)) {
+      setPdfBlobUrl(pdfCache.current.get(fileId));
+      return;
+    }
+
     const fetchPDF = async () => {
       setLoading(true);
       try {
@@ -35,6 +48,8 @@ function PdfViewer({ fileId }) {
         });
         const blob = new Blob([res.data], { type: "application/pdf" });
         const url = URL.createObjectURL(blob);
+
+        pdfCache.current.set(fileId, url);
         setPdfBlobUrl(url);
       } catch (err) {
         console.error("PDF Load Error:", err);
@@ -194,9 +209,8 @@ function PdfViewer({ fileId }) {
               <div
                 key={idx}
                 ref={(el) => (pageRefs.current[idx] = el)}
-                className={`mb-4 shadow-lg rounded-md ${
-                  pageNumber === idx + 1 ? "ring-2 ring-indigo-500" : ""
-                }`}
+                className={`mb-4 shadow-lg rounded-md ${pageNumber === idx + 1 ? "ring-2 ring-indigo-500" : ""
+                  }`}
               >
                 <Page
                   pageNumber={idx + 1}

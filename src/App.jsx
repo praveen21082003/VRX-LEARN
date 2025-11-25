@@ -3,7 +3,6 @@ import { useState, useEffect, useRef } from "react";
 import { LoaderCircle } from 'lucide-react';
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
-import Logout from "./pages/Logout";
 import Sidebar from "./components/Sidebar";
 import Courses from "./pages/Courses";
 import LearnPage from "./pages/LearnPage";
@@ -118,8 +117,7 @@ function App() {
                     {/* <Route path="/profile" element={<Profile />} />D */}
                     {/* <Route path="/settings" element={<Accountsettings />} /> */}
                     {/* <Route path="/inbox" element={<Inbox />} /> */}
-                    <Route path="/logout" element={<Logout />} />
-
+                  
                     <Route path="*" element={
                       <DialogueBox
                         errorCode={404}
