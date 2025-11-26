@@ -35,6 +35,7 @@ function App() {
       try {
         const res = await axiosInstance.get("/auth/me");
         setUser(res.data);
+        console.log(res.data);
         setAuthorized(true);
 
         // If user is on login page but token already valid → redirect to dashboard

@@ -28,6 +28,10 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
   const [error, setError] = useState("");
   const [volume, setVolume] = useState(0);
   const [showVolumeUI, setShowVolumeUI] = useState(false);
+  const [rightSkip, setRightSkip] = useState("");
+  const [leftSkip, setLeftSkip] = useState("");
+  const [showRightSkipUI, setshowRightSkipUI] = useState(false);
+  const [showLeftSkipUI, setshowLeftSkipUI] = useState(false);
 
 
   const containerRef = useRef(null);
@@ -97,11 +101,11 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
     const handleKeyDown = (e) => {
       if (!video) return;
       if (e.key === "ArrowLeft") {
-        video.currentTime = Math.max(0, video.currentTime - 10);
+        handleLeftSkip();
       }
 
       else if (e.key === "ArrowRight") {
-        video.currentTime = Math.min(video.duration, video.currentTime + 10);
+        handleRightSkip();
       }
 
       else if (e.key === "ArrowUp") {
@@ -244,6 +248,28 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
       .padStart(2, "0")}`;
   };
 
+
+  const handleLeftSkip = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = Math.max(0, video.currentTime - 10);
+    setLeftSkip("-10");
+    setshowLeftSkipUI(true);
+    setTimeout(() => setshowLeftSkipUI(false), 500);
+  };
+
+  const handleRightSkip = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.currentTime = Math.min(video.duration, video.currentTime + 10);
+    setRightSkip("+10");
+    setshowRightSkipUI(true);
+    setTimeout(() => setshowRightSkipUI(false), 500);
+  };
+
+
   /** 🔹 Handle playback errors */
   const handleVideoError = (e) => {
     const errorCode = e.target.error?.code;
@@ -305,6 +331,80 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
           <Watermark user={user} />
         </div>
 
+
+        <div
+          className={`
+              absolute inset-0 
+              flex 
+              transition-opacity duration-300
+              ${showControls || !isPlaying ? "opacity-100" : "opacity-0 pointer-events-none"}
+            `}
+        >
+          {/* LEFT SECTION (Double Click Skip) */}
+          <div
+            className="w-1/3 h-full flex justify-start items-center"
+            onDoubleClick={handleLeftSkip}
+          >
+            {showLeftSkipUI && (
+              <div
+                className="
+                    bg-black/20
+                    flex justify-center items-center
+                    rounded-r-[50%] shadow-2xl
+                    h-full w-[60%] cursor-pointer
+                    active:scale-95
+                    transition-all duration-300
+                  "
+              >
+                <p className="text-white text-2xl font-bold mr-4 animate-ping">{leftSkip}</p>
+              </div>
+            )}
+          </div>
+
+          {/* CENTER SECTION (Play / Pause) */}
+          <div
+            className="w-1/3 h-full flex justify-center items-center"
+            onClick={handlePlayPause}
+          >
+            {!isPlaying && (
+              <div
+                className={`
+                    bg-black/10
+                    text-white flex justify-center items-center
+                    rounded-full shadow-sm
+                    p-5 sm:p-7 cursor-pointer
+                    active:scale-95
+                    transition-all duration-300
+                    ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}
+                  `}
+              >
+                <Play size={30} className="drop-shadow-md" />
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT SECTION (Double Click Skip) */}
+          <div
+            className="w-1/3 h-full flex justify-end items-center"
+            onDoubleClick={handleRightSkip}
+          >
+            {showRightSkipUI && (
+              <div
+                className="
+                    bg-black/20
+                    flex justify-center items-center
+                    rounded-l-[50%] shadow-2xl
+                    h-full w-[60%] cursor-pointer
+                    active:scale-95
+                    transition-all duration-300
+                  "
+              >
+                <p className="text-white text-2xl font-bold ml-4 animate-ping">{rightSkip}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Controls */}
         {!waiting && !error && (
           <>
@@ -313,29 +413,6 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
               alt="logo"
               className="absolute top-4 right-4 w-8 bg-white p-1 rounded-sm opacity-80"
             />
-
-            <div
-              onClick={handlePlayPause}
-              className={`
-              absolute inset-0 flex justify-center items-center 
-              transition-opacity duration-300 
-              ${showControls || !isPlaying ? "opacity-100" : "opacity-0 pointer-events-none"}
-            `}
-            >
-              {!isPlaying && (
-                <div className={`
-              bg-black/10
-              text-white flex justify-center items-center
-              rounded-full shadow-sm
-              p-5 sm:p-7 cursor-pointer
-              active:scale-95
-              transition-all duration-300
-              ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}
-            `}>
-                  <Play size={30} className="drop-shadow-md" />
-                </div>
-              )}
-            </div>
 
             {showVolumeUI && (
               <div
@@ -348,10 +425,12 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
               active:scale-95
               transition-all duration-300
             "
+
               >
                 {getVolumeIcon()}
               </div>
             )}
+
 
 
 
@@ -410,7 +489,7 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
 
       <div className="h-5">
         {progress > 99 &&
-          <button className="bg-green-700 flex justify-center md:gap-1 items-center text-xs lg:text-base text-white px-4 py-1 md:px-4 md:py-2 rounded-lg" onClick={onNextVideo}><CirclePlay size={20} />Next<MoveRight size={15} /></button>}
+          <button className="bg-green-700 flex justify-center md:gap-1 items-center text-xs lg:text-base text-white px-4 py-1 md:px-4 md:py-2 rounded-lg" onClick={onNextVideo}><CirclePlay size={20} />Play Next<MoveRight size={15} /></button>}
       </div>
     </>
   );

@@ -194,7 +194,7 @@ function LearnPage({ user }) {
   return (
     <>
       {showLogout && (
-        <Logout handleClose={handleClose} />
+        <Logout handleClose={handleClose} msg={"⚠️Security alert! Screenshot blocked. Repeated attempts will lock your account."}/>
       )}
 
       {errorData.show && (

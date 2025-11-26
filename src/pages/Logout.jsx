@@ -6,7 +6,7 @@ import DialogueBox from "../components/DialogueBox";
 import { LoaderCircle } from "lucide-react";
 import ReactDOM from 'react-dom';
 
-function Logout({handleClose}) {
+function Logout({handleClose, msg}) {
   const navigate = useNavigate();
   const [error, setError] = useState({
     code: null,
@@ -61,6 +61,7 @@ function Logout({handleClose}) {
             )
           }
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-[90%] sm:w-[400px] text-center">
+            <p className="text-yellow-700 text-sm">{msg || ""}</p>
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
               Are you sure you want to log out?
             </h2>
