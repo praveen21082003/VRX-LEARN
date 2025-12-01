@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { href, Link, useLocation, useNavigate } from "react-router-dom";
 import DarkModeToggle from "./DarkModeToggle";
 import WarningPopup from "./WarningPopup";
-import Logout from "../pages/Logout";
+// import Logout from "../pages/Logout";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 import {
   LayoutDashboard,
@@ -15,10 +16,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
-  MoveRight
+  MoveRight,
+  BookPlus
 } from "lucide-react";
 
-function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCoursesRef }) {
+function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCoursesRef, user }) {
   const location = useLocation();
   const [showWarning, setShowWarning] = useState(false);
   const navigate = useNavigate();
@@ -51,6 +53,14 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
     // { name: "Inbox", icon: Mail, href: "/inbox" },
   ];
 
+  const adminNavigationLinks = [
+    { name: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard", title: "dashboard" },
+    { name: "Users", icon: User, href: "/admin/users", title: "users" },
+    { name: "Courses", icon: GraduationCap, href: "/admin/courses", title: "courses" },
+    { name: "Enrollments", icon: BookPlus, href: "/admin/enrollments", title: "enrollments"}
+  ];
+
+
   // const settingsLinks = [
   //   // { name: "Settings", icon: Settings, href: "/settings" },
   //   // { name: "Profile", icon: User, href: "/profile", title: "profile" },
@@ -76,7 +86,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
     <>
       {showWarning && (
         <WarningPopup
-          message="Please select a course from the Dashboard before entering Learn!"
+          message="⚠️ Please select a course from the Dashboard before entering Learn!"
           show={true}
           onClose={() => setShowWarning(false)}
         />
@@ -123,51 +133,81 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
           </button>
         </div>
 
-        {/* Navigation */}
+
+
+        {/* NAVIGATION */}
         <div className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
-          {navigationLinks.map((item) => {
-            const Icon = item.icon;
 
-            const isActive =
-              (item.name === "Learn" && location.pathname.startsWith("/learn/")) ||
-              (item.href && location.pathname === item.href);
+          {/* If ADMIN */}
+          {user?.fullname === "admin" ? (
+            adminNavigationLinks.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname.startsWith(item.href);
 
-            if (item.name === "Learn") {
               return (
-                <button
-                  key="Learn"
-                  onClick={handleLearnClick}
-                  title={item.title}
-                  className={`w-full flex items-center gap-3 px-2 py-2 rounded-md text-sm font-medium transition
-                  ${isActive
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center gap-3 px-2 py-2 rounded-md text-sm font-medium transition
+            ${isActive
                       ? "bg-red-50 dark:bg-[#1F2937] text-red-600 shadow-sm"
                       : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 hover:dark:bg-[#1F2937] hover:text-gray-500"
                     }`}
                 >
                   <Icon size={20} />
                   {!collapsed && <span>{item.name}</span>}
-                </button>
+                </Link>
               );
-            }
+            })
+          ) : (
+            /* If STUDENT */
+            navigationLinks.map((item) => {
+              const Icon = item.icon;
 
-            // Regular links
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                title={item.title}
-                className={`flex items-center gap-3 px-2 py-2 rounded-md text-sm font-medium transition
-                ${isActive
-                    ? "bg-red-50 dark:bg-[#1F2937] text-red-600 shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 hover:dark:bg-[#1F2937] hover:text-gray-500"
-                  }`}
-              >
-                <Icon size={20} />
-                {!collapsed && <span>{item.name}</span>}
-              </Link>
-            );
-          })}
+              const isActive =
+                (item.name === "Learn" && location.pathname.startsWith("/learn/")) ||
+                (item.href && location.pathname === item.href);
+
+              if (item.name === "Learn") {
+                return (
+                  <button
+                    key="Learn"
+                    onClick={handleLearnClick}
+                    title={item.title}
+                    className={`w-full flex items-center gap-3 px-2 py-2 rounded-md text-sm font-medium transition
+            ${isActive
+                        ? "bg-red-50 dark:bg-[#1F2937] text-red-600 shadow-sm"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 hover:dark:bg-[#1F2937] hover:text-gray-500"
+                      }`}
+                  >
+                    <Icon size={20} />
+                    {!collapsed && <span>{item.name}</span>}
+                  </button>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center gap-3 px-2 py-2 rounded-md text-sm font-medium transition
+          ${isActive
+                      ? "bg-red-50 dark:bg-[#1F2937] text-red-600 shadow-sm"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 hover:dark:bg-[#1F2937] hover:text-gray-500"
+                    }`}
+                >
+                  <Icon size={20} />
+                  {!collapsed && <span>{item.name}</span>}
+                </Link>
+              );
+            })
+          )}
+
         </div>
+
+
+        {/* Navigation */}
+
 
         <DarkModeToggle collapsed={collapsed} />
 
@@ -195,7 +235,17 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
 
             {!collapsed && "Logout"}
           </button>
-          {showLogout && <Logout handleClose={handleClose} />}
+          {showLogout &&
+            <ConfirmationDialog
+              message="Are you sure you want to log out?"
+              msg=""
+              buttonName="Logout"
+              loadingMsg="Loging out..."
+              endpoint="/auth/logout"
+              onSuccess={() => setShowLogout(false)}
+              onClose={() => setShowLogout(false)}
+            />
+          }
 
 
         </div>

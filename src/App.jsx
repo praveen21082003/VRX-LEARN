@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { LoaderCircle } from 'lucide-react';
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
@@ -12,6 +12,15 @@ import DialogueBox from "./components/DialogueBox";
 // import Accountsettings from "./pages/Accountsettings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import axiosInstance from "./api/axiosInstance";
+import AdminRoute from "./components/AdminRoute";
+
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminUsers = lazy(()=>import('./pages/admin/AdminUsers'));
+const AdminCourses = lazy(()=>import('./pages/admin/AdminCourses'));
+const AdminEnrollments = lazy(()=>import('./pages/admin/AdminEnrollments'));
+
+import { AdminContextProvider } from "./components/context/AdminContextProvider";
+
 
 function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -27,7 +36,7 @@ function App() {
   const [user, setUser] = useState(null);
   const myCoursesRef = useRef(null);
   const navigate = useNavigate();
-  const isLoginPage = location.pathname === "/" || location.pathname === "/login";
+  const isLoginPage = location.pathname === "/login";
 
 
   useEffect(() => {
@@ -35,12 +44,15 @@ function App() {
       try {
         const res = await axiosInstance.get("/auth/me");
         setUser(res.data);
-        console.log(res.data);
         setAuthorized(true);
 
         // If user is on login page but token already valid → redirect to dashboard
         if (isLoginPage) {
-          navigate("/dashboard", { replace: true });
+          if (res.data.role === 'admin') {
+            navigate("/admin/dashboard", { replace: true });
+          } else {
+            navigate("/dashboard", { replace: true });
+          }
         }
 
       } catch (error) {
@@ -89,8 +101,16 @@ function App() {
         />
       )}
       <Routes>
-        {/* Public Route */}
-        <Route path="/" element={authorized ? <Navigate to="/dashboard" /> : <Login />} />
+        {/* validating role */}
+        <Route
+          path="/login"
+          element={
+            authorized ?
+              (user?.role === 'admin' ? <Navigate to="/admin/dashboard" /> : <Navigate to="/dashboard" />)
+              : <Login />}
+        />
+
+
         {/* Protected Routes */}
         <Route
           path="/*"
@@ -103,6 +123,7 @@ function App() {
                   setCollapsed={setCollapsed}
                   mobileOpen={mobileOpen}
                   setMobileOpen={setMobileOpen}
+                  user={user}
                 />
                 <div
                   className={`flex-1 dark:bg-[#0b1222] mt-14 sm:mt-0 p-2 sm:p-5 overflow-y-auto transition-all duration-300 ${collapsed ? "sm:ml-16" : "sm:ml-56"
@@ -118,7 +139,8 @@ function App() {
                     {/* <Route path="/profile" element={<Profile />} />D */}
                     {/* <Route path="/settings" element={<Accountsettings />} /> */}
                     {/* <Route path="/inbox" element={<Inbox />} /> */}
-                  
+
+
                     <Route path="*" element={
                       <DialogueBox
                         errorCode={404}
@@ -133,6 +155,49 @@ function App() {
                 </div>
               </div>
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/*"
+          element={
+            <AdminRoute authorized={authorized}>
+              <AdminContextProvider>
+                <div className="flex h-screen">
+                  <Sidebar
+                    myCoursesRef={myCoursesRef}
+                    collapsed={collapsed}
+                    setCollapsed={setCollapsed}
+                    mobileOpen={mobileOpen}
+                    setMobileOpen={setMobileOpen}
+                    user={user}
+                  />
+                  <div
+                    className={`flex-1 dark:bg-[#0b1222] mt-14 sm:mt-0 p-2 sm:p-5 overflow-y-auto transition-all duration-300 ${collapsed ? "sm:ml-16" : "sm:ml-56"
+                      }`}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <Suspense
+                      fallback={
+                        <div className="flex items-center justify-center h-screen text-white">
+                          <LoaderCircle className="animate-spin" size={28} />
+                          Loading Admin…
+                        </div>
+                      }
+                    >
+                      <Routes>
+                        <Route path="dashboard" element={<AdminDashboard user={user} />} />
+                        <Route path="users" element={<AdminUsers />} />
+                        <Route path="courses" element={<AdminCourses />} />
+                        <Route path="enrollments" element={<AdminEnrollments />} />
+
+                        {/* admin 404 */}
+                        <Route path="*" element={<div className="text-white">Admin Page Not Found</div>} />
+                      </Routes>
+                    </Suspense>
+                  </div>
+                </div>
+              </AdminContextProvider>
+            </AdminRoute>
           }
         />
       </Routes>

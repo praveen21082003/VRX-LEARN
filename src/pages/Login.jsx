@@ -41,16 +41,9 @@ function Login() {
 
     try {
       setLoading(true);
-      const formData = new FormData();
-      formData.append("username", credentials.email_id);
-      formData.append("password", credentials.password);
-
-      const response = await axiosInstance.post("/auth/login", formData, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-
+      const response = await axiosInstance.post("/auth/login", credentials);
       if (response.status === 200) {
-        window.location.href = "/dashboard";
+        window.location.href = "/login";
       }
     } catch (error) {
       console.error(error);

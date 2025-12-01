@@ -7,7 +7,6 @@ import { LoaderCircle } from "lucide-react";
 import ReactDOM from 'react-dom';
 
 function Logout({handleClose, msg}) {
-  const navigate = useNavigate();
   const [error, setError] = useState({
     code: null,
     message: "",
@@ -23,10 +22,10 @@ function Logout({handleClose, msg}) {
 
     try {
       logoutLoading(true);
-      await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
-      navigate("/");
+      await axiosInstance.post("/auth/logout");
       return true;
     } catch (error) {
+      console.log(error);
       const status = error.response?.status;
       const detail = error.response?.data?.detail || "Unexpected error";
       setError({
@@ -46,7 +45,7 @@ function Logout({handleClose, msg}) {
   return (
     ReactDOM.createPortal(
       <>
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-40">
           {
             error.show && (
               <DialogueBox
@@ -55,7 +54,6 @@ function Logout({handleClose, msg}) {
                 error={error.detail}
                 onClose={() => {
                   setError(prev => ({ ...prev, show: false }));
-                  navigate(-1);
                 }}
               />
             )

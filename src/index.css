@@ -13,7 +13,7 @@
   }
 
   .user-details-lables {
-    @apply block text-base font-bold text-[#840227]
+    @apply block text-base text-gray-500
   }
 
 
@@ -28,6 +28,23 @@
     color: rgba(255, 255, 255, 0.15);
     font-weight: 700;
     pointer-events: none;
+  }
+
+  .subtitle{
+    @apply font-bold text-2xl
+  }
+
+  .admintabletag{
+    @apply min-w-full text-left text-sm border-collapse
+  }
+  .tableheader{
+    @apply bg-gray-100 text-gray-700
+  }
+  .tableth{
+    @apply border-b px-4 py-3
+  }
+  .tabletd{
+    @apply border-b px-4 py-2
   }
 }
 
