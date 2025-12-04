@@ -1,7 +1,10 @@
 import { Navigate } from "react-router-dom";
 
-export default function AdminRoute({ authorized, children }) {
+export default function AdminRoute({ authorized,user, children }) {
 
-  if (!authorized) return <Navigate to="/login" replace />;
+  if (!authorized) return <Navigate to="/" replace />;
+  if (user?.role !== "admin") {
+    return <Navigate to="/dashboard" replace />;
+  }
   return children;
 }

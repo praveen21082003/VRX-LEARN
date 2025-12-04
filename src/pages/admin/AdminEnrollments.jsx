@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { BookPlus, BookCheck, BookMarked, ScanSearch, Trash2 } from 'lucide-react';
+import { BookPlus, BookCheck, BookMarked, ScanSearch, Trash2, X, ChevronDown } from 'lucide-react';
 import { useAdmin } from '../../components/context/AdminContextProvider'
 import DialogueBox from '../../components/DialogueBox';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
@@ -7,7 +7,7 @@ import WarningPopup from '../../components/WarningPopup';
 import axiosInstance from '../../api/axiosInstance';
 
 function AdminEnrollments() {
-    const { enrollments, fetchALLEnrollments } = useAdmin();
+    const { enrollments, fetchALLEnrollments, allCourses, usersData } = useAdmin();
     const [successMsg, setSuccessMsg] = useState(false);
     const [showDeleteBox, setShowDeleteBox] = useState(false);
     const [enrollmentLoading, setEnrollmentLoading] = useState(false);
@@ -30,6 +30,10 @@ function AdminEnrollments() {
         detail: "",
         show: false
     });
+    const [searchedUserData, setSearchedUserData] = useState(null);
+    const [openUsers, setOpenUsers] = useState(false);
+    const [openCourses, setOpenCourses] = useState(false);
+    const [hover, setHover] = useState(null);
 
 
     const filteredData = useMemo(() => {
@@ -40,15 +44,6 @@ function AdminEnrollments() {
     }, [searchEnrollment, enrollments]);
 
 
-
-    const handleOnChange = (e) => {
-        const { name, value } = e.target;
-
-        setNewEnrollment((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
 
 
     async function featchEnrollment(enrollment_id) {
@@ -74,11 +69,11 @@ function AdminEnrollments() {
     function CheckFormError() {
         const errors = {};
         if (!newEnrollment.user_id.trim()) {
-            errors.user_id = "This field cannot be empty"
+            errors.user_id = "Username cannot be empty"
         }
 
         if (!newEnrollment.course_id.trim()) {
-            errors.course_id = "This field cannot be empty"
+            errors.course_id = "Coursename cannot be empty"
         }
 
         setFormError(errors);
@@ -94,7 +89,11 @@ function AdminEnrollments() {
 
         try {
             setEnrollmentLoading(true);
-            const response = await axiosInstance.post('/enrollments/', newEnrollment);
+            const response = await axiosInstance.post('/enrollments/', {
+                user_id: newEnrollment.user_id_value,
+                course_id: newEnrollment.course_id_value
+            });
+
             if (response.status === 201) {
                 fetchALLEnrollments();
                 setSuccessMsg(true);
@@ -124,18 +123,40 @@ function AdminEnrollments() {
     }
 
 
-    const handleDelete = (course) => {
+
+    const handleDelete = async (enrollment) => {
+        await fetchUser(enrollment.user_id)
         setShowDeleteBox(true);
-        setEnrollmentId(course.course_id);
+        setEnrollmentId(enrollment.id);
         setSearchedEnrollmentData(null);
     }
 
+
+    async function fetchUser(user_id) {
+        try {
+            setSearchLoading(true);
+            const response = await axiosInstance.get(`/users/${user_id}`)
+            setSearchedUserData(response.data);
+        } catch (error) {
+            const status = error.response?.status;
+            const detail = error.response?.data?.detail || "Unexpected error";
+            setError({
+                code: status,
+                message: "Request failed",
+                detail: detail,
+                show: true
+            });
+        } finally {
+            setSearchLoading(false);
+        }
+    }
+
     return (
-        <div className='bg-white rounded-lg'>
+        <div className='pagebg'>
             {showDeleteBox &&
                 <ConfirmationDialog
-                    message="Delete this user permanently?"
-                    msg="⚠️ The enrollment will be permanently removed."
+                    message={`Delete  ${searchedUserData.fullname}'s enrollment permanently?`}
+                    msg={`You are about to delete user enrollmets (${searchedUserData.email_id}). Proceed?`}
                     buttonName="Delete"
                     loadingMsg="Deleting..."
                     endpoint="/enrollments"
@@ -154,7 +175,7 @@ function AdminEnrollments() {
                     }}
                 />
             }
-            <div className='p-5'>
+            <div className='sm:p-5 p-2'>
                 <h1 className='subtitle'>Create Enrollment</h1>
                 <div className='flex flex-col lg:flex-row justify-evenly items-center border p-1 sm:p-5'>
 
@@ -177,34 +198,113 @@ function AdminEnrollments() {
 
                     <form className='grid grid-cols-2 gap-1 sm:gap-5'>
 
-                        <div>
-                            <label>User ID*</label>
+                        <div className="relative w-full">
+                            <label>User Name*</label>
+
                             <input
-                                className='input-field'
-                                type='text'
-                                placeholder='enter userId'
-                                required
-                                name='user_id'
+                                className="input-field w-full"
                                 value={newEnrollment.user_id}
-                                onChange={handleOnChange}
+                                placeholder="Search user...(eg.name,id)"
+                                onClick={() => setOpenUsers(!openUsers)}
+                                onChange={(e) => {
+                                    setOpenUsers(true);
+                                    setNewEnrollment({ ...newEnrollment, user_id: e.target.value });
+                                }}
+
                             />
-                            {formError.user_id && <p className='text-xs text-red-500'>{formError.user_id}</p>}
+
+
+                            {openUsers && (
+                                <div className="absolute w-full bg-white border shadow-md rounded max-h-40 overflow-y-auto z-0 mt-1">
+                                    {usersData
+                                        .filter(user =>
+                                            user.fullname.toLowerCase().includes(newEnrollment.user_id.toLowerCase()) ||
+                                            String(user.id).includes(newEnrollment.user_id)
+                                        )
+                                        .map(user => (
+                                            <div
+                                                onMouseEnter={() => setHover(user.id)}
+                                                onMouseLeave={() => setHover(null)}
+                                                key={user.id}
+                                                onClick={() => {
+                                                    setNewEnrollment({
+                                                        ...newEnrollment,
+                                                        user_id: user.fullname,
+                                                        user_id_value: user.id
+                                                    });
+                                                    setOpenUsers(false);
+                                                }}
+                                                className="relative p-2 cursor-pointer hover:bg-gray-100"
+
+                                            >
+                                                {user.fullname}
+                                                <span className="block text-xs text-gray-600">
+                                                    ({user.email_id})
+                                                </span>
+                                                {hover === user.id && (
+                                                    <div className="absolute right-3 top-[70%] -translate-y-1/2 bg-black opacity-90 text-white text-xs px-2 py-1 shadow z-50 whitespace-nowrap">
+                                                        User ID: {user.id}
+                                                    </div>
+                                                )}
+
+                                            </div>
+                                        ))}
+                                </div>
+                            )}
+                            {formError.user_id && (
+                                <p className="text-xs text-red-500">{formError.user_id}</p>
+                            )}
                         </div>
 
 
-                        <div>
-                            <label>Course Id*</label>
+                        <div className="relative w-full">
+                            <label>Course Name*</label>
                             <input
-                                className='input-field'
-                                type='text'
-                                placeholder='enter CourseId'
-                                required
-                                name='course_id'
+                                className="input-field w-full"
                                 value={newEnrollment.course_id}
-                                onChange={handleOnChange}
+                                placeholder="Search course...(eg.name,id)"
+                                onClick={() => setOpenCourses(!openCourses)}
+                                onChange={(e) => {
+                                    setOpenCourses(true);
+                                    setNewEnrollment({ ...newEnrollment, course_id: e.target.value });
+                                }}
                             />
-                            {formError.course_id && <p className='text-xs text-red-500'>{formError.course_id}</p>}
+
+
+                            {openCourses && (
+                                <div className="absolute w-full bg-white border shadow-md rounded max-h-40 overflow-y-auto z-50 mt-1">
+                                    {allCourses
+                                        .filter(course =>
+                                            course.name.toLowerCase().includes(newEnrollment.course_id.toLowerCase()) ||
+                                            String(course.id).includes(newEnrollment.course_id)
+                                        )
+                                        .map(course => (
+                                            <div
+                                                key={course.id}
+                                                onClick={() => {
+                                                    setNewEnrollment({
+                                                        ...newEnrollment,
+                                                        course_id: course.name,
+                                                        course_id_value: course.id
+                                                    });
+                                                    setOpenCourses(false);
+                                                }}
+                                                className="relative p-2 cursor-pointer hover:bg-gray-100"
+                                                title={`Course ID: ${course.id}`}
+                                            >
+                                                {course.name}
+                                                <span className="block text-xs text-gray-600">
+                                                    (Course Id : {course.id})
+                                                </span>
+                                            </div>
+                                        ))}
+                                </div>
+                            )}
+                            {formError.course_id && (
+                                <p className="text-xs text-red-500">{formError.course_id}</p>
+                            )}
                         </div>
+
                         <div className='col-span-2 flex justify-center'>
                             <button
                                 className='bg-gray-700 rounded-lg px-3 py-2 text-white font-semibold transition delay-100 duration-150 ease-in-out hover:-translate-y-1 hover:scale-110'
@@ -218,17 +318,17 @@ function AdminEnrollments() {
                     </form>
                 </div>
             </div>
-            <div className="p-5">
-                <h1 className="subtitle mb-4">Search Enrollment</h1>
+            <div className="sm:p-5">
+                <h1 className="subtitle mb-4">Delete Enrollment</h1>
                 <div className="">
                     <div className="flex flex-row gap-4">
                         <div className="relative w-full lg:w-1/2">
                             <ScanSearch
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                className="icon-insearchbar"
                                 size={18}
                             />
                             <input
-                                className="border rounded-md w-full h-10 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="input-field px-10"
                                 type="number"
                                 placeholder="Enter enrollment ID"
                                 value={searchedEnrollment}
@@ -248,7 +348,7 @@ function AdminEnrollments() {
 
 
 
-                    <div className="mt-6 p-5 border rounded-lg shadow-sm bg-gray-50">
+                    <div className="admin-search">
                         {searchedEnrollmentData && !Array.isArray(searchedEnrollment) && (
                             <>
                                 <h2 className="text-xl font-semibold mb-4">Enrollment Details</h2>
@@ -259,14 +359,20 @@ function AdminEnrollments() {
                                         <p className="text-sm text-gray-500">User Id</p>
                                         <p className="text-base font-medium">{searchedEnrollmentData.user_id}</p>
                                     </div>
-
+                                    {/* <div>
+                                        <p className="text-sm text-gray-500">User Name</p>
+                                        <p className="text-base font-medium">{searchedUserData.fullname}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500">User email ID</p>
+                                        <p className="text-base font-medium">{searchedUserData.email_id}</p>
+                                    </div> */}
                                     <div>
                                         <p className="text-sm text-gray-500">Course Id</p>
                                         <p className="text-base font-medium">
                                             {searchedEnrollmentData.course_id}
                                         </p>
                                     </div>
-
                                     <div>
                                         <p className="text-sm text-gray-500">Enrollment ID</p>
                                         <p className="text-base font-medium capitalize">{searchedEnrollmentData.id}</p>
@@ -297,16 +403,16 @@ function AdminEnrollments() {
                 </div>
             </div>
 
-            <div className="p-5">
+            <div className="sm:p-5">
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
                     <h3 className="subtitle">All Enrollments</h3>
                     <div className="relative flex gap-5 w-full lg:w-1/2">
                         <BookMarked
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                            className="icon-insearchbar"
                             size={18}
                         />
                         <input
-                            className="border rounded-sm w-full h-10 pl-10 pr-4 text-sm focus:outline-none"
+                            className="input-field px-10"
                             type="number"
                             placeholder="Search (eg.userId,CourseId)"
                             value={searchEnrollment}
@@ -332,7 +438,7 @@ function AdminEnrollments() {
                                 .map((enrollment, index) => (
                                     <tr
                                         key={enrollment.id}
-                                        className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                                        className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
                                             }`}
                                     >
                                         <td className="tabletd">{enrollment.user_id}</td>

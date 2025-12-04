@@ -23,7 +23,7 @@ export default ({ mode }) => {
       },
     },
     server: {
-      allowedHosts: [backendURL, frontendURL],
+      allowedHosts: [backendURL,frontendURL],
       port: 5173,
       open: true,
       host: true,

@@ -152,7 +152,7 @@ function AdminUsers() {
     }
 
     return (
-        <div className='bg-white rounded-lg'>
+        <div className='pagebg'>
 
             {showDeleteBox &&
                 <ConfirmationDialog
@@ -176,7 +176,7 @@ function AdminUsers() {
                     }}
                 />
             }
-            <div className='p-5'>
+            <div className='sm:p-5'>
                 <h1 className='subtitle'>Create User</h1>
                 <div className='flex flex-col lg:flex-row justify-evenly items-center border p-1 sm:p-5'>
 
@@ -284,7 +284,7 @@ function AdminUsers() {
                     </form>
                 </div>
             </div>
-            <div className="p-5">
+            <div className="sm:p-5">
                 <h1 className="subtitle mb-4">Search User</h1>
 
 
@@ -292,11 +292,11 @@ function AdminUsers() {
                     <div className="flex flex-row gap-4">
                         <div className="relative w-full lg:w-1/2">
                             <UserSearch
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                className="icon-insearchbar"
                                 size={18}
                             />
                             <input
-                                className="border rounded-md w-full h-10 pl-10 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="input-field px-10"
                                 type="number"
                                 placeholder="Enter User ID"
                                 value={SearchedUser}
@@ -316,7 +316,7 @@ function AdminUsers() {
 
 
 
-                    <div className="mt-6 p-5 border rounded-lg shadow-sm bg-gray-50">
+                    <div className="admin-search">
                         {searchedUserData && !Array.isArray(searchedUserData) && (
                             <>
                                 <h2 className="text-xl font-semibold mb-4">User Details</h2>
@@ -371,16 +371,16 @@ function AdminUsers() {
                 </div>
             </div>
 
-            <div className="p-5">
+            <div className="sm:p-5">
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
                     <h3 className="subtitle">All Users</h3>
                     <div className="relative flex gap-5 w-full lg:w-1/2">
                         <UserSearch
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                            className="icon-insearchbar"
                             size={18}
                         />
                         <input
-                            className="border rounded-sm w-full h-10 pl-10 pr-4 text-sm focus:outline-none"
+                            className="input-field px-10    "
                             type="text"
                             placeholder="Search (e.g., name, user ID, email)"
                             value={searchUser}
@@ -409,7 +409,7 @@ function AdminUsers() {
                                 .map((user, index) => (
                                     <tr
                                         key={user.id}
-                                        className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                                        className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
                                             }`}
                                     >
                                         <td className="tabletd">{user.fullname}</td>

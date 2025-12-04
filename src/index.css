@@ -5,7 +5,11 @@
 
 @layer components {
   .input-field {
-    @apply w-full rounded-md p-2 bg-white text-gray-800 border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition;
+    @apply w-full rounded-md p-2 bg-white text-gray-800 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 outline-none transition;
+  }
+
+  .icon-insearchbar{
+    @apply absolute left-3 top-1/2 -translate-y-1/2 text-gray-700
   }
 
   .pagetitle-heading {
@@ -35,16 +39,24 @@
   }
 
   .admintabletag{
-    @apply min-w-full text-left text-sm border-collapse
+    @apply min-w-full text-left text-sm border-collapse 
   }
   .tableheader{
-    @apply bg-gray-100 text-gray-700
+    @apply bg-gray-100 text-gray-700 dark:text-gray-400 dark:bg-[#0a0a0ade]
   }
   .tableth{
     @apply border-b px-4 py-3
   }
   .tabletd{
-    @apply border-b px-4 py-2
+    @apply border-b px-4 py-2 dark:text-gray-200
+  }
+
+  .pagebg{
+    @apply bg-white rounded-lg dark:bg-gray-800 dark:text-gray-400
+  }
+
+  .admin-search{
+    @apply mt-6 sm:p-5 border rounded-lg shadow-sm bg-gray-50 dark:bg-[#0a0a0ade]
   }
 }
 

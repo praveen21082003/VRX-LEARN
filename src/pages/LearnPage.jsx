@@ -14,7 +14,6 @@ import PdfViewer from "../components/PdfViewer";
 import { useLearn } from "../components/context/ContextProvider";
 import DialogueBox from "../components/DialogueBox";
 import Coursecontentloading from "../components/loading/Coursecontentloading";
-import Logout from "./Logout";
 
 function LearnPage({ user }) {
   const navigate = useNavigate();
@@ -276,7 +275,7 @@ function LearnPage({ user }) {
                                 transition-all 
                                 ${isActive
                                       ? "bg-red-50 dark:bg-[#1F2937] text-red-600 shadow-sm"
-                                      : "bg-white dark:bg-gray-800 hover:bg-indigo-100 dark:hover:bg-indigo-900"
+                                      : "bg-white dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
                                     }
                               `}
                                   onClick={() => {

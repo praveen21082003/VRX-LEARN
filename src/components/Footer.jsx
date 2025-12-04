@@ -1,9 +1,11 @@
 
-import React from 'react';
+import React, {useState} from 'react';
 import { Linkedin, Github, Youtube, Globe, PhoneCall, Mail } from 'lucide-react';
 import { Link } from "react-router-dom";
+import ConfirmationDialog from './ConfirmationDialog';
 
 function Footer() {
+    const [showLogout, setShowLogout] = useState(false);
     return (
         <footer className="bg-[#3f3f3f] text-white py-6 px-6 mt-5 rounded-lg">
             <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -21,8 +23,19 @@ function Footer() {
                     <Link to="/dashboard" className="hover:text-white transition-colors font-bold">Dashboard</Link>
                     <Link to="/courses" className="hover:text-white transition-colors font-bold">Courses</Link>
                     <Link to="/learn" className="hover:text-white transition-colors font-bold">Learn</Link>
-                    <Link to="/inbox" className="hover:text-white transition-colors font-bold">Inbox</Link>
+                    <Link onClick={() => setShowLogout(true)} className="hover:text-white transition-colors font-bold">logout</Link>
                 </div>
+                {showLogout &&
+                    <ConfirmationDialog
+                        message="Are you sure you want to log out?"
+                        msg=""
+                        buttonName="Logout"
+                        loadingMsg="Loging out..."
+                        endpoint="/auth/logout"
+                        onSuccess={() => setShowLogout(false)}
+                        onClose={() => setShowLogout(false)}
+                    />
+                }
 
 
                 <div className="flex flex-col justify-center gap-5">

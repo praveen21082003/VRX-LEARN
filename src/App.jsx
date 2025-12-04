@@ -15,9 +15,10 @@ import axiosInstance from "./api/axiosInstance";
 import AdminRoute from "./components/AdminRoute";
 
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
-const AdminUsers = lazy(()=>import('./pages/admin/AdminUsers'));
-const AdminCourses = lazy(()=>import('./pages/admin/AdminCourses'));
-const AdminEnrollments = lazy(()=>import('./pages/admin/AdminEnrollments'));
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminCourses = lazy(() => import('./pages/admin/AdminCourses'));
+const AdminEnrollments = lazy(() => import('./pages/admin/AdminEnrollments'));
+const AdminModules = lazy(() => import('./pages/admin/AdminModules'));
 
 import { AdminContextProvider } from "./components/context/AdminContextProvider";
 
@@ -36,7 +37,7 @@ function App() {
   const [user, setUser] = useState(null);
   const myCoursesRef = useRef(null);
   const navigate = useNavigate();
-  const isLoginPage = location.pathname === "/login";
+  const isLoginPage = location.pathname === "/" || location.pathname === "/login";
 
 
   useEffect(() => {
@@ -44,25 +45,23 @@ function App() {
       try {
         const res = await axiosInstance.get("/auth/me");
         setUser(res.data);
-        setAuthorized(true);
 
-        // If user is on login page but token already valid → redirect to dashboard
+
         if (isLoginPage) {
           if (res.data.role === 'admin') {
             navigate("/admin/dashboard", { replace: true });
-          } else {
+          } else if (res.data.role === 'trainee') {
             navigate("/dashboard", { replace: true });
           }
         }
+        setAuthorized(true);
 
       } catch (error) {
         setAuthorized(false);
 
-        // If on protected pages → show error popup
-        if (!isLoginPage) {
-          const status = error.response?.status;
-          const detail = error.response?.data?.detail || "Unexpected error";
-
+        const status = error.response?.status;
+        const detail = error.response?.data?.detail || "Unexpected error";
+        if (status !== 401 && !isLoginPage) {
           setErrorData({
             code: status,
             message: "Request failed",
@@ -103,7 +102,7 @@ function App() {
       <Routes>
         {/* validating role */}
         <Route
-          path="/login"
+          path="/"
           element={
             authorized ?
               (user?.role === 'admin' ? <Navigate to="/admin/dashboard" /> : <Navigate to="/dashboard" />)
@@ -115,7 +114,7 @@ function App() {
         <Route
           path="/*"
           element={
-            <ProtectedRoute authorized={authorized}>
+            <ProtectedRoute authorized={authorized} user={user}>
               <div className="flex h-screen">
                 <Sidebar
                   myCoursesRef={myCoursesRef}
@@ -160,7 +159,7 @@ function App() {
         <Route
           path="/admin/*"
           element={
-            <AdminRoute authorized={authorized}>
+            <AdminRoute authorized={authorized} user={user}>
               <AdminContextProvider>
                 <div className="flex h-screen">
                   <Sidebar
@@ -189,9 +188,10 @@ function App() {
                         <Route path="users" element={<AdminUsers />} />
                         <Route path="courses" element={<AdminCourses />} />
                         <Route path="enrollments" element={<AdminEnrollments />} />
+                        <Route path="modules" element={<AdminModules />} />
 
                         {/* admin 404 */}
-                        <Route path="*" element={<div className="text-white">Admin Page Not Found</div>} />
+                        <Route path="*" element={<div className="text-black">Admin Page Not Found</div>} />
                       </Routes>
                     </Suspense>
                   </div>

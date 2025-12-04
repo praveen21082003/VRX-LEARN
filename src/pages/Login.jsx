@@ -43,7 +43,7 @@ function Login() {
       setLoading(true);
       const response = await axiosInstance.post("/auth/login", credentials);
       if (response.status === 200) {
-        window.location.href = "/login";
+        window.location.href = "/";
       }
     } catch (error) {
       console.error(error);

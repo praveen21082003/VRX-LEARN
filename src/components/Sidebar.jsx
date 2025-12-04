@@ -17,7 +17,8 @@ import {
   ChevronRight,
   Menu,
   MoveRight,
-  BookPlus
+  BookPlus,
+  ListTree
 } from "lucide-react";
 
 function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCoursesRef, user }) {
@@ -40,7 +41,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
     if (location.pathname.startsWith("/learn")) return "Learning Panel";
     if (location.pathname.startsWith("/profile")) return "Profile";
     if (location.pathname.startsWith("/settings")) return "Settings";
-    if (location.pathname.startsWith("/logout")) return "Logout";
+    if (location.pathname.startsWith("/")) return "Logout";
 
     return "VRNexGen";
   };
@@ -57,7 +58,8 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard", title: "dashboard" },
     { name: "Users", icon: User, href: "/admin/users", title: "users" },
     { name: "Courses", icon: GraduationCap, href: "/admin/courses", title: "courses" },
-    { name: "Enrollments", icon: BookPlus, href: "/admin/enrollments", title: "enrollments"}
+    { name: "Enrollments", icon: BookPlus, href: "/admin/enrollments", title: "enrollments"},
+    { name: "Module List", icon:ListTree, href: "/admin/modules", title: "module list"}
   ];
 
 
@@ -139,7 +141,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
         <div className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
 
           {/* If ADMIN */}
-          {user?.fullname === "admin" ? (
+          {user?.role === "admin" ? (
             adminNavigationLinks.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname.startsWith(item.href);

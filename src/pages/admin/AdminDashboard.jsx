@@ -1,50 +1,51 @@
 import { GraduationCap, Users, ShieldUser, Contact } from 'lucide-react';
 import { useAdmin } from '../../components/context/AdminContextProvider';
-// import EnrollmentsChart from '../../adminComponents/EnrollmentsChart';
+import EnrollmentSummary from '../../adminComponents/EnrollmentSummary';
 
 export default function AdminDashboard() {
-    const { usersData, loadingUsers,usersCount, adminCount, studentCount, coursesCount} = useAdmin();
+    const { usersData, loadingUsers, usersCount, adminCount, studentCount, coursesCount } = useAdmin();
 
     return (
-        <div className="bg-white rounded-lg font-semibold text-xl">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-10">
+        <div className="pagebg font-semibold text-xl">
+            <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-2 sm:p-10">
 
-                <div className="bg-white p-6 rounded shadow flex items-center gap-4">
+                <div className="bg-white p-6 rounded shadow flex items-center gap-4 dark:bg-[#0A0A0A]">
                     <Users size={40} className="text-red-800" />
                     <div>
-                        <h2 className="text-gray-600 text-lg">Total Users</h2>
+                        <h2 className="text-gray-600 dark:text-gray-400 text-lg">Total Users</h2>
                         <p className="text-3xl font-bold">{usersCount}</p>
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-lg shadow flex items-center gap-4">
+                <div className="bg-white p-6 rounded-lg shadow flex items-center gap-4 dark:bg-[#0A0A0A]">
                     <Contact size={40} className="text-blue-600" />
                     <div>
-                        <p className="text-gray-500 text-lg">Students</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-lg">Students</p>
                         <h2 className="text-3xl font-bold">{studentCount}</h2>
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded shadow flex items-center gap-4">
+                <div className="bg-white p-6 rounded shadow flex items-center gap-4 dark:bg-[#0A0A0A]">
                     <ShieldUser size={40} className="text-green-700" />
                     <div>
-                        <h2 className="text-gray-600 text-lg">Total Admins</h2>
+                        <h2 className="text-gray-600 dark:text-gray-400 text-lg">Total Admins</h2>
                         <p className="text-3xl font-bold">{adminCount}</p>
                     </div>
                 </div>
-                <div className="bg-white p-6 rounded shadow flex items-center gap-4">
-                    <GraduationCap  size={40} className="text-indigo-900" />
+                <div className="bg-white p-6 rounded shadow flex items-center gap-4 dark:bg-[#0A0A0A]">
+                    <GraduationCap size={40} className="text-indigo-900" />
                     <div>
-                        <h2 className="text-gray-600 text-lg">Total Courses</h2>
+                        <h2 className="text-gray-600 dark:text-gray-400 text-lg">Total Courses</h2>
                         <p className="text-3xl font-bold">{coursesCount}</p>
                     </div>
                 </div>
             </div>
-            {/* <div className='p-10'>
-                <EnrollmentsChart/>
-            </div> */}
+            <div className='p-5'>
+                <h3 className="subtitle">Course Enrollment Summary</h3>
+                <EnrollmentSummary />
+            </div>
             <div className="p-5">
-                <h3 className="text-lg font-semibold mb-4">Admin Details</h3>
+                <h3 className="subtitle">Admin Details</h3>
                 <div className="overflow-x-auto rounded-lg shadow-sm border">
                     <table className="admintabletag">
                         <thead className="tableheader">

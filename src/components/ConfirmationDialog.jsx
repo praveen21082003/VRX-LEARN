@@ -47,6 +47,7 @@ function ConfirmationDialog({
         response = await axiosInstance.post(endpoint);
 
         if (response.status >= 200 && response.status < 300) {
+          navigate("/")
           return true;
         }
       }
@@ -76,9 +77,9 @@ function ConfirmationDialog({
     const ok = await fetchRemove(endpoint);
     if (!ok) return;
 
-    if (buttonName === "Logout") {
-      navigate("/login");
-    }
+    // if (buttonName === "Logout") {
+    //   window.location.replace("/");
+    // }
 
     if (typeof onSuccess === "function") onSuccess();
 
