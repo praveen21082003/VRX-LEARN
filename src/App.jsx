@@ -188,7 +188,7 @@ function App() {
                         <Route path="users" element={<AdminUsers />} />
                         <Route path="courses" element={<AdminCourses />} />
                         <Route path="enrollments" element={<AdminEnrollments />} />
-                        <Route path="modules" element={<AdminModules />} />
+                        <Route path="modules" element={<AdminModules user={user} />} />
 
                         {/* admin 404 */}
                         <Route path="*" element={<div className="text-black">Admin Page Not Found</div>} />

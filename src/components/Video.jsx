@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Watermark from "./Watermark";
 
-function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo }) {
+function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -167,10 +167,6 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
       const isNowFullScreen = !!document.fullscreenElement;
       setIsFullScreen(isNowFullScreen);
 
-      if (!isNowFullScreen && typeof onExitFullScreen === "function") {
-        onExitFullScreen();
-      }
-
       // Mobile orientation lock
 
       if (isNowFullScreen && window.innerWidth < 768) {
@@ -184,7 +180,7 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
     return () => {
       document.removeEventListener("fullscreenchange", handleFullScreenChange);
     };
-  }, [onExitFullScreen]);
+  }, []);
 
   /** Auto fullscreen on mobile */
   useEffect(() => {
@@ -327,7 +323,7 @@ function ModuleVideo({ videoRef, video_URL, onExitFullScreen, user, onNextVideo 
         )}
 
         {/* Watermark */}
-        <div className="watermark absolute mt-16 h-[90%] w-[80%]">
+        <div className="watermark absolute mt-20 h-[90%] w-[80%]">
           <Watermark user={user} />
         </div>
 

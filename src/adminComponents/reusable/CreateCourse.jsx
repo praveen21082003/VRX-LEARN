@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import { useAdmin } from '../../components/context/AdminContextProvider'
 import { Grid2x2Plus, Grid2x2Check, CircleAlert } from 'lucide-react'
+import WarningPopup from '../../components/WarningPopup'
 
 function CreateCourse() {
-    const { courseLoading, successMsg, newCourse, setNewCourse } = useAdmin();
+    const { courseLoading, successMsg, newCourse, setNewCourse, createCourse } = useAdmin();
 
 
     const [formError, setFormError] = useState({
@@ -53,11 +54,13 @@ function CreateCourse() {
         if (!checkFormError()) {
             return;
         }
+        createCourse();
     }
+
     return (
         <>
             <h1 className='subtitle'>Create Course</h1>
-            <div className='flex flex-col lg:flex-row justify-evenly items-center border p-1 sm:p-5'>
+            <div className='flex flex-col lg:flex-row justify-between items-center p-1 sm:p-5'>
                 {successMsg ? (
                     <>
                         <WarningPopup

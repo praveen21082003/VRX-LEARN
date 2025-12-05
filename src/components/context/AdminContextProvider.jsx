@@ -18,10 +18,27 @@ export function AdminContextProvider({ children }) {
     const [courseLoading, setCourseLoading] = useState(false);
     const [successMsg, setSuccessMsg] = useState(false);
     const [newCourse, setNewCourse] = useState({
-            name: "",
-            description: "",
-            author: ""
-        });
+        name: "",
+        description: "",
+        author: ""
+    });
+
+    // create Module
+    const [moduleLoading, setModuleLoading] = useState(false);
+    const [newModule, setNewModule] = useState({
+        name: "",
+    });
+
+    // create resource
+    const [resourceLoading, setResourceLoading] = useState(false);
+    const [newResource, setNewResource] = useState({
+        name: "",
+        type: "",
+        file_type: "",
+        url: "",
+        module_id: ""
+    });
+
     // get user 
     const [searchloading, setSearchLoading] = useState(false);
     const [searchedUserData, setSearchedUserData] = useState(null);
@@ -81,7 +98,7 @@ export function AdminContextProvider({ children }) {
 
 
     const fetchALLEnrollments = async () => {
-        
+
         try {
             const response = await axiosInstance.get('/enrollments/');
             setEnrollments(response.data);
@@ -130,6 +147,62 @@ export function AdminContextProvider({ children }) {
     }
 
 
+    async function createModule() {
+        try {
+            setModuleLoading(true);
+            const response = await axiosInstance.post('/modules/', newModule);
+            if (response.status === 201) {
+                setSuccessMsg(true);
+                setTimeout(() => setSuccessMsg(false), 1200);
+                setNewModule({
+                    name: "",
+                })
+            }
+        } catch (error) {
+            const status = error.response?.status;
+            const detail = error.response?.data?.detail || "Unexpected error";
+            setError({
+                code: status,
+                message: "Request failed",
+                detail: detail,
+                show: true
+            });
+        } finally {
+            setModuleLoading(false);
+        }
+    }
+
+
+    async function createResource() {
+        try {
+            setResourceLoading(true);
+            const response = await axiosInstance.post('/resources/', newResource)
+            if (response.status === 201) {
+                setSuccessMsg(true);
+                setTimeout(() => setSuccessMsg(false), 1200);
+                setNewResource({
+                    name: "",
+                    type: "",
+                    file_type: "",
+                    url: "",
+                    module_id: ""
+                })
+            }
+        } catch (error) {
+            const status = error.response?.status;
+            const detail = error.response?.data?.detail || "Unexpected error";
+            setError({
+                code: status,
+                message: "Request failed",
+                detail: detail,
+                show: true
+            });
+        } finally {
+            setResourceLoading(false);
+        }
+    }
+
+
     return (
         <>
             {error.show &&
@@ -143,7 +216,7 @@ export function AdminContextProvider({ children }) {
                 />
             }
             <AdminContext.Provider value={{
-                usersData, loadingUsers, usersCount, adminCount, studentCount, courseLoading, allCourses, coursesCount, enrollments, successMsg, loadingCourses, newCourse, setNewCourse, fetchUsers, fetchCourses, fetchALLEnrollments
+                usersData, loadingUsers, usersCount, adminCount, studentCount, courseLoading, allCourses, coursesCount, enrollments, successMsg, loadingCourses, newCourse, newModule, newResource, moduleLoading, resourceLoading, setNewCourse, setNewResource, setNewModule, fetchUsers, fetchCourses, fetchALLEnrollments, createCourse, createModule, createResource
             }}>
 
                 {children}

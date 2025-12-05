@@ -26,8 +26,8 @@ function MyCourses({ searchQuery }) {
                 setLoading(true);
                 if (!myCourseData) {
                     const response = await axiosInstance.get("/my_courses");
-                    setMyCourseData(response.data);
-                    setCourses(response.data)
+                    setMyCourseData(response.data.items);
+                    setCourses(response.data,items)
                 } else {
                     setCourses(myCourseData || []);
                 }
