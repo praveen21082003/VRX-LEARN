@@ -78,14 +78,14 @@ function AdminModules({ user }) {
       return allCourses.filter(course =>
         course.name.toLowerCase().includes(search.toLowerCase()) ||
         String(course.id).includes(search)
-      );
+      ) || []
     }
 
     if (active === 'Modules') {
       return modules.filter(module =>
         module.name.toLowerCase().includes(search.toLowerCase()) ||
         String(module.id).includes(search)
-      )
+      ) || []
     }
 
     if (active === 'Resources') {
@@ -93,21 +93,21 @@ function AdminModules({ user }) {
         resource.name.toLowerCase().includes(search.toLowerCase()) ||
         String(resource.id).includes(search) ||
         resource.type.toLowerCase().includes(search.toLowerCase())
-      )
+      ) || []
     }
   }, [active, search, allCourses, modules, selectedModule])
 
 
 
   const tab = (name) =>
-    `flex items-center justify-center gap-1 px-3 py-2 font-semibold cursor-pointer border-b-4 ${active === name
+    `flex items-center justify-center gap-1 px-5 lg:px-3 py-2 font-semibold cursor-pointer border-b-4 ${active === name
       ? "border-green-600 text-black"
       : "border rounded-t-lg text-sm text-gray-500 hover:text-black"
     }`;
 
 
   return (
-    <div className="bg-white h-full rounded-lg overflow-hidden flex flex-col">
+    <div className='pagebg h-full overflow-hidden'>
       {showDeleteBox && (
         <ConfirmationDialog
           message={`Are you sure you want to delete this ${active.toLowerCase()}?`}
@@ -142,7 +142,7 @@ function AdminModules({ user }) {
         onClose={() => setShowCreate(false)}
       />}
 
-      <header className="bg-slate-100 text-slate-900 h-12 flex items-center border-b">
+      <header className="bg-slate-100 text-slate-900 w-full lg:h-12 flex flex-col lg:flex-row justify-center lg:justify-normal items-center border-b">
 
         <div className="flex justify-center min-w-[30%]">
           <div className={tab("Courses")} onClick={() => setActive("Courses")}>
@@ -156,9 +156,9 @@ function AdminModules({ user }) {
           </div>
         </div>
 
-        <div className="hidden lg:flex flex-1 lg:justify-between">
+        <div className="flex flex-1 w-full justify-start lg:justify-between">
           <div className="text-sm text-gray-700 font-medium flex items-center gap-1">
-            <ChevronRight className="text-green-700" size={30} />
+            <ChevronRight className="text-green-700" size={26} />
             {active === "Courses" && selectedCourse && <span>{selectedCourse.name}</span>}
             {active === "Modules" && selectedCourse && (
               <span>
@@ -174,7 +174,7 @@ function AdminModules({ user }) {
           </div>
         </div>
 
-        <div className="hidden lg:flex gap-1 mr-5 font-semibold">
+        <div className="flex gap-1 mr-5 font-semibold">
           <button className="flex items-center gap-1 bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded-l-lg text-sm"
             onClick={() => {
               setShowCreate(true);
@@ -185,28 +185,36 @@ function AdminModules({ user }) {
           </button>
           <button className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-r-lg text-sm"
             onClick={() => {
-              if (active === "Courses") handleDelete(selectedCourse?.id);
-              if (active === "Modules") handleDelete(selectedModule?.id);
-              if (active === "Resources") handleDelete(selectedResource?.id);
+              if (
+                (active === "Courses" && !selectedCourse?.id) ||
+                (active === "Modules" && !selectedModule?.id) ||
+                (active === "Resources" && !selectedResource?.id)
+              ) {
+                alert(`No ${active.toLowerCase()} selected to delete`);
+                return;
+              }
+
+              if (active === "Courses") handleDelete(selectedCourse.id);
+              if (active === "Modules") handleDelete(selectedModule.id);
+              if (active === "Resources") handleDelete(selectedResource.id);
             }}
           >
             <Trash2 size={18} />
           </button>
         </div>
-
       </header>
 
-      <div className="flex flex-col-reverse lg:flex-row justify-between lg:justify-normal flex-1 w-full bg-gray-50 overflow-hidden">
+      <div className="flex flex-col-reverse lg:flex-row h-full justify-between lg:justify-normal flex-1 w-full bg-gray-50 overflow-hidden">
 
         <div className="w-full h-[75%] lg:h-auto lg:w-[30%] border-t lg:border-t-0 lg:border-r bg-white overflow-y-auto">
-          <div className='flex justify-between gap-2 h-7 border-b px-1'>
+          <div className='flex justify-between gap-2 h-10 lg:h-9 border-b px-1'>
             {/* <input type='checkbox' /> */}
             <div className="relative w-full">
               <Search className="absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none opacity-70" />
               <input
                 type="text"
                 value={search}
-                className="w-full pl-5 bg-transparent outline-none"
+                className="w-full h-full pl-5 bg-transparent outline-none"
                 placeholder={`Search ${active} (eg.ID,Name)`}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -216,14 +224,26 @@ function AdminModules({ user }) {
               <button className='text-green-700' onClick={() => { setShowCreate(true); setCreate(`create${active}`) }}><Plus size={18} /></button>
               <button className='text-red-600'
                 onClick={() => {
-                  if (active === "Courses") handleDelete(selectedCourse?.id);
-                  if (active === "Modules") handleDelete(selectedModule?.id);
-                  if (active === "Resources") handleDelete(selectedResource?.id);
+                  if (
+                    (active === "Courses" && !selectedCourse?.id) ||
+                    (active === "Modules" && !selectedModule?.id) ||
+                    (active === "Resources" && !selectedResource?.id)
+                  ) {
+                    alert(`No ${active.toLowerCase()} selected to delete`);
+                    return;
+                  }
+
+                  if (active === "Courses") handleDelete(selectedCourse.id);
+                  if (active === "Modules") handleDelete(selectedModule.id);
+                  if (active === "Resources") handleDelete(selectedResource.id);
                 }}
               ><Trash2 size={18} /></button>
             </div>
 
           </div>
+          {active === "Courses" && filtereddata.length === 0 && (
+            <div className="p-4 flex justify-center text-gray-500">No courses available</div>
+          )}
           {active === "Courses" &&
             filtereddata.map((course) => (
               <div
@@ -236,6 +256,9 @@ function AdminModules({ user }) {
               </div>
             ))}
 
+          {active === "Modules" && filtereddata.length === 0 && (
+            <div className="p-4 flex justify-center text-gray-500">No modules available</div>
+          )}
           {active === "Modules" &&
             filtereddata.map((m) => (
               <div
@@ -247,6 +270,10 @@ function AdminModules({ user }) {
                 {m.name}
               </div>
             ))}
+
+          {active === "Resources" && filtereddata.length === 0 && (
+            <div className="p-4 flex justify-center text-gray-500">No resources available</div>
+          )}
 
           {active === "Resources" &&
             filtereddata.map((r) => (
@@ -307,7 +334,7 @@ function AdminModules({ user }) {
                 <div className="mt-4 p-4 border rounded-lg bg-gray-50">
                   <div className='flex items-center gap-5 mb-5'>
                     <h3 className="font-semibold">Preview</h3>
-                    <button className='text-white font-semibold bg-green-700 rounded-lg p-1' onClick={() => setShowPreview(!showPreview)}>{showPreview ? <p className='flex justify-center items-center gap-1'><EyeOff size={20}/>Hide</p> : <p className='flex justify-center items-center gap-1 px-1'><Eye size={20}/>View</p>}</button>
+                    <button className='text-white font-semibold bg-green-700 rounded-lg p-1' onClick={() => setShowPreview(!showPreview)}>{showPreview ? <p className='flex justify-center items-center gap-1'><EyeOff size={20} />Hide</p> : <p className='flex justify-center items-center gap-1 px-1'><Eye size={20} />View</p>}</button>
                   </div>
 
                   {showPreview && selectedResource.type === "video" && (
@@ -329,23 +356,32 @@ function AdminModules({ user }) {
               </div>
             ))}
 
-          <div className="flex gap-3 py-5 font-semibold">
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-              <SquarePen size={15} />
-              Edit {active}
-            </button>
 
-            <button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-              onClick={() => {
-                if (active === "Courses") handleDelete(selectedCourse?.id);
-                if (active === "Modules") handleDelete(selectedModule?.id);
-                if (active === "Resources") handleDelete(selectedResource?.id);
-              }}
-            >
-              <Trash2 size={15} />
-              Delete {active}
-            </button>
-          </div>
+          {(
+            (active === "Courses" && selectedCourse) ||
+            (active === "Modules" && selectedModule) ||
+            (active === "Resources" && selectedResource)
+          ) && (
+              <div className="flex gap-3 py-5 font-semibold">
+                <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                  <SquarePen size={15} />
+                  Edit {active}
+                </button>
+
+                <button
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  onClick={() => {
+                    if (active === "Courses") handleDelete(selectedCourse?.id);
+                    if (active === "Modules") handleDelete(selectedModule?.id);
+                    if (active === "Resources") handleDelete(selectedResource?.id);
+                  }}
+                >
+                  <Trash2 size={15} />
+                  Delete {active}
+                </button>
+              </div>
+            )}
+
         </div>
       </div>
     </div>

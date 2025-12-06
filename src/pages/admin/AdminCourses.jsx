@@ -11,13 +11,16 @@ function AdminCourses() {
     const { allCourses, fetchCourses, courseLoading, successMsg, newCourse, setNewCourse } = useAdmin();
     const [showDeleteBox, setShowDeleteBox] = useState(false);
     const [searchCourse, setSearchCourse] = useState("");
-    
-    
+
+
     const [searchedCourseData, setSearchedCourseData] = useState(null);
     const [searchedCourse, setSearchedCourse] = useState("");
     const [searchLoading, setSearchLoading] = useState(false);
     const [courseId, setCourseId] = useState(0);
-    
+    const [formError, setFormError] = useState({
+        search_input: "",
+    })
+
     const [error, setError] = useState({
         code: null,
         message: "",
@@ -36,7 +39,7 @@ function AdminCourses() {
 
     }, [searchCourse, allCourses]);
 
-    
+
 
     const handleDelete = (course) => {
         setShowDeleteBox(true);
@@ -89,14 +92,15 @@ function AdminCourses() {
                     }}
                 />
             }
-            
+
             <div className='sm:p-5'>
-                <CreateCourse/>
+                <CreateCourse />
             </div>
-            
+
             <div className="sm:p-5">
                 <h1 className="subtitle mb-4">Search Course</h1>
                 <div className="">
+                    {formError.search_input && <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.search_input}</p>}
                     <div className="flex flex-row gap-4">
                         <div className="relative w-full lg:w-1/2">
                             <ScanSearch
@@ -116,7 +120,17 @@ function AdminCourses() {
                         <button
                             className="bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 text-white font-semibold transition-all"
                             type="button"
-                            onClick={() => fetchCourse(searchedCourse)}
+                            onClick={() => {
+                                if (!searchedCourse.trim()) {
+                                    setFormError(prev => ({
+                                        ...prev,
+                                        search_input: "Please enter a Course ID to search.",
+                                    }));
+                                    return;
+                                }
+                                setFormError(prev => ({ ...prev, search_input: "" }));
+                                fetchCourse(searchedCourse)
+                            }}
                         >
                             Search
                         </button>
@@ -211,19 +225,28 @@ function AdminCourses() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredCourses.map((course, index) => (
-                                <tr key={course.id}
-                                    className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
-                                        }`}
-                                >
-                                    <td className='tabletd'>{course.name}</td>
-                                    <td className='tabletd'>{course.description}</td>
-                                    <td className='tabletd'>{course.author}</td>
-                                    <td className='tabletd'>{course.id}</td>
-                                    <td className='tabletd'>{new Date(course.created_at).toLocaleString()}</td>
+                            {filteredCourses.length === 0 ? (
+                                <tr>
+                                    <td
+                                        className="tabletd text-center py-4 text-gray-500 font-semibold"
+                                        colSpan={5}
+                                    >
+                                        No courses found for this search.
+                                    </td>
                                 </tr>
-                            ))}
-
+                            ) : (
+                                filteredCourses.map((course, index) => (
+                                    <tr key={course.id}
+                                        className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
+                                            }`}
+                                    >
+                                        <td className='tabletd'>{course.name}</td>
+                                        <td className='tabletd'>{course.description}</td>
+                                        <td className='tabletd'>{course.author}</td>
+                                        <td className='tabletd'>{course.id}</td>
+                                        <td className='tabletd'>{new Date(course.created_at).toLocaleString()}</td>
+                                    </tr>
+                                )))}
                         </tbody>
 
                     </table>

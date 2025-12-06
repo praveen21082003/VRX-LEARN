@@ -25,6 +25,8 @@ function ConfirmationDialog({
     show: false,
   });
 
+  
+
   const [loading, setLoading] = useState(false);
 
   async function fetchRemove(endpoint) {

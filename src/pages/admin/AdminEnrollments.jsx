@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { BookPlus, BookCheck, BookMarked, ScanSearch, Trash2, X, ChevronDown } from 'lucide-react';
+import { BookPlus, BookCheck, BookMarked, ScanSearch, Trash2, X, CircleAlert } from 'lucide-react';
 import { useAdmin } from '../../components/context/AdminContextProvider'
 import DialogueBox from '../../components/DialogueBox';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
@@ -22,7 +22,8 @@ function AdminEnrollments() {
     });
     const [formError, setFormError] = useState({
         user_id: "",
-        course_id: ""
+        course_id: "",
+        search_input: "",
     })
     const [error, setError] = useState({
         code: null,
@@ -252,7 +253,7 @@ function AdminEnrollments() {
                                 </div>
                             )}
                             {formError.user_id && (
-                                <p className="text-xs text-red-500">{formError.user_id}</p>
+                                <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.user_id}</p>
                             )}
                         </div>
 
@@ -301,7 +302,7 @@ function AdminEnrollments() {
                                 </div>
                             )}
                             {formError.course_id && (
-                                <p className="text-xs text-red-500">{formError.course_id}</p>
+                                <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.course_id}</p>
                             )}
                         </div>
 
@@ -321,6 +322,9 @@ function AdminEnrollments() {
             <div className="sm:p-5">
                 <h1 className="subtitle mb-4">Delete Enrollment</h1>
                 <div className="">
+                    {formError.search_input && (
+                        <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.search_input}</p>
+                    )}
                     <div className="flex flex-row gap-4">
                         <div className="relative w-full lg:w-1/2">
                             <ScanSearch
@@ -340,7 +344,17 @@ function AdminEnrollments() {
                         <button
                             className="bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 text-white font-semibold transition-all"
                             type="button"
-                            onClick={() => featchEnrollment(searchedEnrollment)}
+                            onClick={() => {
+                                if (!searchedEnrollment.trim()) {
+                                    setFormError(prev => ({
+                                        ...prev,
+                                        search_input: "Please enter a Enrollment ID to search.",
+                                    }));
+                                    return;
+                                }
+                                setFormError(prev => ({ ...prev, search_input: "" }));
+                                featchEnrollment(searchedEnrollment);
+                            }}
                         >
                             Search
                         </button>
@@ -434,23 +448,34 @@ function AdminEnrollments() {
                         </thead>
 
                         <tbody>
-                            {filteredData
-                                .map((enrollment, index) => (
-                                    <tr
-                                        key={enrollment.id}
-                                        className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
-                                            }`}
+                            {filteredData.length === 0 ? (
+                                <tr>
+                                    <td
+                                        className="tabletd text-center py-4 text-gray-500 font-semibold"
+                                        colSpan={5}
                                     >
-                                        <td className="tabletd">{enrollment.user_id}</td>
-                                        <td className="tabletd">{enrollment.course_id}</td>
-                                        <td className="tabletd">{enrollment.id}</td>
-                                        <td className="tabletd">
-                                            <div className={`${searchEnrollment && "flex justify-between"}`}>
-                                                {new Date(enrollment.enrolled_at).toLocaleDateString()}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                        No enrollment found for this search.
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredData
+                                    .map((enrollment, index) => (
+                                        <tr
+                                            key={enrollment.id}
+                                            className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
+                                                }`}
+                                        >
+                                            <td className="tabletd">{enrollment.user_id}</td>
+                                            <td className="tabletd">{enrollment.course_id}</td>
+                                            <td className="tabletd">{enrollment.id}</td>
+                                            <td className="tabletd">
+                                                <div className={`${searchEnrollment && "flex justify-between"}`}>
+                                                    {new Date(enrollment.enrolled_at).toLocaleDateString()}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )))
+                            }
                         </tbody>
                     </table>
                 </div>

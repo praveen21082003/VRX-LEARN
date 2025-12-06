@@ -102,7 +102,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
       </div>
 
       <button
-        className="sm:hidden fixed flex top-1 z-50 text-black dark:text-white p-2 rounded-md"
+        className="sm:hidden fixed flex top-1 z-40 text-black dark:text-white p-2 rounded-md"
         onClick={() => setMobileOpen((prev) => !prev)}
       >
         <Menu size={20} />
@@ -110,7 +110,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
 
       {/* Sidebar container */}
       <div
-        className={`fixed top-0 left-0 sm:h-screen h-full bg-white dark:bg-[#1a1818] shadow-lg flex flex-col transition-all duration-300 z-40
+        className={`fixed top-0 left-0 sm:h-screen h-full bg-white dark:bg-[#1a1818] shadow-lg flex flex-col transition-all duration-300 z-30
         ${collapsed ? "w-16" : "w-56"} 
         ${mobileOpen ? "translate-x-0" : "-translate-x-60 sm:translate-x-0"}`}
       >

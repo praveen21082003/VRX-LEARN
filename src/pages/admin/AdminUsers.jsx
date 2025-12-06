@@ -36,6 +36,7 @@ function AdminUsers() {
         role: "",
         password: "",
         confirm_password: "",
+        search_input: "",
     })
 
     const filteredUserData = useMemo(() => {
@@ -61,44 +62,44 @@ function AdminUsers() {
         }));
     };
 
-    function CheckFormError(){
+    function CheckFormError() {
         const errors = {};
 
-        if (!newUser.fullname.trim()){
+        if (!newUser.fullname.trim()) {
             errors.fullname = "Name cannot be empty"
-        } else if (!/^[A-Z]/.test(newUser.fullname.trim())){
+        } else if (!/^[A-Z]/.test(newUser.fullname.trim())) {
             errors.fullname = "Name must starts with uppercase letter"
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (!newUser.email_id.trim()){
+        if (!newUser.email_id.trim()) {
             errors.email_id = "Email cannot be empty"
-        } else if (!emailRegex.test(newUser.email_id)){
+        } else if (!emailRegex.test(newUser.email_id)) {
             errors.email_id = "Please enter a valid email address."
         }
 
-        if (!newUser.role.trim()){
+        if (!newUser.role.trim()) {
             errors.role = "Role cannot be empty"
         }
 
-        if (!newUser.password.trim()){
+        if (!newUser.password.trim()) {
             errors.password = "Password cannot be empty"
         }
 
-        if (!newUser.confirm_password.trim()){
+        if (!newUser.confirm_password.trim()) {
             errors.confirm_password = "Confirm password cannot be empty"
         }
 
         setFormError(errors);
-        
+
         return Object.keys(errors).length === 0;
     }
 
 
     async function handleSubmit() {
 
-        if (!CheckFormError()){
+        if (!CheckFormError()) {
             return;
         }
 
@@ -289,6 +290,7 @@ function AdminUsers() {
 
 
                 <div className="">
+                    {formError.search_input && <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.search_input}</p>}
                     <div className="flex flex-row gap-4">
                         <div className="relative w-full lg:w-1/2">
                             <UserSearch
@@ -305,10 +307,23 @@ function AdminUsers() {
                         </div>
 
 
+
                         <button
                             className="bg-green-600 hover:bg-green-700 rounded-md py-2 px-4 text-white font-semibold transition-all"
                             type="button"
-                            onClick={() => fetchUser(SearchedUser)}
+                            onClick={() => {
+                                if (!SearchedUser.trim()) {
+                                    setFormError(prev => ({
+                                        ...prev,
+                                        search_input: "Please enter a User ID to search.",
+                                    }));
+                                    return;
+                                }
+                                setFormError(prev => ({ ...prev, search_input: "" }));
+
+                                fetchUser(SearchedUser);
+                            }}
+
                         >
                             Search
                         </button>
@@ -404,29 +419,44 @@ function AdminUsers() {
                         </thead>
 
                         <tbody>
-                            {filteredUserData
-                                .filter((a) => a.role === "trainee")
-                                .map((user, index) => (
-                                    <tr
-                                        key={user.id}
-                                        className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
-                                            }`}
+                            {filteredUserData.filter((a) => a.role === "trainee").length === 0 ? (
+                                <tr>
+                                    <td
+                                        className="tabletd text-center py-4 text-gray-500 font-semibold"
+                                        colSpan={5}
                                     >
-                                        <td className="tabletd">{user.fullname}</td>
-                                        <td className="tabletd">{user.email_id}</td>
-                                        <td className="tabletd">{user.id}</td>
-                                        <td className="tabletd">{user.role}</td>
-                                        <td className="tabletd">
-                                            <div className={`${searchUser && "flex justify-between"}`}>
-                                                {new Date(user.created_at).toLocaleDateString()}
-                                                {
-                                                    searchUser && (<button onClick={() => handleDelete(user)}><Trash2 className='text-red-700' size={18} /></button>)
-                                                }
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                        No users found for this search.
+                                    </td>
+                                </tr>
+                            ) : (
+                                filteredUserData
+                                    .filter((a) => a.role === "trainee")
+                                    .map((user, index) => (
+                                        <tr
+                                            key={user.id}
+                                            className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition 
+                                                ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}
+                                            `}
+                                        >
+                                            <td className="tabletd">{user.fullname}</td>
+                                            <td className="tabletd">{user.email_id}</td>
+                                            <td className="tabletd">{user.id}</td>
+                                            <td className="tabletd">{user.role}</td>
+                                            <td className="tabletd">
+                                                <div className={`${searchUser && "flex justify-between"}`}>
+                                                    {new Date(user.created_at).toLocaleDateString()}
+                                                    {searchUser && (
+                                                        <button onClick={() => handleDelete(user)}>
+                                                            <Trash2 className="text-red-700" size={18} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                            )}
                         </tbody>
+
                     </table>
                 </div>
             </div>
