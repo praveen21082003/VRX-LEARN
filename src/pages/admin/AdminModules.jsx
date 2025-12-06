@@ -1,19 +1,25 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { BookOpen, Search, ListTree, Files, Plus, Trash2, ChevronRight, X, SquarePen } from "lucide-react";
+import React, { useEffect, useState, useRef, useMemo } from 'react'
+import { BookOpen, Search, ListTree, Files, Plus, Trash2, ChevronRight, X, SquarePen, EyeOff, Eye } from "lucide-react";
 import { useAdmin } from "../../components/context/AdminContextProvider";
 import axiosInstance from '../../api/axiosInstance';
 import AdminCRUDDialog from '../../adminComponents/reusable/AdminCRUDDialog';
 import ModuleVideo from "../../components/Video";
+import ConfirmationDialog from '../../components/ConfirmationDialog';
+import PdfViewer from '../../components/PdfViewer';
 
 
-function AdminModules({user}) {
-  const { allCourses, successMsg } = useAdmin();
+function AdminModules({ user }) {
+  const { allCourses, successMsg, fetchCourses } = useAdmin();
 
   const [active, setActive] = useState("Courses");
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [modules, setModules] = useState([]);
   const [selectedModule, setSelectedModule] = useState(null);
   const [selectedResource, setSelectedResource] = useState(null);
+  const [showDeleteBox, setShowDeleteBox] = useState(false);
+  const [selectedId, setSelectedId] = useState(0);
+  const [search, setSearch] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
 
 
   const videoRef = useRef(null);
@@ -61,6 +67,37 @@ function AdminModules({user}) {
     }
   }, [allCourses]);
 
+  const handleDelete = (id) => {
+    setShowDeleteBox(true);
+    setSelectedId(id);
+  }
+
+
+  const filtereddata = useMemo(() => {
+    if (active === "Courses") {
+      return allCourses.filter(course =>
+        course.name.toLowerCase().includes(search.toLowerCase()) ||
+        String(course.id).includes(search)
+      );
+    }
+
+    if (active === 'Modules') {
+      return modules.filter(module =>
+        module.name.toLowerCase().includes(search.toLowerCase()) ||
+        String(module.id).includes(search)
+      )
+    }
+
+    if (active === 'Resources') {
+      return selectedModule?.resources?.filter(resource =>
+        resource.name.toLowerCase().includes(search.toLowerCase()) ||
+        String(resource.id).includes(search) ||
+        resource.type.toLowerCase().includes(search.toLowerCase())
+      )
+    }
+  }, [active, search, allCourses, modules, selectedModule])
+
+
 
   const tab = (name) =>
     `flex items-center justify-center gap-1 px-3 py-2 font-semibold cursor-pointer border-b-4 ${active === name
@@ -71,6 +108,31 @@ function AdminModules({user}) {
 
   return (
     <div className="bg-white h-full rounded-lg overflow-hidden flex flex-col">
+      {showDeleteBox && (
+        <ConfirmationDialog
+          message={`Are you sure you want to delete this ${active.toLowerCase()}?`}
+          msg="⚠️ This action is irreversible."
+          buttonName="Delete"
+          loadingMsg="Deleting..."
+          endpoint={
+            active === "Courses"
+              ? "/courses"
+              : active === "Modules"
+                ? "/modules"
+                : "/resources"
+          }
+          actionId={selectedId}
+          onSuccess={() => {
+            setShowDeleteBox(false);
+
+            if (active === "Courses") fetchCourses();
+            if (active === "Modules") fetchModules(selectedCourse?.id);
+            if (active === "Resources") fetchModules(selectedCourse?.id); // refresh module list
+          }}
+          onClose={() => setShowDeleteBox(false)}
+        />
+      )}
+
       {showCreate && <AdminCRUDDialog
         courseId={selectedCourse?.id}
         courseName={selectedCourse?.name}
@@ -94,9 +156,9 @@ function AdminModules({user}) {
           </div>
         </div>
 
-        <div className="flex-1 flex justify-between">
+        <div className="hidden lg:flex flex-1 lg:justify-between">
           <div className="text-sm text-gray-700 font-medium flex items-center gap-1">
-            <ChevronRight className="text-green-700" size={18} />
+            <ChevronRight className="text-green-700" size={30} />
             {active === "Courses" && selectedCourse && <span>{selectedCourse.name}</span>}
             {active === "Modules" && selectedCourse && (
               <span>
@@ -112,7 +174,7 @@ function AdminModules({user}) {
           </div>
         </div>
 
-        <div className="flex gap-1 mr-5 font-semibold">
+        <div className="hidden lg:flex gap-1 mr-5 font-semibold">
           <button className="flex items-center gap-1 bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded-l-lg text-sm"
             onClick={() => {
               setShowCreate(true);
@@ -121,35 +183,49 @@ function AdminModules({user}) {
           >
             <Plus size={18} /> Add {active}
           </button>
-          <button className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-r-lg text-sm">
+          <button className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-r-lg text-sm"
+            onClick={() => {
+              if (active === "Courses") handleDelete(selectedCourse?.id);
+              if (active === "Modules") handleDelete(selectedModule?.id);
+              if (active === "Resources") handleDelete(selectedResource?.id);
+            }}
+          >
             <Trash2 size={18} />
           </button>
         </div>
 
       </header>
 
-      <div className="flex flex-1 w-full bg-gray-50 overflow-hidden">
+      <div className="flex flex-col-reverse lg:flex-row justify-between lg:justify-normal flex-1 w-full bg-gray-50 overflow-hidden">
 
-        <div className="w-full md:w-[30%] border-r bg-white overflow-y-auto">
+        <div className="w-full h-[75%] lg:h-auto lg:w-[30%] border-t lg:border-t-0 lg:border-r bg-white overflow-y-auto">
           <div className='flex justify-between gap-2 h-7 border-b px-1'>
-            <input type='checkbox' />
+            {/* <input type='checkbox' /> */}
             <div className="relative w-full">
               <Search className="absolute top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none opacity-70" />
               <input
                 type="text"
+                value={search}
                 className="w-full pl-5 bg-transparent outline-none"
                 placeholder={`Search ${active} (eg.ID,Name)`}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <div className='flex gap-1'>
               {/* <button className=''><X size={18} /></button> */}
               <button className='text-green-700' onClick={() => { setShowCreate(true); setCreate(`create${active}`) }}><Plus size={18} /></button>
-              <button className='text-red-600'><Trash2 size={18} /></button>
+              <button className='text-red-600'
+                onClick={() => {
+                  if (active === "Courses") handleDelete(selectedCourse?.id);
+                  if (active === "Modules") handleDelete(selectedModule?.id);
+                  if (active === "Resources") handleDelete(selectedResource?.id);
+                }}
+              ><Trash2 size={18} /></button>
             </div>
 
           </div>
           {active === "Courses" &&
-            allCourses.map((course) => (
+            filtereddata.map((course) => (
               <div
                 key={course.id}
                 onClick={() => fetchModules(course.id)}
@@ -161,7 +237,7 @@ function AdminModules({user}) {
             ))}
 
           {active === "Modules" &&
-            modules.map((m) => (
+            filtereddata.map((m) => (
               <div
                 key={m.id}
                 onClick={() => setSelectedModule(m)}
@@ -173,7 +249,7 @@ function AdminModules({user}) {
             ))}
 
           {active === "Resources" &&
-            selectedModule?.resources?.map((r) => (
+            filtereddata.map((r) => (
               <div
                 key={r.id}
                 onClick={() => setSelectedResource(r)}
@@ -229,18 +305,22 @@ function AdminModules({user}) {
                 <p className="text-gray-600">File Type: {selectedResource.file_type}</p>
 
                 <div className="mt-4 p-4 border rounded-lg bg-gray-50">
-                  <h3 className="font-semibold">Preview</h3>
+                  <div className='flex items-center gap-5 mb-5'>
+                    <h3 className="font-semibold">Preview</h3>
+                    <button className='text-white font-semibold bg-green-700 rounded-lg p-1' onClick={() => setShowPreview(!showPreview)}>{showPreview ? <p className='flex justify-center items-center gap-1'><EyeOff size={20}/>Hide</p> : <p className='flex justify-center items-center gap-1 px-1'><Eye size={20}/>View</p>}</button>
+                  </div>
 
-                  {selectedResource.type === "video" && (
+                  {showPreview && selectedResource.type === "video" && (
                     <ModuleVideo
                       videoRef={videoRef}
                       video_URL={videoURL}
                       user={user}
                       onNextVideo={() => alert("Next Video Triggered")}
                     />
-                  )}
+                  )
+                  }
 
-                  {selectedResource.type === "pdf" && <div className="mt-3">PDF Preview</div>}
+                  {showPreview && selectedResource.type === "pdf" && <div className="h-[500px]"><PdfViewer fileId={selectedResource.url} /></div>}
                 </div>
               </div>
             ) : (
@@ -255,7 +335,13 @@ function AdminModules({user}) {
               Edit {active}
             </button>
 
-            <button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+            <button className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              onClick={() => {
+                if (active === "Courses") handleDelete(selectedCourse?.id);
+                if (active === "Modules") handleDelete(selectedModule?.id);
+                if (active === "Resources") handleDelete(selectedResource?.id);
+              }}
+            >
               <Trash2 size={15} />
               Delete {active}
             </button>

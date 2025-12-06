@@ -61,7 +61,7 @@ function CreateResource({ moduleId, moduleName }) {
         <>
             <h1 className="subtitle">Create Resource</h1>
 
-            <div className="flex flex-col lg:flex-row justify-between items-center p-1 sm:p-5">
+            <div className="flex flex-col gap-10 lg:flex-row justify-between border items-center p-1 sm:p-5">
 
                 {successMsg ? (
                     <>
@@ -85,7 +85,7 @@ function CreateResource({ moduleId, moduleName }) {
                     </div>
                 )}
 
-                <form className="grid grid-cols-2 gap-1 sm:gap-5">
+                <form className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-5">
 
                     <div>
                         <label>Module Name*</label>
@@ -115,7 +115,7 @@ function CreateResource({ moduleId, moduleName }) {
                         )}
                     </div>
 
-                    <div className="col-span-2">
+                    <div className="sm:col-span-2">
                         <label>Type*</label>
                         <select
                             className="input-field"
@@ -153,7 +153,7 @@ function CreateResource({ moduleId, moduleName }) {
                         )}
                     </div>
 
-                    <div className="col-span-2 flex justify-center">
+                    <div className="sm:col-span-2 flex justify-center">
                         <button
                             type="button"
                             onClick={handleSubmit}

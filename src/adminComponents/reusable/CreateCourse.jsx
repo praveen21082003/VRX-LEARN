@@ -4,7 +4,7 @@ import { Grid2x2Plus, Grid2x2Check, CircleAlert } from 'lucide-react'
 import WarningPopup from '../../components/WarningPopup'
 
 function CreateCourse() {
-    const { courseLoading, successMsg, newCourse, setNewCourse, createCourse } = useAdmin();
+    const { courseLoading,setSuccessMsg, successMsg, newCourse, setNewCourse, createCourse } = useAdmin();
 
 
     const [formError, setFormError] = useState({
@@ -60,7 +60,7 @@ function CreateCourse() {
     return (
         <>
             <h1 className='subtitle'>Create Course</h1>
-            <div className='flex flex-col lg:flex-row justify-between items-center p-1 sm:p-5'>
+            <div className='flex flex-col lg:flex-row gap-10 justify-between items-center border p-1 sm:p-5'>
                 {successMsg ? (
                     <>
                         <WarningPopup
@@ -69,12 +69,12 @@ function CreateCourse() {
                             onClose={() => setSuccessMsg(false)}
                         />
                         <div className='h-32 w-32 bg-green-700 border rounded-full flex justify-center items-center text-white shadow-2xl'>
-                            <Grid2x2Plus className='animate-bounce' size={60} />
+                            <Grid2x2Check className='animate-bounce' size={60} />
                         </div>
                     </>
                 ) : (
                     <div className='h-32 w-32 bg-blue-700 border rounded-full flex justify-center items-center text-white shadow-2xl'>
-                        <Grid2x2Check size={60} />
+                        <Grid2x2Plus size={60} />
                     </div>
                 )}
                 <form className='grid grid-cols-2 gap-1 sm:gap-5'>

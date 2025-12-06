@@ -41,14 +41,11 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
     if (location.pathname.startsWith("/learn")) return "Learning Panel";
     if (location.pathname.startsWith("/profile")) return "Profile";
     if (location.pathname.startsWith("/settings")) return "Settings";
-    if (location.pathname.startsWith("/")) return "Logout";
-    if (location.pathname.startsWith("admin/dashboard")) return "Dashboard";
-    if (location.pathname.startsWith("admin/courses")) return "Courses";
-    if (location.pathname.startsWith("admin/users")) return "Users";
-    if (location.pathname.startsWith("admin/enrollments")) return "Enrollments";
-    if (location.pathname.startsWith("admin/modules")) return "Modules";
-
-    if (location.pathname.startsWith("/")) return "Logout";
+    if (location.pathname.startsWith("/admin/dashboard")) return "Dashboard";
+    if (location.pathname.startsWith("/admin/courses")) return "Courses";
+    if (location.pathname.startsWith("/admin/users")) return "Users";
+    if (location.pathname.startsWith("/admin/enrollments")) return "Enrollments";
+    if (location.pathname.startsWith("/admin/modules")) return "Modules";
 
     return "VRNexGen";
   };
@@ -86,10 +83,6 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
   const handleClose = () => {
     setShowLogout(false);
   };
-
-
-
-
 
   return (
     <>
