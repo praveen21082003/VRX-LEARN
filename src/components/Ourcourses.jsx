@@ -25,8 +25,8 @@ function Ourcourses() {
         setLoading(true);
         if (!courseData) {
           const response = await axiosInstance.get("/all_courses");
-          setCourseData(response.data);
-          setCourses(response.data);
+          setCourseData(response.data.items);
+          setCourses(response.data.items);
         } else {
           setCourses(courseData || []);
         }
