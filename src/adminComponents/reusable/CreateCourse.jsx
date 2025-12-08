@@ -60,7 +60,7 @@ function CreateCourse() {
     return (
         <>
             <h1 className='subtitle'>Create Course</h1>
-            <div className='flex flex-col lg:flex-row gap-10 justify-between border items-center p-1 sm:px-20 sm:p-5'>
+            <div className='flex flex-col lg:flex-row gap-10 justify-between border items-center p-2 sm:px-20 sm:p-5'>
                 {successMsg ? (
                     <>
                         <WarningPopup
@@ -119,7 +119,7 @@ function CreateCourse() {
                         />
                         {formError.description && <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.description}</p>}
                     </div>
-                    <div className='col-span-2 flex justify-center'>
+                    <div className='col-span-2 flex justify-center mt-10'>
                         <button
                             className='bg-gray-700 rounded-lg px-3 py-2 text-white font-semibold transition delay-100 duration-150 ease-in-out hover:-translate-y-1 hover:scale-110'
                             onClick={handleSubmit}

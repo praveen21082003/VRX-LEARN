@@ -97,7 +97,7 @@ function AdminCourses() {
                 <CreateCourse />
             </div>
 
-            <div className="sm:p-5">
+            <div className="py-10 sm:p-5">
                 <h1 className="subtitle mb-4">Search Course</h1>
                 <div className="">
                     {formError.search_input && <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.search_input}</p>}
@@ -194,7 +194,7 @@ function AdminCourses() {
                     </div>
                 </div>
             </div>
-            <div className='sm:p-5'>
+            <div className='py-10 sm:p-5'>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
                     <h3 className="subtitle">All Courses</h3>
                     <div className="relative flex gap-5 w-full lg:w-1/2">

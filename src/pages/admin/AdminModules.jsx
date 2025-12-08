@@ -9,7 +9,7 @@ import PdfViewer from '../../components/PdfViewer';
 
 
 function AdminModules({ user }) {
-  const { allCourses, successMsg, fetchCourses } = useAdmin();
+  const { allCourses, successMsg, fetchCourses, loadingCourses } = useAdmin();
 
   const [active, setActive] = useState("Courses");
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -20,6 +20,7 @@ function AdminModules({ user }) {
   const [selectedId, setSelectedId] = useState(0);
   const [search, setSearch] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+  const [moduleloadiing, setModuleLoading] = useState(true);
 
 
   const videoRef = useRef(null);
@@ -43,6 +44,7 @@ function AdminModules({ user }) {
   const fetchModules = async (course_id) => {
     try {
       // info of allCourses
+      setModuleLoading(true);
       const baseInfo = allCourses.find(c => c.id === course_id);
       setSelectedCourse(baseInfo);
 
@@ -58,6 +60,8 @@ function AdminModules({ user }) {
 
     } catch (error) {
       console.log(error);
+    } finally {
+      setModuleLoading(false);
     }
   }
 
@@ -101,8 +105,8 @@ function AdminModules({ user }) {
 
   const tab = (name) =>
     `flex items-center justify-center gap-1 px-5 lg:px-3 py-2 font-semibold cursor-pointer border-b-4 ${active === name
-      ? "border-green-600 text-black"
-      : "border rounded-t-lg text-sm text-gray-500 hover:text-black"
+      ? "border-green-600 text-black dark:text-gray-200"
+      : "border rounded-t-lg text-sm text-gray-500  hover:text-black dark:hover:text-gray-200"
     }`;
 
 
@@ -142,7 +146,7 @@ function AdminModules({ user }) {
         onClose={() => setShowCreate(false)}
       />}
 
-      <header className="bg-slate-100 text-slate-900 w-full lg:h-12 flex flex-col lg:flex-row justify-center lg:justify-normal items-center border-b">
+      <header className="bg-slate-100 w-full lg:h-12 flex flex-col lg:flex-row justify-center lg:justify-normal items-center border-b dark:bg-[#0a0a0ade]">
 
         <div className="flex justify-center min-w-[30%]">
           <div className={tab("Courses")} onClick={() => setActive("Courses")}>
@@ -157,7 +161,7 @@ function AdminModules({ user }) {
         </div>
 
         <div className="flex flex-1 w-full justify-start lg:justify-between">
-          <div className="text-sm text-gray-700 font-medium flex items-center gap-1">
+          <div className="text-sm text-gray-700 dark:text-gray-400 font-medium flex items-center gap-1">
             <ChevronRight className="text-green-700" size={26} />
             {active === "Courses" && selectedCourse && <span>{selectedCourse.name}</span>}
             {active === "Modules" && selectedCourse && (
@@ -177,6 +181,12 @@ function AdminModules({ user }) {
         <div className="flex gap-1 mr-5 font-semibold">
           <button className="flex items-center gap-1 bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded-l-lg text-sm"
             onClick={() => {
+              if (
+                (active === "Resources" && !selectedResource?.id)
+              ) {
+                alert(`No Module selected to create resource `);
+                return;
+              }
               setShowCreate(true);
               setCreate(`create${active}`);
             }}
@@ -204,9 +214,9 @@ function AdminModules({ user }) {
         </div>
       </header>
 
-      <div className="flex flex-col-reverse lg:flex-row h-full justify-between lg:justify-normal flex-1 w-full bg-gray-50 overflow-hidden">
+      <div className="flex flex-col-reverse lg:flex-row h-full justify-between lg:justify-normal flex-1 w-full bg-gray-50 overflow-hidden dark:bg-slate-700">
 
-        <div className="w-full h-[75%] lg:h-auto lg:w-[30%] border-t lg:border-t-0 lg:border-r bg-white overflow-y-auto">
+        <div className="w-full h-[75%] lg:h-auto lg:w-[30%] border-t lg:border-t-0 lg:border-r  dark:bg-slate-700 overflow-y-auto">
           <div className='flex justify-between gap-2 h-10 lg:h-9 border-b px-1'>
             {/* <input type='checkbox' /> */}
             <div className="relative w-full">
@@ -229,7 +239,7 @@ function AdminModules({ user }) {
                     (active === "Modules" && !selectedModule?.id) ||
                     (active === "Resources" && !selectedResource?.id)
                   ) {
-                    alert(`No ${active.toLowerCase()} selected to delete`);
+                    alert(`No ${active.toLowerCase()} to delete`);
                     return;
                   }
 
@@ -244,12 +254,32 @@ function AdminModules({ user }) {
           {active === "Courses" && filtereddata.length === 0 && (
             <div className="p-4 flex justify-center text-gray-500">No courses available</div>
           )}
+          {loadingCourses &&
+            <div className="p-4 space-y-3 animate-pulse">
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+              <div className="loading-course"></div>
+            </div>
+          }
           {active === "Courses" &&
             filtereddata.map((course) => (
               <div
                 key={course.id}
                 onClick={() => fetchModules(course.id)}
-                className={`p-3 border-b cursor-pointer hover:bg-green-50 transition ${selectedCourse?.id === course.id ? "bg-blue-100 font-semibold" : ""
+                className={`p-3 border-b cursor-pointer dark:text-white hover:bg-green-50 dark:hover:bg-gray-600 transition ${selectedCourse?.id === course.id ? "bg-blue-100 dark:bg-slate-500 font-semibold" : ""
                   }`}
               >
                 {course.name}
@@ -264,7 +294,7 @@ function AdminModules({ user }) {
               <div
                 key={m.id}
                 onClick={() => setSelectedModule(m)}
-                className={`p-3 border-b cursor-pointer hover:bg-blue-50 transition ${selectedModule?.id === m.id ? "bg-blue-100 font-semibold" : ""
+                className={`p-3 border-b cursor-pointer hover:bg-blue-50 dark:text-white dark:hover:bg-gray-600 transition ${selectedModule?.id === m.id ? "bg-blue-100 dark:bg-slate-500 font-semibold" : ""
                   }`}
               >
                 {m.name}
@@ -280,7 +310,7 @@ function AdminModules({ user }) {
               <div
                 key={r.id}
                 onClick={() => setSelectedResource(r)}
-                className={`p-3 border-b cursor-pointer hover:bg-yellow-50 transition ${selectedResource?.id === r.id ? "bg-yellow-100 font-semibold" : ""
+                className={`p-3 border-b cursor-pointer hover:bg-yellow-50 dark:text-white dark:hover:bg-gray-600 transition ${selectedResource?.id === r.id ? "bg-yellow-100 dark:bg-slate-500 font-semibold" : ""
                   }`}
               >
                 {r.name} ({r.type})
@@ -289,11 +319,24 @@ function AdminModules({ user }) {
         </div>
 
         <div className="flex-1 p-4 overflow-y-auto">
+          {loadingCourses &&
+            <div className="p-4 space-y-3 animate-pulse">
+              <div className='h-6 bg-gray-300 dark:bg-gray-700 rounded w-60'></div>
+              <div className='h-4 bg-gray-300 dark:bg-gray-700 rounded w-48'></div>
+              <div className='loading-course'></div>
+              <div className='loading-course'></div>
+              <div className='loading-course'></div>
+              <div className='flex gap-5'>
+                <div className='h-10 bg-gray-300 dark:bg-gray-700 rounded w-40'></div>
+                <div className='h-10 bg-gray-300 dark:bg-gray-700 rounded w-40'></div>
+              </div>
+            </div>
+          }
 
           {active === "Courses" && selectedCourse && (
             <div>
-              <h2 className="text-2xl font-bold">{selectedCourse.name}</h2>
-              <p className="text-gray-600 mt-1">Author: {selectedCourse.author}</p>
+              <h2 className="text-2xl dark:text-gray-100 font-bold">{selectedCourse.name}</h2>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">Author: {selectedCourse.author}</p>
               <p className="mt-4 text-gray-700">{selectedCourse.description}</p>
             </div>
           )}
@@ -301,10 +344,10 @@ function AdminModules({ user }) {
           {active === "Modules" &&
             (selectedModule ? (
               <div>
-                <h2 className="text-2xl font-bold">{selectedModule.name}</h2>
-                <p className="text-gray-600 mt-1">Module ID: {selectedModule.id}</p>
+                <h2 className="text-2xl font-bold dark:text-gray-100">{selectedModule.name}</h2>
+                <p className="text-gray-600 mt-1 dark:text-gray-300">Module ID: {selectedModule.id}</p>
 
-                <h3 className="mt-6 text-lg font-semibold">Resources</h3>
+                <h3 className="mt-6 text-lg font-semibold dark:text-gray-100">Resources</h3>
 
                 {selectedModule.resources?.length > 0 ? (
                   <ul className="list-disc ml-6">
@@ -327,11 +370,11 @@ function AdminModules({ user }) {
           {active === "Resources" &&
             (selectedResource ? (
               <div>
-                <h2 className="text-2xl font-bold">{selectedResource.name}</h2>
-                <p className="text-gray-600 mt-1">Resource ID: {selectedResource.id}</p>
-                <p className="text-gray-600">File Type: {selectedResource.file_type}</p>
+                <h2 className="text-2xl dark:text-gray-100 font-bold">{selectedResource.name}</h2>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">Resource ID: {selectedResource.id}</p>
+                <p className="text-gray-600 dark:text-gray-300">File Type: {selectedResource.file_type}</p>
 
-                <div className="mt-4 p-4 border rounded-lg bg-gray-50">
+                <div className="mt-4 p-4 border rounded-lg bg-gray-50 dark:bg-[#0b1222]">
                   <div className='flex items-center gap-5 mb-5'>
                     <h3 className="font-semibold">Preview</h3>
                     <button className='text-white font-semibold bg-green-700 rounded-lg p-1' onClick={() => setShowPreview(!showPreview)}>{showPreview ? <p className='flex justify-center items-center gap-1'><EyeOff size={20} />Hide</p> : <p className='flex justify-center items-center gap-1 px-1'><Eye size={20} />View</p>}</button>

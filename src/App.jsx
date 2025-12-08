@@ -125,7 +125,7 @@ function App() {
                   user={user}
                 />
                 <div
-                  className={`flex-1 dark:bg-[#0b1222] mt-10 sm:mt-0 p-2 sm:p-3 overflow-y-auto transition-all duration-300 ${collapsed ? "sm:ml-16" : "sm:ml-56"
+                  className={`flex-1 dark:bg-[#0b1222] mt-12 sm:mt-0 p-2 sm:p-3 overflow-y-auto transition-all duration-300 ${collapsed ? "sm:ml-16" : "sm:ml-56"
                     }`}
                   onClick={() => setMobileOpen(false)}
                 >
@@ -171,7 +171,7 @@ function App() {
                     user={user}
                   />
                   <div
-                    className={`flex-1 dark:bg-[#0b1222] mt-10 sm:mt-0 p-2 sm:p-3 overflow-y-auto transition-all duration-300 ${collapsed ? "sm:ml-16" : "sm:ml-56"
+                    className={`flex-1 dark:bg-[#0b1222] mt-12 sm:mt-0 p-2 sm:p-3 overflow-y-auto transition-all duration-300 ${collapsed ? "sm:ml-16" : "sm:ml-56"
                       }`}
                     onClick={() => setMobileOpen(false)}
                   >

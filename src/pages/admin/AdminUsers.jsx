@@ -177,9 +177,9 @@ function AdminUsers() {
                     }}
                 />
             }
-            <div className='sm:p-5'>
+            <div className='p-1 sm:p-5'>
                 <h1 className='subtitle'>Create User</h1>
-                <div className='flex flex-col lg:flex-row justify-evenly items-center border p-1 sm:p-5'>
+                <div className='flex flex-col lg:flex-row justify-evenly gap-10 items-center border p-2 sm:p-5'>
 
                     {successMsg ? (
                         <>
@@ -272,7 +272,7 @@ function AdminUsers() {
                             {formError.confirm_password && <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.confirm_password}</p>}
                         </div>
 
-                        <div className='col-span-2 flex justify-center'>
+                        <div className='col-span-2 flex justify-center mt-5'>
                             <button
                                 className='bg-gray-700 rounded-lg px-3 py-2 text-white font-semibold transition delay-100 duration-150 ease-in-out hover:-translate-y-1 hover:scale-110'
                                 onClick={handleSubmit}
@@ -285,7 +285,7 @@ function AdminUsers() {
                     </form>
                 </div>
             </div>
-            <div className="sm:p-5">
+            <div className="py-10 sm:p-5">
                 <h1 className="subtitle mb-4">Search User</h1>
 
 

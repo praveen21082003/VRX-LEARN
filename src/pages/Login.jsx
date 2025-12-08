@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail, LockKeyhole, LoaderCircle } from "lucide-react";
+import { Mail, LockKeyhole, LoaderCircle, Linkedin, Github, Youtube, Globe } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
 
 function Login() {
@@ -117,14 +117,21 @@ function Login() {
           </form>
         </div>
 
-        <div className="text-center flex flex-col py-10 gap-4">
-          <a href="#" className="text-blue-500 font-semibold">
+        <div className="text-center flex  flex-col py-10 gap-4">
+          {/* <a href="#" className="text-blue-500 font-semibold">
             or Sign Up
-          </a>
+          </a> */}
+          <div className='flex justify-center gap-4 text-gray-700'>
+            <a href="https://www.linkedin.com/company/vrnexgen/" className="hover:text-blue-700" target="_blank" rel="noopener noreferrer"><Linkedin size={20} /></a>
+            <a href="https://vrnexgen1.com" className="hover:text-blue-500" target="_blank" rel="noopener noreferrer"><Globe size={20} /></a>
+            <a href="#" className="hover:text-gray-300" target="_blank" rel="noopener noreferrer"><Github size={20} /></a>
+            <a href="https://www.youtube.com/@VRNeXGen1" className="hover:text-red-500" target="_blank" rel="noopener noreferrer"><Youtube size={20} /></a>
+          </div>
           <a href="#" className="text-gray-400 font-semibold">
             forgot password?
           </a>
         </div>
+
       </div>
     </div>
   );

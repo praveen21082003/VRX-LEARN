@@ -102,7 +102,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
       </div>
 
       <button
-        className="sm:hidden fixed flex top-1 z-40 text-black dark:text-white p-2 rounded-md"
+        className="sm:hidden fixed flex top-1 z-40 text-black p-2 rounded-md"
         onClick={() => setMobileOpen((prev) => !prev)}
       >
         <Menu size={20} />

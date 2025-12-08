@@ -63,7 +63,7 @@ export default function AdminDashboard() {
                                 .map((user, index) => (
                                     <tr
                                         key={user.id}
-                                        className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                                        className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
                                             }`}
                                     >
                                         <td className="tabletd">{user.fullname}</td>
