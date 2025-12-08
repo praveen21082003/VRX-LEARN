@@ -484,7 +484,7 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
       </div>
 
       <div className="h-5">
-        {progress > 99 &&
+        {progress > 99 && user.role !== 'admin' &&
           <button className="bg-green-700 flex justify-center md:gap-1 items-center text-xs lg:text-base text-white px-4 py-1 md:px-4 md:py-2 rounded-lg" onClick={onNextVideo}><CirclePlay size={20} />Play Next<MoveRight size={15} /></button>}
       </div>
     </>

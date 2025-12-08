@@ -72,9 +72,15 @@ function AdminEnrollments() {
         if (!newEnrollment.user_id.trim()) {
             errors.user_id = "Username cannot be empty"
         }
+        else if (!newEnrollment.user_id_value){
+            errors.user_id = "Please select a user from the dropdown."
+        }
 
         if (!newEnrollment.course_id.trim()) {
             errors.course_id = "Coursename cannot be empty"
+        }
+        else if (!newEnrollment.course_id_value){
+            errors.course_id = "Please select a course from the dropdown."
         }
 
         setFormError(errors);
@@ -197,7 +203,7 @@ function AdminEnrollments() {
                         </div>
                     )}
 
-                    <form className="grid grid-cols-1 gap-3 sm:gap-5 lg:grid-cols-2">
+                    <form className="grid grid-cols-1 gap-3 sm:gap-5 lg:grid-cols-2" onClick={() => {setOpenUsers(false); setOpenCourses(false);}}>
 
                         <div className="relative w-full">
                             <label>User Name*</label>
@@ -206,10 +212,10 @@ function AdminEnrollments() {
                                 className="input-field w-full"
                                 value={newEnrollment.user_id}
                                 placeholder="Search user...(eg.name,id)"
-                                onClick={() => setOpenUsers(!openUsers)}
+                                // onClick={() => setOpenUsers(!openUsers)}
                                 onChange={(e) => {
                                     setOpenUsers(true);
-                                    setNewEnrollment({ ...newEnrollment, user_id: e.target.value });
+                                    setNewEnrollment({ ...newEnrollment, user_id: e.target.value, user_id_value: null });
                                 }}
 
                             />
@@ -264,7 +270,6 @@ function AdminEnrollments() {
                                 className="input-field w-full"
                                 value={newEnrollment.course_id}
                                 placeholder="Search course...(eg.name,id)"
-                                onClick={() => setOpenCourses(!openCourses)}
                                 onChange={(e) => {
                                     setOpenCourses(true);
                                     setNewEnrollment({ ...newEnrollment, course_id: e.target.value });

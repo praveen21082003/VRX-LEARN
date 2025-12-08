@@ -196,10 +196,6 @@ function PdfViewer({ fileId }) {
         ref={scrollRef}
         className="w-full h-full overflow-auto flex flex-col items-center py-3"
       >
-        {loading && (
-          <p className="text-center text-gray-300">Loading PDF...</p>
-        )}
-
         {pdfBlobUrl && (
           <Document
             file={pdfBlobUrl}
@@ -209,7 +205,7 @@ function PdfViewer({ fileId }) {
               <div
                 key={idx}
                 ref={(el) => (pageRefs.current[idx] = el)}
-                className={`mb-4 shadow-lg rounded-md ${pageNumber === idx + 1 ? "ring-2 ring-indigo-500" : ""
+                className={`mb-4 shadow-lg ${pageNumber === idx + 1 ? "ring-2 ring-indigo-500" : ""
                   }`}
               >
                 <Page

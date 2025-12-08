@@ -111,7 +111,7 @@ function AdminModules({ user }) {
 
 
   return (
-    <div className='pagebg h-full overflow-hidden'>
+    <div className='pagebg h-[100%] overflow-hidden flex flex-col'>
       {showDeleteBox && (
         <ConfirmationDialog
           message={`Are you sure you want to delete this ${active.toLowerCase()}?`}
@@ -214,7 +214,7 @@ function AdminModules({ user }) {
         </div>
       </header>
 
-      <div className="flex flex-col-reverse lg:flex-row h-full justify-between lg:justify-normal flex-1 w-full bg-gray-50 overflow-hidden dark:bg-slate-700">
+      <div className="flex flex-col-reverse lg:flex-row h-full justify-between lg:justify-normal flex-1 w-full bg-gray-50 overflow-hidden dark:bg-slate-800">
 
         <div className="w-full h-[75%] lg:h-auto lg:w-[30%] border-t lg:border-t-0 lg:border-r  dark:bg-slate-700 overflow-y-auto">
           <div className='flex justify-between gap-2 h-10 lg:h-9 border-b px-1'>
@@ -262,7 +262,7 @@ function AdminModules({ user }) {
 
           </div>
           {active === "Courses" && filtereddata.length === 0 && (
-            <div className="p-4 flex justify-center text-gray-500">No courses available</div>
+            <div className="p-4 flex justify-center text-gray-500">No courses were found for "{search}".</div>
           )}
           {loadingCourses &&
             <div className="p-4 space-y-3 animate-pulse">
@@ -297,7 +297,7 @@ function AdminModules({ user }) {
             ))}
 
           {active === "Modules" && filtereddata.length === 0 && (
-            <div className="p-4 flex justify-center text-gray-500">No modules available</div>
+            <div className="p-4 flex justify-center text-gray-500">No modules were found for "{search}".</div>
           )}
           {active === "Modules" &&
             filtereddata.map((m) => (
@@ -312,7 +312,7 @@ function AdminModules({ user }) {
             ))}
 
           {active === "Resources" && filtereddata.length === 0 && (
-            <div className="p-4 flex justify-center text-gray-500">No resources available</div>
+            <div className="p-4 flex justify-center text-gray-500">No resources were found for "{search}".</div>
           )}
 
           {active === "Resources" &&
@@ -347,7 +347,7 @@ function AdminModules({ user }) {
             <div>
               <h2 className="text-2xl dark:text-gray-100 font-bold">{selectedCourse.name}</h2>
               <p className="text-gray-600 dark:text-gray-300 mt-1">Author: {selectedCourse.author}</p>
-              <p className="mt-4 text-gray-700">{selectedCourse.description}</p>
+              <p className="mt-4 text-gray-700 dark:text-gray-400">{selectedCourse.description}</p>
             </div>
           )}
 

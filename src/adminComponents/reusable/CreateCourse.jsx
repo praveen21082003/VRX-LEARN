@@ -6,12 +6,17 @@ import WarningPopup from '../../components/WarningPopup'
 function CreateCourse() {
     const { courseLoading, setSuccessMsg, successMsg, newCourse, setNewCourse, createCourse } = useAdmin();
 
-
     const [formError, setFormError] = useState({
         name: "",
         description: "",
         author: ""
     })
+
+
+    const getWordCount = (text) => {
+        return text.trim().split(/\s+/).filter(Boolean).length;
+    };
+
 
 
     function checkFormError() {
@@ -27,9 +32,11 @@ function CreateCourse() {
             errors.description = "Description must start with an uppercase letter.";
         }
         else {
-            const wordCount = newCourse.description.trim().split(/\s+/).length;
+            const wordCount = getWordCount(newCourse.description)
             if (wordCount < 15) {
                 errors.description = "Description must be at least 15 words long.";
+            } else if (wordCount > 20) {
+                errors.description = "Description cannot exceed 20 words."
             }
         }
         if (!newCourse.author.trim()) {
@@ -116,7 +123,11 @@ function CreateCourse() {
                             name='description'
                             value={newCourse.description}
                             onChange={handleOnChange}
+                            title="Description must contain at least 15 words and must not exceed 20 words."
                         />
+                        <p className="flex justify-end text-xs text-gray-600">
+                            <span className="font-semibold">{getWordCount(newCourse.description)}/20</span>
+                        </p>
                         {formError.description && <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.description}</p>}
                     </div>
                     <div className='col-span-2 flex justify-center mt-10'>

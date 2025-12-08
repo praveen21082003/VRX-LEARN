@@ -45,7 +45,7 @@ export default function AdminDashboard() {
                 <EnrollmentSummary />
             </div>
             <div className="p-5">
-                <h3 className="subtitle">Admin Details</h3>
+                <h3 className="subtitle">Admin Users</h3>
                 <div className="overflow-x-auto rounded-lg shadow-sm border">
                     <table className="admintabletag">
                         <thead className="tableheader">

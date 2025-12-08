@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { Trash2, UserSearch, UserCheck, UserPlus, CircleAlert } from 'lucide-react';
+import { Trash2, UserSearch, UserCheck, UserPlus, CircleAlert, ShieldUser } from 'lucide-react';
 import { useAdmin } from '../../components/context/AdminContextProvider';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import axiosInstance from '../../api/axiosInstance';
@@ -189,7 +189,7 @@ function AdminUsers() {
                                 onClose={() => setSuccessMsg(false)}
                             />
                             <div className='h-32 w-32 bg-green-700 border rounded-full flex justify-center items-center text-white shadow-2xl'>
-                                <UserCheck className='animate-bounce' size={60} />
+                                {newUser.role === "admin" ? <ShieldUser className='animate-bounce' size={60} /> : <UserCheck className='animate-bounce' size={60} />}
                             </div>
                         </>
                     ) : (
@@ -406,7 +406,7 @@ function AdminUsers() {
                 </div>
 
 
-                <div className="overflow-x-auto rounded-lg shadow-sm border">
+                <div className="overflow-x-auto rounded-lg h-full shadow-sm border">
                     <table className="admintabletag">
                         <thead className="tableheader">
                             <tr>
@@ -419,7 +419,7 @@ function AdminUsers() {
                         </thead>
 
                         <tbody>
-                            {filteredUserData.filter((a) => a.role === "trainee").length === 0 ? (
+                            {filteredUserData.length === 0 ? (
                                 <tr>
                                     <td
                                         className="tabletd text-center py-4 text-gray-500 font-semibold"
@@ -429,31 +429,29 @@ function AdminUsers() {
                                     </td>
                                 </tr>
                             ) : (
-                                filteredUserData
-                                    .filter((a) => a.role === "trainee")
-                                    .map((user, index) => (
-                                        <tr
-                                            key={user.id}
-                                            className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition 
+                                filteredUserData.map((user, index) => (
+                                    <tr
+                                        key={user.id}
+                                        className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition 
                                                 ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}
                                             `}
-                                        >
-                                            <td className="tabletd">{user.fullname}</td>
-                                            <td className="tabletd">{user.email_id}</td>
-                                            <td className="tabletd">{user.id}</td>
-                                            <td className="tabletd">{user.role}</td>
-                                            <td className="tabletd">
-                                                <div className={`${searchUser && "flex justify-between"}`}>
-                                                    {new Date(user.created_at).toLocaleDateString()}
-                                                    {searchUser && (
-                                                        <button onClick={() => handleDelete(user)}>
-                                                            <Trash2 className="text-red-700" size={18} />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
+                                    >
+                                        <td className="tabletd">{user.fullname}</td>
+                                        <td className="tabletd">{user.email_id}</td>
+                                        <td className="tabletd">{user.id}</td>
+                                        <td className="tabletd">{user.role}</td>
+                                        <td className="tabletd">
+                                            <div className={`${searchUser && "flex justify-between"}`}>
+                                                {new Date(user.created_at).toLocaleDateString()}
+                                                {searchUser && (
+                                                    <button onClick={() => handleDelete(user)}>
+                                                        <Trash2 className="text-red-700" size={18} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
                             )}
                         </tbody>
 

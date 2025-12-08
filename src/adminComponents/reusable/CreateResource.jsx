@@ -85,7 +85,7 @@ function CreateResource({ moduleId, moduleName }) {
                     </div>
                 )}
 
-                <form className="grid grid-cols-1 sm:grid-cols-2 gap-1 sm:gap-5">
+                <form className="grid grid-cols-2 gap-1 sm:gap-5">
 
                     <div>
                         <label>Module Name*</label>
@@ -115,7 +115,7 @@ function CreateResource({ moduleId, moduleName }) {
                         )}
                     </div>
 
-                    <div className="sm:col-span-2">
+                    <div>
                         <label>Type*</label>
                         <select
                             className="input-field"
@@ -153,7 +153,7 @@ function CreateResource({ moduleId, moduleName }) {
                         )}
                     </div>
 
-                    <div className="sm:col-span-2 flex justify-center">
+                    <div className="flex col-span-2 justify-center">
                         <button
                             type="button"
                             onClick={handleSubmit}
