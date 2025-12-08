@@ -231,7 +231,17 @@ function AdminModules({ user }) {
             </div>
             <div className='flex gap-1'>
               {/* <button className=''><X size={18} /></button> */}
-              <button className='text-green-700' onClick={() => { setShowCreate(true); setCreate(`create${active}`) }}><Plus size={18} /></button>
+              <button className='text-green-700'
+                onClick={() => {
+                  if (
+                    (active === "Resources" && !selectedResource?.id)
+                  ) {
+                    alert(`No Module selected to create resource `);
+                    return;
+                  }
+                  setShowCreate(true);
+                  setCreate(`create${active}`)
+                }}><Plus size={18} /></button>
               <button className='text-red-600'
                 onClick={() => {
                   if (
