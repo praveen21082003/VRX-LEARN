@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { href, Link, useLocation, useNavigate } from "react-router-dom";
-import DarkModeToggle from "./DarkModeToggle";
+
+const DarkModeToggle = lazy(()=> import('./DarkModeToggle'));
 import WarningPopup from "./WarningPopup";
-// import Logout from "../pages/Logout";
+
 import ConfirmationDialog from "./ConfirmationDialog";
 
 import {

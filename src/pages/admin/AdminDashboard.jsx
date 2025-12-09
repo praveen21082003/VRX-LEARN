@@ -2,7 +2,7 @@ import { GraduationCap, Users, ShieldUser, Contact } from 'lucide-react';
 import { useAdmin } from '../../components/context/AdminContextProvider';
 import EnrollmentSummary from '../../adminComponents/EnrollmentSummary';
 
-export default function AdminDashboard() {
+export default function AdminDashboard({ loginUser }) {
     const { usersData, loadingUsers, usersCount, adminCount, studentCount, coursesCount } = useAdmin();
 
     return (
@@ -66,7 +66,13 @@ export default function AdminDashboard() {
                                         className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
                                             }`}
                                     >
-                                        <td className="tabletd">{user.fullname}</td>
+                                        <td className="tabletd">{user.fullname}
+                                            {user.email_id === loginUser.email_id && (
+                                                <span className="ml-2 text-green-700 text-xs bg-green-100 px-2 py-1 rounded-full">
+                                                    You
+                                                </span>
+                                            )}
+                                        </td>
                                         <td className="tabletd">{user.email_id}</td>
                                         <td className="tabletd">{user.id}</td>
                                         <td className="tabletd">

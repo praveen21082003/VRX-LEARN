@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, lazy } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ChevronUp,
@@ -11,9 +11,12 @@ import {
 import axiosInstance from "../api/axiosInstance";
 import Video from "../components/Video";
 import PdfViewer from "../components/PdfViewer";
-import { useLearn } from "../components/context/ContextProvider";
+
 import DialogueBox from "../components/DialogueBox";
 import Coursecontentloading from "../components/loading/Coursecontentloading";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+
+
 
 function LearnPage({ user }) {
   const navigate = useNavigate();
@@ -58,6 +61,11 @@ function LearnPage({ user }) {
         const status = error.response?.status;
         const detail = error.response?.data?.detail || "Unexpected error";
 
+        if (status === 401) {
+          alert("Not authorized. Please log in again.");
+          navigate("/");
+        }
+
         setErrorData({
           code: status,
           message: "Request failed",
@@ -76,16 +84,16 @@ function LearnPage({ user }) {
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();
 
-    const isBing = 
+    const isBing =
       ua.includes("bing") ||
       ua.includes("bingwebview") ||
       ua.includes("bingpreview") ||
       ua.includes("wv") && ua.includes("bing");
 
-      if (isBing){
-        alert("⚠️ Some features may not work in the Bing App. For best experience, please open the site in Chrome or Edge Browser.")
-      }
-  },[]);
+    if (isBing) {
+      alert("⚠️ Some features may not work in the Bing App. For best experience, please open the site in Chrome or Edge Browser.")
+    }
+  }, []);
 
 
 
@@ -193,7 +201,15 @@ function LearnPage({ user }) {
   return (
     <>
       {showLogout && (
-        <Logout handleClose={handleClose} msg={"⚠️Security alert! Screenshot blocked. Repeated attempts will lock your account."}/>
+        <ConfirmationDialog
+          message="Are you sure you want to log out?"
+          msg="⚠️Security alert! Screenshot blocked. Repeated attempts will lock your account."
+          buttonName="Logout"
+          loadingMsg="Loging out..."
+          endpoint="/auth/logout"
+          onSuccess={() => setShowLogout(false)}
+          onClose={() => setShowLogout(false)}
+        />
       )}
 
       {errorData.show && (
@@ -237,7 +253,11 @@ function LearnPage({ user }) {
             <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4 flex items-center gap-2">
               <BookOpen className="w-6 h-6" /> Learn
             </h1>
-
+            {Object.keys(groupedData).length === 0 &&
+              <div className="text-center py-3 text-gray-500 dark:text-gray-400">
+                Learning content for this course is not available.
+              </div>
+            }
             {Object.entries(groupedData).map(([courseName, modules], idx) => (
               <div key={idx} className="mb-5">
 
@@ -334,10 +354,31 @@ function LearnPage({ user }) {
               onNextVideo={handlePlayNextVideo}
             />
           ) : (
-            <p className="text-gray-500 flex gap-3 items-center">
-              <MousePointerClick className="w-5 h-5" />
-              Welcome to the training panel. Select a Video or PDF.
-            </p>
+            <div className="flex justify-center items-center w-full">
+              {loading ? (
+                <div className="w-full h-[300px] sm:h-[300px] lg:h-[420px] 
+                  bg-gray-200 animate-pulse rounded-lg shadow-inner
+                  flex items-center justify-center">
+                  <div className="relative h-40 w-40 rounded-full overflow-hidden flex items-center justify-center bg-sky-400">
+                    <video
+                      src="/loadinglearn.mp4"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      disablePictureInPicture
+                      className="h-full w-full"
+                    />
+                    <p className="absolute text-sm bottom-2">Loading...</p>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-500 flex gap-3 items-center">
+                  <MousePointerClick className="w-5 h-5" />
+                  Welcome to the training panel. Select a Video or PDF.
+                </p>
+              )}
+            </div>
           )}
         </div>
 

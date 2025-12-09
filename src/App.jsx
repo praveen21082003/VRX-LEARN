@@ -61,6 +61,7 @@ function App() {
 
         const status = error.response?.status;
         const detail = error.response?.data?.detail || "Unexpected error";
+
         if (status !== 401 && !isLoginPage) {
           setErrorData({
             code: status,
@@ -77,6 +78,8 @@ function App() {
 
     checkAuth();
   }, [isLoginPage]);
+
+  console.log(user)
 
   if (!checkedAuth && !isLoginPage) {
     return (
@@ -184,7 +187,7 @@ function App() {
                       }
                     >
                       <Routes>
-                        <Route path="dashboard" element={<AdminDashboard user={user} />} />
+                        <Route path="dashboard" element={<AdminDashboard loginUser={user} />} />
                         <Route path="users" element={<AdminUsers />} />
                         <Route path="courses" element={<AdminCourses />} />
                         <Route path="enrollments" element={<AdminEnrollments />} />

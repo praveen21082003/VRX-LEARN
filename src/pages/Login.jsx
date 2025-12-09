@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail, LockKeyhole, LoaderCircle, Linkedin, Github, Youtube, Globe } from "lucide-react";
+import { Mail, LockKeyhole, LoaderCircle, Linkedin, Github, Youtube, Globe, TriangleAlert } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
 
 function Login() {
@@ -66,8 +66,8 @@ function Login() {
             <img src="./logo.png" alt="logo" className="w-9 h-auto" />
             <h1 className="font-bold text-3xl text-center">Login</h1>
             {errorMessage && (
-              <p className="text-red-500 text-sm text-center mt-2">
-                {errorMessage}
+              <p className="flex gap-1 items-center text-red-500 text-sm text-center mt-2">
+                <TriangleAlert size={15}/>{errorMessage}
               </p>
             )}
           </div>

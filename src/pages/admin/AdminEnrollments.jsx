@@ -445,8 +445,8 @@ function AdminEnrollments() {
                     <table className="admintabletag">
                         <thead className="tableheader">
                             <tr>
-                                <th className="tableth">UserId</th>
-                                <th className="tableth">CourseId</th>
+                                <th className="tableth">Username</th>
+                                <th className="tableth">Course Name</th>
                                 <th className="tableth">EnrollmentId</th>
                                 <th className="tableth">Enrolled At</th>
                             </tr>
@@ -470,8 +470,8 @@ function AdminEnrollments() {
                                             className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
                                                 }`}
                                         >
-                                            <td className="tabletd">{enrollment.user_id}</td>
-                                            <td className="tabletd">{enrollment.course_id}</td>
+                                            <td className="tabletd">{enrollment.username}</td>
+                                            <td className="tabletd">{enrollment.course_name}</td>
                                             <td className="tabletd">{enrollment.id}</td>
                                             <td className="tabletd">
                                                 <div className={`${searchEnrollment && "flex justify-between"}`}>

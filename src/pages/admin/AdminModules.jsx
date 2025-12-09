@@ -297,7 +297,11 @@ function AdminModules({ user }) {
             ))}
 
           {active === "Modules" && filtereddata.length === 0 && (
-            <div className="p-4 flex justify-center text-gray-500">No modules were found for "{search}".</div>
+            <div className="p-4 flex justify-center text-gray-500">
+              {search
+                ? <>No resources found for "<span className="font-semibold">{search}</span>".</>
+                : "No resources available."}
+            </div>
           )}
           {active === "Modules" &&
             filtereddata.map((m) => (
@@ -312,8 +316,13 @@ function AdminModules({ user }) {
             ))}
 
           {active === "Resources" && filtereddata.length === 0 && (
-            <div className="p-4 flex justify-center text-gray-500">No resources were found for "{search}".</div>
+            <div className="p-4 flex justify-center text-gray-500">
+              {search
+                ? <>No resources found for "<span className="font-semibold">{search}</span>".</>
+                : "No resources available."}
+            </div>
           )}
+
 
           {active === "Resources" &&
             filtereddata.map((r) => (

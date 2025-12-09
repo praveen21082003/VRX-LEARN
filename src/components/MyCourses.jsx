@@ -95,7 +95,6 @@ function MyCourses({ searchQuery }) {
             ) : (
                 <p className="text-center text-gray-500 py-10">
                     No enrolled courses found for "{`${searchQuery}`}", {searchQuery && <><Link to={`/courses/${searchQuery}`}> <u className='text-blue-700'> chick here</u></Link> to see in all courses</>}
-                    
                 </p>
             )}
         </div>

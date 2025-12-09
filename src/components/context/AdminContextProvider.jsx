@@ -100,7 +100,7 @@ export function AdminContextProvider({ children }) {
     const fetchALLEnrollments = async () => {
 
         try {
-            const response = await axiosInstance.get('/enrollments/');
+            const response = await axiosInstance.get('/enrollments/aggregated');
             setEnrollments(response.data);
         } catch (error) {
             const status = error.response?.status;

@@ -4,7 +4,7 @@ import { useAdmin } from "../../components/context/AdminContextProvider";
 import WarningPopup from "../../components/WarningPopup";
 
 function CreateResource({ moduleId, moduleName }) {
-    const { successMsg, setSuccessMsg, createResource, newResource, setNewResource } = useAdmin();
+    const { successMsg, setSuccessMsg, createResource, newResource, setNewResource,resourceLoading } = useAdmin();
 
     const [formError, setFormError] = useState({
         name: "",
@@ -159,7 +159,7 @@ function CreateResource({ moduleId, moduleName }) {
                             onClick={handleSubmit}
                             className="bg-gray-700 rounded-lg px-3 py-2 text-white font-semibold hover:-translate-y-1 hover:scale-110 transition"
                         >
-                            Create Resource
+                            {resourceLoading ? "Creating Resource..." : "Create Resource"}
                         </button>
                     </div>
                 </form>

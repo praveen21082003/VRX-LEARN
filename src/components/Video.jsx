@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { lazy, useEffect, useRef, useState } from "react";
 import {
   Play,
   Pause,
@@ -13,7 +13,9 @@ import {
   CirclePlay,
   MoveRight
 } from "lucide-react";
-import Watermark from "./Watermark";
+
+const Watermark = lazy(()=> import('./Watermark'));
+
 
 function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
   const [isPlaying, setIsPlaying] = useState(false);
