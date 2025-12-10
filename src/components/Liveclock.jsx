@@ -13,7 +13,7 @@ function Liveclock() {
     }, []);
 
     return (
-        <div className="text-black flex text-xs font-semibold">
+        <div className="text-black flex text-[10px] font-semibold">
             <p>{Time.toLocaleDateString()} ({Time.toLocaleTimeString()})</p>
         </div>
     );

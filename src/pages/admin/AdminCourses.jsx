@@ -241,7 +241,7 @@ function AdminCourses() {
                                             }`}
                                     >
                                         <td className='tabletd'>{course.name}</td>
-                                        <td className='tabletd'>{course.description}</td>
+                                        <td className='tabletd'><div className='line-clamp-3'>{course.description}</div></td>
                                         <td className='tabletd'>{course.author}</td>
                                         <td className='tabletd'>{course.id}</td>
                                         <td className='tabletd'>{new Date(course.created_at).toLocaleString()}</td>

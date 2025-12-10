@@ -13,10 +13,6 @@ function CreateCourse() {
     })
 
 
-    const getWordCount = (text) => {
-        return text.trim().split(/\s+/).filter(Boolean).length;
-    };
-
 
 
     function checkFormError() {
@@ -32,11 +28,9 @@ function CreateCourse() {
             errors.description = "Description must start with an uppercase letter.";
         }
         else {
-            const wordCount = getWordCount(newCourse.description)
-            if (wordCount < 15) {
-                errors.description = "Description must be at least 15 words long.";
-            } else if (wordCount > 20) {
-                errors.description = "Description cannot exceed 20 words."
+            const charCount = newCourse.description.length;
+            if (charCount < 500) {
+                errors.description = `Description must be at least 500 characters. (${charCount}/500)`;
             }
         }
         if (!newCourse.author.trim()) {
@@ -116,6 +110,7 @@ function CreateCourse() {
                         <label>Description*</label>
                         <textarea
                             rows={3}
+                            maxLength={2000}
                             className='input-field'
                             type='text-area'
                             placeholder='Enter description'
@@ -123,10 +118,10 @@ function CreateCourse() {
                             name='description'
                             value={newCourse.description}
                             onChange={handleOnChange}
-                            title="Description must contain at least 15 words and must not exceed 20 words."
+                            title="Description must contain at least 500 characters and must not exceed 2000 characters."
                         />
                         <p className="flex justify-end text-xs text-gray-600">
-                            <span className="font-semibold">{getWordCount(newCourse.description)}/20</span>
+                            <span className="font-semibold">{newCourse.description.length} / 2000</span>
                         </p>
                         {formError.description && <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.description}</p>}
                     </div>

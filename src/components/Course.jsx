@@ -1,6 +1,7 @@
 import React from "react";
 import { LockKeyholeOpen, LockKeyhole, GraduationCap, BookOpenText } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import Tippy from '@tippyjs/react';
 
 
 function Course({ id, url, name, description, author, enrollment }) {
@@ -44,9 +45,17 @@ function Course({ id, url, name, description, author, enrollment }) {
             </div>
 
             <div className="flex justify-center px-1 h-24">
-                <p className="text-xs text-gray-600 mt-1 line-clamp-2">
-                    {description}
-                </p>
+                <Tippy
+                    className="bg-black/80 p-2 text-xs text-white w-[100%] rounded"
+                    content={description}
+                    placement="auto"
+                    trigger="click"
+                >
+                    <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                        {description}
+                    </p>
+                </Tippy>
+
             </div>
 
             <div className="flex justify-center p-3">
