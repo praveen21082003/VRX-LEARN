@@ -104,7 +104,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
         </div>
 
         {/* Profile Section */}
-        <div className="flex w-[30%] sm:w-[25%] md:w-[20%] justify-end items-center">
+        <div className="flex ml-8 w-[30%] sm:w-[25%] md:w-[20%] justify-end items-center">
           <Userprofile user={user} />
         </div>
     

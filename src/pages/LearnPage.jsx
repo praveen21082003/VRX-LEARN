@@ -27,6 +27,8 @@ function LearnPage({ user }) {
   const [currentPDF, setCurrentPDF] = useState("");
   const [activeVideo, setActiveVideo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [selectedResourceId, setSelectedResourceId] = useState(null);
+
   const [errorData, setErrorData] = useState({
     code: null,
     message: "",
@@ -283,9 +285,8 @@ function LearnPage({ user }) {
                         {isModuleOpen && (
                           <div className="pl-2">
                             {resources.map((res, j) => {
-                              const isActive = activeVideo === res.file_id;
+                              const isActive = selectedResourceId === res.file_id;
                               const isPDF = res.resource_type === "pdf";
-
                               return (
                                 <div
                                   key={j}
@@ -299,14 +300,19 @@ function LearnPage({ user }) {
                                     }
                               `}
                                   onClick={() => {
+                                    if (selectedResourceId === res.file_id) return;
+                                    setSelectedResourceId(res.file_id);
+
                                     if (isPDF) {
                                       setCurrentPDF(res.file_id);
                                       setCurrentVideo("");
                                       return;
                                     }
+
                                     setCurrentPDF("");
                                     handleVideoPlay(res.file_id);
                                   }}
+
                                 >
                                   <span className="truncate dark:text-gray-300">
                                     {res.resource_name}

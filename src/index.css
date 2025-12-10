@@ -8,7 +8,7 @@
     @apply w-full rounded-md p-2 bg-white text-gray-800 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 outline-none transition;
   }
 
-  .icon-insearchbar{
+  .icon-insearchbar {
     @apply absolute left-3 top-1/2 -translate-y-1/2 text-gray-700
   }
 
@@ -34,32 +34,35 @@
     pointer-events: none;
   }
 
-  .subtitle{
+  .subtitle {
     @apply font-bold text-2xl
   }
 
-  .admintabletag{
-    @apply min-w-full text-left text-sm border-collapse 
+  .admintabletag {
+    @apply min-w-full text-left text-sm border-collapse
   }
-  .tableheader{
+
+  .tableheader {
     @apply bg-gray-100 text-gray-700 dark:text-gray-400 dark:bg-[#0a0a0ade]
   }
-  .tableth{
+
+  .tableth {
     @apply border-b px-4 py-3
   }
-  .tabletd{
+
+  .tabletd {
     @apply border-b px-4 py-2 dark:text-gray-200
   }
 
-  .pagebg{
+  .pagebg {
     @apply bg-white sm:p-0 rounded-lg dark:bg-gray-800 dark:text-gray-400
   }
 
-  .admin-search{
+  .admin-search {
     @apply mt-6 sm:p-5 border rounded-lg shadow-sm bg-gray-50 dark:bg-[#0a0a0ade]
   }
 
-  .loading-course{
+  .loading-course {
     @apply h-5 bg-gray-300 dark:bg-gray-700 rounded w-full
   }
 }
@@ -196,16 +199,27 @@ body {
   }
 }
 
+@keyframes marquee-reverse {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 /* smooth continuous scroll */
 .animate-marquee {
   display: inline-block;
-  animation: marquee 7s linear infinite;
+  animation: marquee-reverse 7s linear infinite;
 }
 
 
-#root{
+#root {
   position: relative;
 }
-#popup{
-  position:absolute;
+
+#popup {
+  position: absolute;
 }

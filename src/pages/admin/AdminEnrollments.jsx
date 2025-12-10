@@ -317,7 +317,7 @@ function AdminEnrollments() {
                                 onClick={handleSubmit}
                                 type='button'
                             >
-                                {enrollmentLoading ? "Enrolling.." : "Enrolle"}
+                                {enrollmentLoading ? "Enrolling.." : "Enroll"}
                             </button>
                         </div>
 

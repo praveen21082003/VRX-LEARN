@@ -79,8 +79,6 @@ function App() {
     checkAuth();
   }, [isLoginPage]);
 
-  console.log(user)
-
   if (!checkedAuth && !isLoginPage) {
     return (
       <div className="flex items-center justify-center h-screen text-3xl text-gray-600">

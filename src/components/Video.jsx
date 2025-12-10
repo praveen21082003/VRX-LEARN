@@ -14,7 +14,7 @@ import {
   MoveRight
 } from "lucide-react";
 
-const Watermark = lazy(()=> import('./Watermark'));
+const Watermark = lazy(() => import('./Watermark'));
 
 
 function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
@@ -325,9 +325,12 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
         )}
 
         {/* Watermark */}
-        <div className="watermark absolute mt-20 h-[90%] w-[80%]">
-          <Watermark user={user} />
+        <div className="absolute inset-0 pointer-events-none flex justify-center items-center">
+          <div className="watermark w-[80%] h-[80%]">
+            <Watermark user={user} />
+          </div>
         </div>
+
 
 
         <div
@@ -451,11 +454,11 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
                 <div className="flex items-center">
                   <button
                     onClick={handlePlayPause}
-                    className="bg-black h-8 w-8 sm:h-10 sm:w-10 flex justify-center items-center rounded-full z-30"
+                    className="bg-black h-8 w-8 sm:h-10 sm:w-10 flex justify-center items-center rounded-full z-20"
                   >
                     {isPlaying ? <Pause size={20} /> : <Play size={20} />}
                   </button>
-                  <div className="ml-[-5px] text-xs sm:text-sm bg-black px-2 py-[3px] sm:py-1 rounded-r-full opacity-70 z-20">
+                  <div className="ml-[-5px] text-xs sm:text-sm bg-black px-2 py-[3px] sm:py-1 rounded-r-full opacity-70 z-10">
                     {formatTime(currentTime)} / {formatTime(duration)}
                   </div>
                 </div>

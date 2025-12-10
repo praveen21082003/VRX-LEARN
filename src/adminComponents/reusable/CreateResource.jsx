@@ -4,7 +4,9 @@ import { useAdmin } from "../../components/context/AdminContextProvider";
 import WarningPopup from "../../components/WarningPopup";
 
 function CreateResource({ moduleId, moduleName }) {
-    const { successMsg, setSuccessMsg, createResource, newResource, setNewResource,resourceLoading } = useAdmin();
+    const { successMsg, setSuccessMsg, createResource, newResource, setNewResource, resourceLoading } = useAdmin();
+    const isPDF = newResource.type === "pdf";
+
 
     const [formError, setFormError] = useState({
         name: "",
@@ -29,6 +31,7 @@ function CreateResource({ moduleId, moduleName }) {
         }
 
         setNewResource(updated);
+
     };
 
     function checkFormError() {
@@ -72,7 +75,7 @@ function CreateResource({ moduleId, moduleName }) {
                         />
 
                         <div className="h-32 w-32 bg-green-700 border rounded-full flex justify-center items-center text-white shadow-2xl">
-                            {newResource.type === "pdf" ? (
+                            {isPDF ? (
                                 <FileText className="animate-bounce" size={60} />
                             ) : (
                                 <MonitorPlay className="animate-bounce" size={60} />

@@ -14,7 +14,7 @@ function Userprofile({ user }) {
   return (
     <div className="flex items-center gap-2">
       {/* Avatar */}
-      <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white">
+      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white">
         <User size={18} />
       </div>
 
