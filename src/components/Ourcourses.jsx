@@ -15,7 +15,6 @@ function Ourcourses() {
   const navigate = useNavigate();
 
   const searchQuery = useParams();
-  console.log(searchQuery)
 
 
 

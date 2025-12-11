@@ -355,7 +355,7 @@ function AdminModules({ user }) {
           {active === "Courses" && selectedCourse && (
             <div>
               <h2 className="text-2xl dark:text-gray-100 font-bold">{selectedCourse.name}</h2>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">Author: {selectedCourse.author}</p>
+              <p className="text-gray-600 dark:text-gray-300 font-semibold mt-1">Author: {selectedCourse.author}</p>
               <p className="mt-4 text-gray-700 dark:text-gray-400">{selectedCourse.description}</p>
             </div>
           )}
