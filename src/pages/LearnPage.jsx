@@ -15,6 +15,7 @@ import PdfViewer from "../components/PdfViewer";
 import DialogueBox from "../components/DialogueBox";
 import Coursecontentloading from "../components/loading/Coursecontentloading";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import VideoLoading from "../components/loading/VideoLoading";
 
 
 
@@ -194,10 +195,6 @@ function LearnPage({ user }) {
     handleVideoPlay(nextVideoId);
   };
 
-  const handleClose = () => {
-    setShowLogout(false);
-  };
-
 
 
   return (
@@ -362,22 +359,7 @@ function LearnPage({ user }) {
           ) : (
             <div className="flex justify-center items-center w-full">
               {loading ? (
-                <div className="w-full h-[300px] sm:h-[300px] lg:h-[420px] 
-                  bg-gray-200 animate-pulse rounded-lg shadow-inner
-                  flex items-center justify-center">
-                  <div className="relative h-40 w-40 rounded-full overflow-hidden flex items-center justify-center bg-sky-400">
-                    <video
-                      src="/loadinglearn.mp4"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      disablePictureInPicture
-                      className="h-full w-full"
-                    />
-                    <p className="absolute text-sm bottom-2">Loading...</p>
-                  </div>
-                </div>
+                <VideoLoading/>
               ) : (
                 <p className="text-gray-500 flex gap-3 items-center">
                   <MousePointerClick className="w-5 h-5" />

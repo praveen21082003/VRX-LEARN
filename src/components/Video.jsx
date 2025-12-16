@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 const Watermark = lazy(() => import('./Watermark'));
+import VideoLoading from "./loading/VideoLoading";
 
 
 function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
@@ -26,7 +27,11 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
   const [speed, setSpeed] = useState(1);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
-  const [waiting, setWaiting] = useState(false);
+
+  // loading states
+  const [isFreshLoading, setIsFreshLoading] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(false);
+
   const [error, setError] = useState("");
   const [volume, setVolume] = useState(0);
   const [showVolumeUI, setShowVolumeUI] = useState(false);
@@ -34,6 +39,7 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
   const [leftSkip, setLeftSkip] = useState("");
   const [showRightSkipUI, setshowRightSkipUI] = useState(false);
   const [showLeftSkipUI, setshowLeftSkipUI] = useState(false);
+  const [bufferedPercent, setBufferedPercent] = useState(0);
 
 
   const containerRef = useRef(null);
@@ -145,16 +151,35 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
       }
     };
 
+
+    const handleProgress = () => {
+      if (video.buffered.length > 0) {
+        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+        const duration = video.duration || 0;
+
+        if (duration > 0) {
+          const percent = (bufferedEnd / duration) * 100;
+          setBufferedPercent(percent);
+        }
+      }
+    };
+
+
+
+
     video.addEventListener("timeupdate", updateProgress);
     video.addEventListener("loadedmetadata", setVideoDuration);
+    video.addEventListener("progress", handleProgress)
     container?.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("blur", handleWindowBlur);
 
+
     return () => {
       video.removeEventListener("timeupdate", updateProgress);
       video.removeEventListener("loadedmetadata", setVideoDuration);
+      video.removeEventListener("progress", handleProgress);
       container?.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("keydown", handleKeyDown);
       clearTimeout(hideTimeout.current);
@@ -231,6 +256,7 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
   };
 
   const handleSeek = (e) => {
+    setIsBuffering(true);
     const video = videoRef.current;
     if (!video) return;
     const newTime = (e.target.value / 100) * video.duration;
@@ -284,54 +310,87 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
     <>
       <div
         ref={containerRef}
-        className="relative flex justify-center overflow-hidden"
+        className={`relative flex justify-center w-full ${isFreshLoading && "h-[300px] sm:h-[300px] lg:h-[420px] rounded-lg"} overflow-hidden`}
       >
-        {/* Video element */}
+
+        {/* VIDEO (always mounted) */}
         {video_URL && (
           <video
             ref={videoRef}
             key={video_URL}
             src={video_URL}
+            preload="metadata"
             className="rounded-lg object-contain w-full h-full"
             controls={false}
             disablePictureInPicture
+
+            // 🆕 Fresh load
+            onLoadStart={() => {
+              setIsFreshLoading(true);
+              setIsBuffering(false);
+              setProgress(0);
+              setBufferedPercent(0);
+            }}
+
+            onLoadedMetadata={() => {
+              setDuration(videoRef.current.duration);
+            }}
+
+            // ✅ Ready
+            onCanPlay={() => {
+              setIsFreshLoading(false);
+              setIsBuffering(false);
+            }}
+
+            onPlaying={() => {
+              setIsFreshLoading(false);
+              setIsBuffering(false);
+            }}
+
+            // ⏳ Buffering while playing
+            onWaiting={() => {
+              if (!isFreshLoading) setIsBuffering(true);
+            }}
+
             onEnded={() => {
-              setIsPlaying(!isPlaying);
+              setIsPlaying(false);
               handleFullScreen();
             }}
-            onLoadStart={() => setWaiting(true)}
-            onCanPlay={() => setWaiting(false)}
-            onPlaying={() => setWaiting(false)}
-            onWaiting={() => setWaiting(true)}
+
             onError={handleVideoError}
           />
         )}
 
-        {/* Loading overlay */}
-        {waiting && !error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 z-40">
+
+        {isFreshLoading && !error && (
+          <div className="absolute inset-0 flex items-center w-full justify-center bg-black/40 z-30">
+            <VideoLoading />
+          </div>
+        )}
+
+        
+        {isBuffering && !isFreshLoading && !error && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-40">
             <Loader className="animate-spin text-white w-10 h-10" />
             <p className="text-white ml-2">Loading...</p>
           </div>
         )}
 
-        {/* Error message */}
+       
         {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-lg z-50">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
             <p className="text-red-400 font-semibold text-sm px-6 text-center">
               ⚠️ {error}
             </p>
           </div>
         )}
 
-        {/* Watermark */}
-        <div className="absolute inset-0 pointer-events-none flex justify-center items-center">
+        
+        <div className="absolute inset-0 pointer-events-none flex justify-center items-center z-10">
           <div className="watermark w-[80%] h-[80%]">
             <Watermark user={user} />
           </div>
         </div>
-
-
 
         <div
           className={`
@@ -367,7 +426,7 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
             className="w-1/3 h-full flex justify-center items-center"
             onClick={handlePlayPause}
           >
-            {!isPlaying && (
+            {!isFreshLoading && !isPlaying && (
               <div
                 className={`
                     bg-black/10
@@ -407,7 +466,7 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
         </div>
 
         {/* Controls */}
-        {!waiting && !error && (
+        {!isFreshLoading && !error && (
           <>
             <img
               src="/logo.png"
@@ -440,14 +499,30 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
               className={`absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent rounded-b-lg px-1 sm:px-4 py-3 transition-opacity duration-500 ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"
                 }`}
             >
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={progress}
-                onChange={handleSeek}
-                className="w-full h-1 accent-white cursor-pointer hover:h-[6px]"
-              />
+              <div className="relative w-full h-1 hover:h-[6px] cursor-pointer mb-2">
+
+                <div
+                  className="absolute inset-y-0 left-0 lg:bg-white/50 rounded pointer-events-none z-20"
+                  style={{ width: `${bufferedPercent}%` }}
+                />
+
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={progress}
+                  onChange={handleSeek}
+                  className="
+                    absolute inset-0 w-full
+                    bg-transparent
+                    accent-white
+                    cursor-pointer
+                    z-10
+                  "
+                />
+              </div>
+
+
 
               <div className="flex justify-between px-1 sm:px-5 items-center text-white">
                 {/* Left controls */}
@@ -486,7 +561,7 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
           </>
 
         )}
-      </div>
+      </div >
 
       <div className="h-5">
         {progress > 99 && user.role !== 'admin' &&
