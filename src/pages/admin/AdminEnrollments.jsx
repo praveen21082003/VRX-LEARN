@@ -5,6 +5,7 @@ import DialogueBox from '../../components/DialogueBox';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import WarningPopup from '../../components/WarningPopup';
 import axiosInstance from '../../api/axiosInstance';
+import Tippy from '@tippyjs/react/headless';
 
 function AdminEnrollments() {
     const { enrollments, fetchALLEnrollments, allCourses, usersData } = useAdmin();
@@ -34,8 +35,6 @@ function AdminEnrollments() {
     const [searchedUserData, setSearchedUserData] = useState(null);
     const [openUsers, setOpenUsers] = useState(false);
     const [openCourses, setOpenCourses] = useState(false);
-    const [hover, setHover] = useState(null);
-
 
     const filteredData = useMemo(() => {
         return enrollments.filter(enrollment =>
@@ -72,14 +71,14 @@ function AdminEnrollments() {
         if (!newEnrollment.user_id.trim()) {
             errors.user_id = "Username cannot be empty"
         }
-        else if (!newEnrollment.user_id_value){
+        else if (!newEnrollment.user_id_value) {
             errors.user_id = "Please select a user from the dropdown."
         }
 
         if (!newEnrollment.course_id.trim()) {
             errors.course_id = "Coursename cannot be empty"
         }
-        else if (!newEnrollment.course_id_value){
+        else if (!newEnrollment.course_id_value) {
             errors.course_id = "Please select a course from the dropdown."
         }
 
@@ -203,7 +202,7 @@ function AdminEnrollments() {
                         </div>
                     )}
 
-                    <form className="grid grid-cols-1 gap-3 sm:gap-5 lg:grid-cols-2" onClick={() => {setOpenUsers(false); setOpenCourses(false);}}>
+                    <form className="grid grid-cols-1 gap-3 sm:gap-5 lg:grid-cols-2" onClick={() => { setOpenUsers(false); setOpenCourses(false); }}>
 
                         <div className="relative w-full">
                             <label>User Name*</label>
@@ -222,41 +221,46 @@ function AdminEnrollments() {
 
 
                             {openUsers && (
-                                <div className="absolute w-full bg-white border shadow-md rounded max-h-40 overflow-y-auto z-0 mt-1">
-                                    {usersData
+                                <div className="absolute w-full bg-white border shadow-md rounded max-h-40 overflow-y-auto z-20 mt-1">
+                                    {usersData.items
                                         .filter(user =>
                                             user.fullname.toLowerCase().includes(newEnrollment.user_id.toLowerCase()) ||
                                             String(user.id).includes(newEnrollment.user_id)
                                         )
                                         .map(user => (
-                                            <div
-                                                onMouseEnter={() => setHover(user.id)}
-                                                onMouseLeave={() => setHover(null)}
-                                                key={user.id}
-                                                onClick={() => {
-                                                    setNewEnrollment({
-                                                        ...newEnrollment,
-                                                        user_id: user.fullname,
-                                                        user_id_value: user.id
-                                                    });
-                                                    setOpenUsers(false);
-                                                }}
-                                                className="relative p-2 cursor-pointer hover:bg-gray-100"
-
-                                            >
-                                                {user.fullname}
-                                                <span className="block text-xs text-gray-600">
-                                                    ({user.email_id})
-                                                </span>
-                                                {hover === user.id && (
-                                                    <div className="absolute right-3 top-[70%] -translate-y-1/2 bg-black opacity-90 text-white text-xs px-2 py-1 shadow z-50 whitespace-nowrap">
-                                                        User ID: {user.id}
+                                            <Tippy
+                                                arrow={false}
+                                                placement="auto"
+                                                render={attrs => (
+                                                    <div className="bg-black opacity-90 text-white text-xs px-2 py-1 shadow rounded">
+                                                        userId: {user.id}
                                                     </div>
                                                 )}
+                                            >
+                                                <div
+                                                    key={user.id}
+                                                    onClick={() => {
+                                                        setNewEnrollment({
+                                                            ...newEnrollment,
+                                                            user_id: user.fullname,
+                                                            user_id_value: user.id
+                                                        });
+                                                        setOpenUsers(false);
+                                                    }}
+                                                    className="relative p-2 cursor-pointer hover:bg-gray-100"
 
-                                            </div>
+                                                >
+                                                    {user.fullname}
+                                                    <span className="block text-xs text-gray-600">
+                                                        ({user.email_id})
+                                                    </span>
+                                                </div>
+                                            </Tippy>
+
                                         ))}
                                 </div>
+
+
                             )}
                             {formError.user_id && (
                                 <p className="flex items-center gap-1 text-xs text-red-500"><CircleAlert size={13} />{formError.user_id}</p>
@@ -278,7 +282,7 @@ function AdminEnrollments() {
 
 
                             {openCourses && (
-                                <div className="absolute w-full bg-white border shadow-md rounded max-h-40 overflow-y-auto z-50 mt-1">
+                                <div className="absolute w-full bg-white border shadow-md rounded max-h-40 overflow-y-auto z-20 mt-1">
                                     {allCourses
                                         .filter(course =>
                                             course.name.toLowerCase().includes(newEnrollment.course_id.toLowerCase()) ||
@@ -408,14 +412,14 @@ function AdminEnrollments() {
                                         className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md font-semibold shadow-sm transition-all flex items-center gap-2"
                                         onClick={() => handleDelete(searchedEnrollmentData)}
                                     >
-                                        <Trash2 size={18} /> Delete Enrollment
+                                        <Trash2 size={18} /> Search Enrollment
                                     </button>
                                 </div>
                             </>
                         )}
                         {searchedEnrollmentData === null && (
                             <p className="text-center mt-4 text-red-600 font-medium">
-                                Search to get Course details
+                                Search to view or delete enrollment details. 
                             </p>
                         )}
                     </div>

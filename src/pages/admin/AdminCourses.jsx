@@ -188,7 +188,7 @@ function AdminCourses() {
                         )}
                         {searchedCourseData === null && (
                             <p className="text-center mt-4 text-red-600 font-medium">
-                                Search to get Course details
+                                Search to view or delete course details.
                             </p>
                         )}
                     </div>
@@ -243,7 +243,7 @@ function AdminCourses() {
                                         <td className='tabletd'>{course.name}</td>
                                         <td className='tabletd'><div className='line-clamp-3'>{course.description}</div></td>
                                         <td className='tabletd'>{course.author}</td>
-                                        <td className='tabletd'>{course.id}</td>
+                                        <td className='tabletd w-24'>{course.id}</td>
                                         <td className='tabletd'>{new Date(course.created_at).toLocaleString()}</td>
                                     </tr>
                                 )))}

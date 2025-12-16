@@ -5,7 +5,20 @@ import DialogueBox from '../DialogueBox';
 const AdminContext = createContext();
 
 export function AdminContextProvider({ children }) {
-    const [usersData, setUsersData] = useState([]);
+    const [usersData, setUsersData] = useState({
+        items: [],
+        total: 0,
+        page: 1,
+        size: 0,
+        pages: 1
+    });
+
+
+    // user pagination
+    const [pageNumber, setPageNumber] = useState(1);
+
+
+
     const [loadingUsers, setLoadingUsers] = useState(true);
     const [usersCount, setUsersCount] = useState(0);
     const [adminCount, setAdminCount] = useState(0);
@@ -50,22 +63,26 @@ export function AdminContextProvider({ children }) {
     });
 
     useEffect(() => {
-        fetchUsers();
         fetchCourses();
         fetchALLEnrollments();
     }, []);
 
+
+    useEffect(() => {
+        fetchUsers();
+    }, [pageNumber])
+
     const fetchUsers = async () => {
         try {
             setLoadingUsers(true);
-            const response = await axiosInstance.get("/users/");
-            console.log(response);
-            const users = response.data.items
+            const response = await axiosInstance.get(`/users?page=${pageNumber}&size=100`);
+            // console.log(response);
+            const users = response.data
 
             setUsersData(users);
-            setUsersCount(users.length);
-            setAdminCount(users.filter(a => a.role === 'admin').length);
-            setStudentCount(users.filter(s => s.role === 'trainee').length);
+            setUsersCount(users.total);
+            setAdminCount(users.items.filter(a => a.role === 'admin').length);
+            setStudentCount(users.items.filter(s => s.role === 'trainee').length);
 
         } catch (error) {
             console.log("Failed to fetch users:", error);
@@ -216,7 +233,7 @@ export function AdminContextProvider({ children }) {
                 />
             }
             <AdminContext.Provider value={{
-                usersData, loadingUsers, usersCount, adminCount, studentCount, courseLoading, allCourses, coursesCount, enrollments, successMsg, loadingCourses, newCourse, newModule, newResource, moduleLoading, resourceLoading, setNewCourse, setNewResource, setNewModule, fetchUsers, fetchCourses, fetchALLEnrollments, createCourse, createModule, createResource
+                usersData, loadingUsers, usersCount, adminCount, studentCount, courseLoading, allCourses, coursesCount, enrollments, successMsg, loadingCourses, newCourse, newModule, newResource, moduleLoading, resourceLoading, pageNumber, setPageNumber, setNewCourse, setNewResource, setNewModule, fetchUsers, fetchCourses, fetchALLEnrollments, createCourse, createModule, createResource
             }}>
 
                 {children}

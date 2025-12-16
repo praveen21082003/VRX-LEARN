@@ -58,7 +58,7 @@ export default function AdminDashboard({ loginUser }) {
                         </thead>
 
                         <tbody>
-                            {usersData
+                            {usersData.items
                                 .filter((a) => a.role === "admin")
                                 .map((user, index) => (
                                     <tr

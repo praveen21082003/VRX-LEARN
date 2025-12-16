@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { Trash2, UserSearch, UserCheck, UserPlus, CircleAlert, ShieldUser } from 'lucide-react';
+import { Trash2, UserSearch, UserCheck, UserPlus, CircleAlert, ShieldUser, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAdmin } from '../../components/context/AdminContextProvider';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import axiosInstance from '../../api/axiosInstance';
@@ -8,7 +8,22 @@ import WarningPopup from '../../components/WarningPopup';
 
 
 function AdminUsers() {
-    const { usersData, fetchUsers } = useAdmin();
+    const { usersData, fetchUsers, pageNumber, setPageNumber, loadingUsers } = useAdmin();
+    const page = usersData.page || 1;
+    const size = usersData.size || 5;
+    const total = usersData.total || 0;
+    const currentCount = usersData.items?.length || 0;
+
+
+
+    const start = (page - 1) * size + 1;
+    const end = (page - 1) * size + currentCount;
+    const rowsCount = end - start + 1;
+    const rowHeight = 56;
+    const dynamicHeight = rowsCount * rowHeight;
+
+
+
     const [searchUser, setSearchUser] = useState("");
     const [showDeleteBox, setShowDeleteBox] = useState(false);
     const [successMsg, setSuccessMsg] = useState(false);
@@ -40,7 +55,7 @@ function AdminUsers() {
     })
 
     const filteredUserData = useMemo(() => {
-        return usersData.filter(user =>
+        return usersData.items.filter(user =>
             user.fullname.toLowerCase().includes(searchUser.toLowerCase()) ||
             user.email_id.toLowerCase().includes(searchUser.toLowerCase()) ||
             String(user.id).includes(searchUser)
@@ -152,8 +167,23 @@ function AdminUsers() {
         }
     }
 
+    const handleNext = () => {
+        if (pageNumber < usersData.pages) {
+            setPageNumber(pageNumber + 1);
+        }
+    };
+
+    const handlePrev = () => {
+        if (pageNumber > 1) {
+            setPageNumber(pageNumber - 1);
+
+        }
+    };
+
+
+
     return (
-        <div className='pagebg'>
+        <div className='pagebg h-auto'>
 
             {showDeleteBox &&
                 <ConfirmationDialog
@@ -379,7 +409,7 @@ function AdminUsers() {
                         )}
                         {searchedUserData === null && (
                             <p className="text-center mt-4 text-red-600 font-medium">
-                                Search to get user details
+                                Search to view or delete user.
                             </p>
                         )}
                     </div>
@@ -389,26 +419,45 @@ function AdminUsers() {
             <div className="sm:p-5">
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
                     <h3 className="subtitle">All Users</h3>
+                </div>
+                <div className="flex flex-col lg:flex-row justify-between items-center lg:mb-3 gap-2 sm:gap-10">
+
                     <div className="relative flex gap-5 w-full lg:w-1/2">
                         <UserSearch
                             className="icon-insearchbar"
                             size={18}
                         />
                         <input
-                            className="input-field px-10    "
+                            className="input-field h-8 px-10"
                             type="text"
                             placeholder="Search (e.g., name, user ID, email)"
                             value={searchUser}
                             onChange={(e) => setSearchUser(e.target.value)}
                         />
-                        <button className='bg-red-600 rounded-lg py-1 px-3 text-white font-semibold' type='button' onClick={() => setSearchUser("")}>Clear</button>
+                        <button className='bg-red-600 rounded-lg px-5 text-white font-semibold' type='button' onClick={() => setSearchUser("")}>Clear</button>
+                    </div>
+
+
+
+                    <div className='flex justify-around items-center p-2 border-x border-t lg:border-none gap-5'>
+                        <span className='text-sm text-gray-500'>{start}–{end} of {total}</span>
+                        <button className='bg-gray-100 rounded-lg p-1' onClick={handlePrev} disabled={pageNumber === 1}>
+                            <ChevronLeft size={20} />
+                        </button>
+
+                        <span className='text-sm text-gray-500'>{pageNumber} page of {usersData.pages}</span>
+
+                        <button className='bg-gray-100 rounded-lg p-1'  onClick={handleNext} disabled={pageNumber === usersData.pages}>
+                            <ChevronRight size={20} />
+                        </button>
+
                     </div>
                 </div>
 
 
                 <div className="overflow-x-auto rounded-lg h-full shadow-sm border">
                     <table className="admintabletag">
-                        <thead className="tableheader">
+                        <thead className="tableheader border-t">
                             <tr>
                                 <th className="tableth">Full Name</th>
                                 <th className="tableth">Email Id</th>
@@ -419,40 +468,66 @@ function AdminUsers() {
                         </thead>
 
                         <tbody>
-                            {filteredUserData.length === 0 ? (
-                                <tr>
-                                    <td
-                                        className="tabletd text-center py-4 text-gray-500 font-semibold"
-                                        colSpan={5}
-                                    >
-                                        No users found for this search.
-                                    </td>
-                                </tr>
+                            {loadingUsers ? (
+                                <>
+                                    {Array.from({ length: rowsCount }).map((_, i) =>
+                                        <tr key={i}>
+                                            <td className="p-3">
+                                                <div className="h-4 w-16 bg-gray-300 animate-pulse rounded"></div>
+                                            </td>
+                                            <td className="p-3">
+                                                <div className="h-4 w-64 bg-gray-300 animate-pulse rounded"></div>
+                                            </td>
+                                            <td className="p-3">
+                                                <div className="h-4 w-5 bg-gray-300 animate-pulse rounded"></div>
+                                            </td>
+                                            <td className="p-3">
+                                                <div className="h-4 w-10 bg-gray-300 animate-pulse rounded"></div>
+                                            </td>
+                                            <td className="p-3">
+                                                <div className="h-4 w-28 bg-gray-300 animate-pulse rounded"></div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </>
                             ) : (
-                                filteredUserData.map((user, index) => (
-                                    <tr
-                                        key={user.id}
-                                        className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition 
+                                <>
+                                    {filteredUserData.length === 0 ? (
+                                        <tr style={{ height: `${dynamicHeight}px` }}>
+                                            <td
+                                                className="tabletd text-center py-4 text-gray-500 font-semibold"
+                                                colSpan={5}
+
+                                            >
+                                                No users found for this search.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        filteredUserData.map((user, index) => (
+                                            <tr
+                                                key={user.id}
+                                                className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition 
                                                 ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}
-                                            `}
-                                    >
-                                        <td className="tabletd">{user.fullname}</td>
-                                        <td className="tabletd">{user.email_id}</td>
-                                        <td className="tabletd">{user.id}</td>
-                                        <td className="tabletd">{user.role}</td>
-                                        <td className="tabletd">
-                                            <div className={`${searchUser && "flex justify-between"}`}>
-                                                {new Date(user.created_at).toLocaleDateString()}
-                                                {searchUser && (
-                                                    <button onClick={() => handleDelete(user)}>
-                                                        <Trash2 className="text-red-700" size={18} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
+                                                `}
+                                            >
+                                                <td className="tabletd">{user.fullname}</td>
+                                                <td className="tabletd">{user.email_id}</td>
+                                                <td className="tabletd">{user.id}</td>
+                                                <td className="tabletd">{user.role}</td>
+                                                <td className="tabletd">
+                                                    <div className={`${searchUser && "flex justify-between"}`}>
+                                                        {new Date(user.created_at).toLocaleDateString()}
+                                                        {searchUser && (
+                                                            <button onClick={() => handleDelete(user)}>
+                                                                <Trash2 className="text-red-700" size={18} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </>)}
                         </tbody>
 
                     </table>
