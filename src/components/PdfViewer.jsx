@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { ZoomIn, ZoomOut, Expand, Minimize } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
@@ -34,7 +34,7 @@ function PdfViewer({ fileId }) {
 
     if (!fileId) return;
 
-    
+
     if (pdfCache.current.has(fileId)) {
       setPdfBlobUrl(pdfCache.current.get(fileId));
       return;
@@ -64,16 +64,17 @@ function PdfViewer({ fileId }) {
   /* ----------------------------------------
      GET PARENT WIDTH  
   ------------------------------------------ */
-  useEffect(() => {
+
+  useLayoutEffect(() => {
     if (!containerRef.current) return;
 
-    const observe = () => {
+    const updateWidth = () => {
       setPageWidth(containerRef.current.clientWidth - 20);
     };
 
-    observe();
-    window.addEventListener("resize", observe);
-    return () => window.removeEventListener("resize", observe);
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
   /* ----------------------------------------
@@ -95,9 +96,22 @@ function PdfViewer({ fileId }) {
   /* ----------------------------------------
      ZOOM CONTROLS
   ------------------------------------------ */
-  const zoomIn = () => setScale((prev) => Math.min(prev + 0.2, 3));
+  const zoomIn = () => setScale((prev) => Math.min(prev + 0.2, 2));
   const zoomOut = () => setScale((prev) => Math.max(prev - 0.2, 0.6));
   const resetZoom = () => setScale(1);
+
+
+  /* ---------------------------------------
+    SIDE HIDING ON ZOOM 
+  ------------------------------------------ */
+  useLayoutEffect(() => {
+    const scrollEl = scrollRef.current;
+    if (!scrollEl) return;
+
+    // Keep left edge visible
+    scrollEl.scrollLeft = 0;
+  }, [scale, pageWidth]);
+
 
   /* ----------------------------------------
      PAGE SCROLL DETECTION
@@ -141,15 +155,12 @@ function PdfViewer({ fileId }) {
     });
   };
 
-  /* ----------------------------------------
-     EFFECTIVE PAGE WIDTH (safe)
-  ------------------------------------------ */
-  const effectiveWidth = pageWidth * scale;
+
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex flex-col bg-[#00000010] rounded-lg overflow-hidden"
+      className="w-full h-full flex items-center flex-col bg-[#00000010] rounded-lg overflow-hidden"
     >
 
       {/* ----------- TOP CONTROLS ----------- */}
@@ -194,7 +205,7 @@ function PdfViewer({ fileId }) {
       {/* ----------- PDF SCROLL AREA ----------- */}
       <div
         ref={scrollRef}
-        className="w-full h-full overflow-auto flex flex-col items-center py-3"
+        className={`w-full h-full overflow-auto ${(scale < 1) && "items-center"} flex flex-col py-3`}
       >
         {pdfBlobUrl && (
           <Document
@@ -205,12 +216,12 @@ function PdfViewer({ fileId }) {
               <div
                 key={idx}
                 ref={(el) => (pageRefs.current[idx] = el)}
-                className={`mb-4 shadow-lg ${pageNumber === idx + 1 ? "ring-2 ring-indigo-500" : ""
+                className={`mb-4 shadow-lg ${scale === 1 ? "mx-auto" : "ml-0"
                   }`}
               >
                 <Page
                   pageNumber={idx + 1}
-                  width={effectiveWidth}
+                  width={pageWidth * scale}
                   renderAnnotationLayer={false}
                   renderTextLayer={false}
                 />

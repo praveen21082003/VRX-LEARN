@@ -9,7 +9,7 @@ import {
   Maximize,
   Minimize,
   Timer,
-  Loader,
+  LoaderCircle,
   CirclePlay,
   MoveRight
 } from "lucide-react";
@@ -324,8 +324,9 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
             controls={false}
             disablePictureInPicture
 
-            // 🆕 Fresh load
+            //  Fresh load
             onLoadStart={() => {
+              setCurrentTime(0);
               setIsFreshLoading(true);
               setIsBuffering(false);
               setProgress(0);
@@ -336,20 +337,25 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
               setDuration(videoRef.current.duration);
             }}
 
-            // ✅ Ready
+            // Ready
             onCanPlay={() => {
               setIsFreshLoading(false);
               setIsBuffering(false);
+              setIsPlaying(false);
             }}
 
             onPlaying={() => {
               setIsFreshLoading(false);
               setIsBuffering(false);
+              setIsPlaying(true);
             }}
 
-            // ⏳ Buffering while playing
+            // Buffering while playing
             onWaiting={() => {
-              if (!isFreshLoading) setIsBuffering(true);
+              if (!isFreshLoading) {
+                setIsBuffering(true);
+                setIsPlaying(false);
+              }
             }}
 
             onEnded={() => {
@@ -364,19 +370,18 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
 
         {isFreshLoading && !error && (
           <div className="absolute inset-0 flex items-center w-full justify-center bg-black/40 z-30">
-            <VideoLoading />
+            <VideoLoading loadmsg={"Fetching..."} />
           </div>
         )}
 
-        
+
         {isBuffering && !isFreshLoading && !error && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-40">
-            <Loader className="animate-spin text-white w-10 h-10" />
-            <p className="text-white ml-2">Loading...</p>
+            <LoaderCircle className="animate-spin text-gray-300 w-16 h-16" />
           </div>
         )}
 
-       
+
         {error && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/70 z-50">
             <p className="text-red-400 font-semibold text-sm px-6 text-center">
@@ -385,7 +390,7 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
           </div>
         )}
 
-        
+
         <div className="absolute inset-0 pointer-events-none flex justify-center items-center z-10">
           <div className="watermark w-[80%] h-[80%]">
             <Watermark user={user} />

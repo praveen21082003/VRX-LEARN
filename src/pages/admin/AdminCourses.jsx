@@ -195,22 +195,22 @@ function AdminCourses() {
                 </div>
             </div>
             <div className='py-10 sm:p-5'>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
-                    <h3 className="subtitle">All Courses</h3>
+                <h3 className="subtitle mb-3">All Courses</h3>
+                <div className="flex flex-col lg:flex-row justify-between items-center lg:mb-3 gap-2 sm:gap-10">
                     <div className="relative flex gap-5 w-full lg:w-1/2">
                         <ScanSearch
                             className="icon-insearchbar"
                             size={18}
                         />
                         <input
-                            className="input-field px-10"
+                            className="input-field h-8 px-10"
                             type="text"
                             placeholder="Search (e.g., name, user ID, email)"
                             value={searchCourse}
                             onChange={(e) => setSearchCourse(e.target.value)}
                         />
 
-                        <button className='bg-red-600 rounded-lg py-1 px-3 text-white font-semibold' type='button' onClick={() => setSearchCourse("")}>Clear</button>
+                        <button className='bg-red-600 rounded-lg px-5 text-white font-semibold' type='button' onClick={() => setSearchCourse("")}>Clear</button>
                     </div>
                 </div>
                 <div className="overflow-x-auto rounded-lg shadow-sm border">
@@ -252,7 +252,7 @@ function AdminCourses() {
                     </table>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

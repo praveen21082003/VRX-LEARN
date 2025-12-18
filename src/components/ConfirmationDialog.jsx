@@ -25,12 +25,12 @@ function ConfirmationDialog({
     show: false,
   });
 
-  
+
 
   const [loading, setLoading] = useState(false);
 
   async function fetchRemove(endpoint) {
-    
+
     try {
       setLoading(true);
       let response;
@@ -39,6 +39,23 @@ function ConfirmationDialog({
         response = await axiosInstance.delete(`${endpoint}/${actionId}`);
 
         if (response.status >= 200 && response.status < 300) {
+          setSuccessMsg(true);
+          setTimeout(() => setSuccessMsg(false), 3100);
+          return true;
+        }
+      }
+
+      if (buttonName === "Delete ") {
+        const responses = await Promise.all(
+          actionId.map((id) =>
+            axiosInstance.delete(`${endpoint}/${Number(id)}`)
+          )
+        );
+        const allSuccess = responses.every(
+          (res) => res.status >= 200 && res.status < 300
+        );
+
+        if (allSuccess) {
           setSuccessMsg(true);
           setTimeout(() => setSuccessMsg(false), 3100);
           return true;

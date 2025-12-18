@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { Trash2, UserSearch, UserCheck, UserPlus, CircleAlert, ShieldUser, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trash2, UserSearch, UserCheck, UserPlus, CircleAlert, ShieldUser, ChevronLeft, ChevronRight, Delete } from 'lucide-react';
 import { useAdmin } from '../../components/context/AdminContextProvider';
 import ConfirmationDialog from '../../components/ConfirmationDialog';
 import axiosInstance from '../../api/axiosInstance';
@@ -20,12 +20,15 @@ function AdminUsers() {
     const end = (page - 1) * size + currentCount;
     const rowsCount = end - start + 1;
     const rowHeight = 56;
-    const dynamicHeight = rowsCount * rowHeight;
+    // const dynamicHeight = rowsCount * rowHeight;
 
+
+    const [selectedDelete, setSelectedDelete] = useState([]);
 
 
     const [searchUser, setSearchUser] = useState("");
     const [showDeleteBox, setShowDeleteBox] = useState(false);
+    const [showMultipleDeleteBox, setShowMultipleDeleteBox] = useState(false);
     const [successMsg, setSuccessMsg] = useState(false);
     const [userId, setUserId] = useState(0);
     const [searchedUserData, setSearchedUserData] = useState(null);
@@ -63,9 +66,15 @@ function AdminUsers() {
     }, [searchUser, usersData]);
 
     const handleDelete = (user) => {
-        setShowDeleteBox(true);
-        setUserId(user.id);
-        setSearchedUserData(null);
+
+        if (selectedDelete.length !== 0) {
+            setShowMultipleDeleteBox(true);
+        }
+        else {
+            setShowDeleteBox(true);
+            setUserId(user.id);
+            setSearchedUserData(null);
+        }
     }
 
     const handleOnChange = (e) => {
@@ -195,6 +204,18 @@ function AdminUsers() {
                     actionId={userId}
                     onSuccess={() => { setShowDeleteBox(false); fetchUsers(); }}
                     onClose={() => setShowDeleteBox(false)}
+                />
+            }
+            {showMultipleDeleteBox &&
+                <ConfirmationDialog
+                    message="Delete users permanently?"
+                    msg="⚠️ The selected user accounts will be permanently removed."
+                    buttonName="Delete "
+                    loadingMsg="Deleting..."
+                    endpoint="/users"
+                    actionId={selectedDelete}
+                    onSuccess={() => { setShowDeleteBox(false); fetchUsers(); setSelectedDelete([]); }}
+                    onClose={() => setShowMultipleDeleteBox(false)}
                 />
             }
             {error.show &&
@@ -417,11 +438,8 @@ function AdminUsers() {
             </div>
 
             <div className="sm:p-5">
-                <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
-                    <h3 className="subtitle">All Users</h3>
-                </div>
+                <h3 className="subtitle mb-3">All Users</h3>
                 <div className="flex flex-col lg:flex-row justify-between items-center lg:mb-3 gap-2 sm:gap-10">
-
                     <div className="relative flex gap-5 w-full lg:w-1/2">
                         <UserSearch
                             className="icon-insearchbar"
@@ -447,7 +465,7 @@ function AdminUsers() {
 
                         <span className='text-sm text-gray-500'>{pageNumber} page of {usersData.pages}</span>
 
-                        <button className='bg-gray-100 rounded-lg p-1'  onClick={handleNext} disabled={pageNumber === usersData.pages}>
+                        <button className='bg-gray-100 rounded-lg p-1' onClick={handleNext} disabled={pageNumber === usersData.pages}>
                             <ChevronRight size={20} />
                         </button>
 
@@ -459,6 +477,14 @@ function AdminUsers() {
                     <table className="admintabletag">
                         <thead className="tableheader border-t">
                             <tr>
+                                <th className="tableth">
+                                    <div className='w-8 h-8 items-center flex justify-center'>
+                                        {
+                                            selectedDelete.length !== 0 &&
+                                            <button className='p-2 hover:bg-black/10 rounded-full font-semibold' type='button' onClick={handleDelete}><Trash2 size={19} /></button>
+                                        }
+                                    </div>
+                                </th>
                                 <th className="tableth">Full Name</th>
                                 <th className="tableth">Email Id</th>
                                 <th className="tableth">User Id</th>
@@ -493,23 +519,44 @@ function AdminUsers() {
                             ) : (
                                 <>
                                     {filteredUserData.length === 0 ? (
-                                        <tr style={{ height: `${dynamicHeight}px` }}>
-                                            <td
-                                                className="tabletd text-center py-4 text-gray-500 font-semibold"
-                                                colSpan={5}
+                                        <tr>
+                                            <td colSpan={6}>
+                                                <div
+                                                    className="flex justify-center tabletd py-4 text-gray-500 font-semibold"
+                                                >
+                                                    No users found for this search.
+                                                </div>
 
-                                            >
-                                                No users found for this search.
                                             </td>
                                         </tr>
                                     ) : (
                                         filteredUserData.map((user, index) => (
                                             <tr
                                                 key={user.id}
-                                                className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition 
+                                                className={`hover:bg-red-100  dark:hover:bg-gray-800 transition 
                                                 ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"}
                                                 `}
                                             >
+                                                <td className="tabletd">
+                                                    <span className='w-8 h-8 items-center hover:bg-black/20 rounded-full  p-2 flex justify-center'>
+                                                        <input
+                                                            className='w-[17px] h-[17px] accent-[#840227]'
+                                                            type="checkbox"
+                                                            value={user.id}
+                                                            checked={selectedDelete.includes(user.id)}
+                                                            onChange={(e) => {
+                                                                const id = user.id;
+
+                                                                setSelectedDelete((prev) =>
+                                                                    e.target.checked
+                                                                        ? [...prev, id]
+                                                                        : prev.filter((item) => item !== id)
+                                                                );
+                                                            }}
+                                                        />
+                                                    </span>
+                                                </td>
+
                                                 <td className="tabletd">{user.fullname}</td>
                                                 <td className="tabletd">{user.email_id}</td>
                                                 <td className="tabletd">{user.id}</td>

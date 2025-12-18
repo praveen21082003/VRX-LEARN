@@ -359,7 +359,7 @@ function LearnPage({ user }) {
           ) : (
             <div className="flex justify-center items-center w-full">
               {loading ? (
-                <VideoLoading/>
+                <VideoLoading loadmsg={"Setting things up…"}/>
               ) : (
                 <p className="text-gray-500 flex gap-3 items-center">
                   <MousePointerClick className="w-5 h-5" />

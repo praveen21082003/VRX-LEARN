@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 
+
+
 @layer components {
   .input-field {
     @apply w-full rounded-md p-2 bg-white text-gray-800 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 outline-none transition;
@@ -51,7 +53,7 @@
   }
 
   .tabletd {
-    @apply border-b px-4 py-2 dark:text-gray-200
+    @apply border-b px-4 py-2 dark:text-gray-200 items-center
   }
 
   .pagebg {
@@ -114,12 +116,12 @@
 
 
 .pdf-viewer-container::-webkit-scrollbar {
-  width: 8px;
+  width: 2px;
 }
 
 .pdf-viewer-container::-webkit-scrollbar-thumb {
   background-color: #a0aec0;
-  border-radius: 4px;
+  border-radius: 1px;
 }
 
 
@@ -223,3 +225,5 @@ body {
 #popup {
   position: absolute;
 }
+
+

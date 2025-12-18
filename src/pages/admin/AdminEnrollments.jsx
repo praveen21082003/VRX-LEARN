@@ -9,8 +9,11 @@ import Tippy from '@tippyjs/react/headless';
 
 function AdminEnrollments() {
     const { enrollments, fetchALLEnrollments, allCourses, usersData } = useAdmin();
+    const [selectedDelete, setSelectedDelete] = useState([]);
+
     const [successMsg, setSuccessMsg] = useState(false);
     const [showDeleteBox, setShowDeleteBox] = useState(false);
+    const [showMultipleDeleteBox, setShowMultipleDeleteBox] = useState(false);
     const [enrollmentLoading, setEnrollmentLoading] = useState(false);
     const [searchEnrollment, setSearchEnrollment] = useState("");
     const [searchedEnrollment, setSearchedEnrollment] = useState("");
@@ -131,10 +134,16 @@ function AdminEnrollments() {
 
 
     const handleDelete = async (enrollment) => {
-        await fetchUser(enrollment.user_id)
-        setShowDeleteBox(true);
-        setEnrollmentId(enrollment.id);
-        setSearchedEnrollmentData(null);
+        if (selectedDelete.length !== 0) {
+            setShowMultipleDeleteBox(true);
+        }
+        else {
+            await fetchUser(enrollment.user_id)
+            setShowDeleteBox(true);
+            setEnrollmentId(enrollment.id);
+            setSearchedEnrollmentData(null);
+        }
+
     }
 
 
@@ -169,6 +178,18 @@ function AdminEnrollments() {
                     actionId={enrollmentId}
                     onSuccess={() => { setShowDeleteBox(false); fetchALLEnrollments(); }}
                     onClose={() => setShowDeleteBox(false)}
+                />
+            }
+            {showMultipleDeleteBox &&
+                <ConfirmationDialog
+                    message="Delete Enrollments permanently?"
+                    msg="⚠️ The selected enrollments will be permanently removed."
+                    buttonName="Delete "
+                    loadingMsg="Deleting..."
+                    endpoint="/enrollments"
+                    actionId={selectedDelete}
+                    onSuccess={() => { setShowDeleteBox(false); fetchALLEnrollments(); setSelectedDelete([]); }}
+                    onClose={() => setShowMultipleDeleteBox(false)}
                 />
             }
             {error.show &&
@@ -412,14 +433,14 @@ function AdminEnrollments() {
                                         className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md font-semibold shadow-sm transition-all flex items-center gap-2"
                                         onClick={() => handleDelete(searchedEnrollmentData)}
                                     >
-                                        <Trash2 size={18} /> Search Enrollment
+                                        <Trash2 size={18} /> Delete Enrollment
                                     </button>
                                 </div>
                             </>
                         )}
                         {searchedEnrollmentData === null && (
                             <p className="text-center mt-4 text-red-600 font-medium">
-                                Search to view or delete enrollment details. 
+                                Search to view or delete enrollment details.
                             </p>
                         )}
                     </div>
@@ -427,21 +448,22 @@ function AdminEnrollments() {
             </div>
 
             <div className="sm:p-5">
+
+                <h3 className="subtitle mb-3">All Enrollments</h3>
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
-                    <h3 className="subtitle">All Enrollments</h3>
                     <div className="relative flex gap-5 w-full lg:w-1/2">
                         <BookMarked
                             className="icon-insearchbar"
                             size={18}
                         />
                         <input
-                            className="input-field px-10"
+                            className="input-field h-8 px-10"
                             type="number"
                             placeholder="Search (eg.userId,CourseId)"
                             value={searchEnrollment}
                             onChange={(e) => setSearchEnrollment(e.target.value)}
                         />
-                        <button className='bg-red-600 rounded-lg py-1 px-3 text-white font-semibold' type='button' onClick={() => setSearchEnrollment("")}>Clear</button>
+                        <button className='bg-red-600 rounded-lg py-1 px-5 text-white font-semibold' type='button' onClick={() => setSearchEnrollment("")}>Clear</button>
                     </div>
                 </div>
 
@@ -449,6 +471,14 @@ function AdminEnrollments() {
                     <table className="admintabletag">
                         <thead className="tableheader">
                             <tr>
+                                <th className="tableth">
+                                    <div className='w-8 h-8 items-center flex justify-center'>
+                                        {
+                                            selectedDelete.length !== 0 &&
+                                            <button className='p-2 hover:bg-black/10 rounded-full font-semibold' type='button' onClick={handleDelete}><Trash2 size={19} /></button>
+                                        }
+                                    </div>
+                                </th>
                                 <th className="tableth">Username</th>
                                 <th className="tableth">Course Name</th>
                                 <th className="tableth">EnrollmentId</th>
@@ -471,9 +501,28 @@ function AdminEnrollments() {
                                     .map((enrollment, index) => (
                                         <tr
                                             key={enrollment.id}
-                                            className={`hover:bg-gray-50 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
+                                            className={`hover:bg-red-100 transition ${index % 2 === 0 ? "bg-white dark:bg-gray-700" : "bg-gray-50 dark:bg-gray-800"
                                                 }`}
                                         >
+                                            <td className="tabletd">
+                                                <span className='w-8 h-8 items-center hover:bg-black/10 rounded-full  p-2 flex justify-center'>
+                                                    <input
+                                                        className='w-[17px] h-[17px] accent-[#840227]'
+                                                        type="checkbox"
+                                                        value={enrollment.id}
+                                                        checked={selectedDelete.includes(enrollment.id)}
+                                                        onChange={(e) => {
+                                                            const id = enrollment.id;
+
+                                                            setSelectedDelete((prev) =>
+                                                                e.target.checked
+                                                                    ? [...prev, id]
+                                                                    : prev.filter((item) => item !== id)
+                                                            );
+                                                        }}
+                                                    />
+                                                </span>
+                                            </td>
                                             <td className="tabletd">{enrollment.username}</td>
                                             <td className="tabletd">{enrollment.course_name}</td>
                                             <td className="tabletd">{enrollment.id}</td>

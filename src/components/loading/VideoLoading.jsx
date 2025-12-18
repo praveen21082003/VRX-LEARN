@@ -1,6 +1,6 @@
 import React from 'react'
 
-function VideoLoading() {
+function VideoLoading({loadmsg}) {
     return (
         <div className="w-full h-[300px] sm:h-[300px] lg:h-[420px] 
                   bg-gray-200 animate-pulse rounded-lg shadow-inner
@@ -15,7 +15,7 @@ function VideoLoading() {
                     disablePictureInPicture
                     className="h-full w-full"
                 />
-                <p className="absolute text-sm bottom-2">Loading...</p>
+                <p className="absolute text-xs bottom-2">{loadmsg}</p>
             </div>
         </div>
     )
