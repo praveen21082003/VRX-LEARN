@@ -97,7 +97,7 @@ function App() {
         style="border: none; border-radius: 8px;"
         loading="lazy"
         allow="microphone; clipboard-write"
-      ></iframe>
+      />
 
       {!isLoginPage && errorData.show && (
         <DialogueBox
