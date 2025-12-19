@@ -89,6 +89,16 @@ function App() {
 
   return (
     <>
+      <iframe
+        src="https://tequila-unwrenched-joane.ngrok-free.dev/"
+        title="AI Chat Assistant"
+        width="100%"
+        height="600"
+        style="border: none; border-radius: 8px;"
+        loading="lazy"
+        allow="microphone; clipboard-write"
+      ></iframe>
+
       {!isLoginPage && errorData.show && (
         <DialogueBox
           errorCode={errorData.code}

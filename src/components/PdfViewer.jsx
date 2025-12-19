@@ -19,7 +19,9 @@ function PdfViewer({ fileId }) {
   const containerRef = useRef(null);
   const scrollRef = useRef(null);
   const pageRefs = useRef([]);
+  const isTypingRef = useRef(false);
 
+  const [pageInput, setPageInput] = useState("1");
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [pageWidth, setPageWidth] = useState(300);
 
@@ -131,7 +133,11 @@ function PdfViewer({ fileId }) {
         const bottom = top + el.clientHeight;
 
         if (midpoint >= top && midpoint <= bottom) {
-          setPageNumber(i + 1);
+          const currentPage = i + 1;
+
+          setPageNumber(currentPage);
+          setPageInput(String(currentPage));
+
           break;
         }
       }
@@ -141,12 +147,27 @@ function PdfViewer({ fileId }) {
     return () => scrollEl.removeEventListener("scroll", handler);
   }, [numPages]);
 
+
   /* ----------------------------------------
      PAGE NUMBER CHANGE (input)
   ------------------------------------------ */
-  const onPageChange = (e) => {
-    let val = Number(e.target.value);
-    if (val < 1 || val > numPages) return;
+  const onPageInputChange = (e) => {
+    isTypingRef.current = true;
+    setPageInput(e.target.value);
+  };
+
+
+  const applyPageChange = () => {
+    isTypingRef.current = false;
+    if (pageInput === "") return setPageInput(string(pageNumber));
+
+    const val = Number(pageInput);
+
+    if (val < 1 || val > numPages) {
+      setPageInput(String(pageNumber)); // reset
+      return;
+    }
+
     setPageNumber(val);
 
     pageRefs.current[val - 1]?.scrollIntoView({
@@ -154,6 +175,7 @@ function PdfViewer({ fileId }) {
       block: "start",
     });
   };
+
 
 
 
@@ -186,8 +208,10 @@ function PdfViewer({ fileId }) {
           <span>Page</span>
           <input
             type="number"
-            value={pageNumber}
-            onChange={onPageChange}
+            value={pageInput}
+            onChange={onPageInputChange}
+            onBlur={applyPageChange}
+            onKeyDown={(e) => e.key === "Enter" && applyPageChange()}
             className="w-10 text-center text-black rounded"
           />
           <span> of {numPages}</span>
