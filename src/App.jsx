@@ -94,10 +94,11 @@ function App() {
         title="AI Chat Assistant"
         width="100%"
         height="600"
-        style="border: none; border-radius: 8px;"
+        style={{ border: "none", borderRadius: "8px" }}
         loading="lazy"
         allow="microphone; clipboard-write"
       />
+
 
       {!isLoginPage && errorData.show && (
         <DialogueBox
