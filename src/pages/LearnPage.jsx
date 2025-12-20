@@ -192,8 +192,28 @@ function LearnPage({ user }) {
     }
 
     const nextVideoId = videoItems[currentIndex + 1].file_id;
+    setSelectedResourceId(nextVideoId);
     handleVideoPlay(nextVideoId);
   };
+
+  const findModuleByVideo = (videoId) => {
+    const item = data.find(d => d.file_id === videoId);
+    return item?.module_name;
+  };
+
+  useEffect(() => {
+    if (!activeVideo || !data.length) return;
+
+    const item = data.find(d => d.file_id === activeVideo);
+    if (!item) return;
+
+    const moduleKey = `${item.course_name}-${item.module_name}`;
+
+    setOpenModules(prev => ({
+      ...prev,
+      [moduleKey]: true, 
+    }));
+  }, [activeVideo, data]);
 
 
 
@@ -273,7 +293,9 @@ function LearnPage({ user }) {
                       <div key={i} className="p-2">
                         <h3
                           className="text-md font-medium text-[#840227] mb-2 flex items-center justify-between cursor-pointer dark:text-gray-400"
-                          onClick={() => toggleModule(moduleKey)}
+                          onClick={() =>
+                            toggleModule(moduleKey)
+                          }
                         >
                           {moduleName}
                           {isModuleOpen ? <ChevronUp /> : <ChevronDown />}
@@ -339,13 +361,13 @@ function LearnPage({ user }) {
         {/* VIEWER */}
         <div
           className="
-        w-full        
-        md:w-[70%]        
-        lg:w-[70%]       
-        h-[40%] md:h-full
-        md:px-2 py-3
-        flex flex-col gap-4 items-center justify-center
-      "
+            w-full        
+            md:w-[70%]        
+            lg:w-[70%]       
+            h-[40%] md:h-full
+            md:px-2 py-3
+            flex flex-col gap-4 items-center justify-center
+          "
         >
           {currentPDF ? (
             <PdfViewer fileId={currentPDF} />
@@ -359,7 +381,7 @@ function LearnPage({ user }) {
           ) : (
             <div className="flex justify-center items-center w-full">
               {loading ? (
-                <VideoLoading loadmsg={"Setting things up…"}/>
+                <VideoLoading loadmsg={"Setting things up…"} />
               ) : (
                 <p className="text-gray-500 flex gap-3 items-center">
                   <MousePointerClick className="w-5 h-5" />

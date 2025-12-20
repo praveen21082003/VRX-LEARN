@@ -11,7 +11,8 @@ import {
   Timer,
   LoaderCircle,
   CirclePlay,
-  MoveRight
+  MoveRight,
+  RotateCcw,
 } from "lucide-react";
 
 const Watermark = lazy(() => import('./Watermark'));
@@ -199,8 +200,11 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
       if (isNowFullScreen && window.innerWidth < 768) {
         screen.orientation?.lock?.("landscape").catch(() => { });
       } else {
-        screen.orientation?.unlock?.();
+        if (screen.orientation?.unlock) {
+          screen.orientation.unlock();
+        }
       }
+
     };
 
     document.addEventListener("fullscreenchange", handleFullScreenChange);
@@ -442,8 +446,15 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
                     transition-all duration-300
                     ${showControls ? "opacity-100" : "opacity-0 pointer-events-none"}
                   `}
-              >
-                <Play size={30} className="drop-shadow-md" />
+              >{progress != 100 ? <Play size={30} className="drop-shadow-md" /> :
+                <div className="relative inline-flex items-center justify-center">
+                  <RotateCcw size={40} className="drop-shadow-md" />
+                  <Play
+                    size={15}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  />
+                </div>
+                }
               </div>
             )}
           </div>
@@ -482,15 +493,14 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
             {showVolumeUI && (
               <div
                 className="
-              absolute
-              bg-black/10 
-              text-white flex justify-center items-center
-              rounded-full shadow-sm
-              p-5 sm:p-7 cursor-pointer
-              active:scale-95
-              transition-all duration-300
-            "
-
+                  absolute
+                  bg-black/10 
+                  text-white flex justify-center items-center
+                  rounded-full shadow-sm
+                  p-5 sm:p-7 cursor-pointer
+                  active:scale-95
+                  transition-all duration-300
+                "
               >
                 {getVolumeIcon()}
               </div>
@@ -536,7 +546,20 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
                     onClick={handlePlayPause}
                     className="bg-black h-8 w-8 sm:h-10 sm:w-10 flex justify-center items-center rounded-full z-20"
                   >
-                    {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+                    {progress === 100 ? (
+                      <div className="relative inline-flex items-center justify-center">
+                        <RotateCcw size={30} />
+                        <Play
+                          size={10}
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+                      </>
+                    )}
+
                   </button>
                   <div className="ml-[-5px] text-xs sm:text-sm bg-black px-2 py-[3px] sm:py-1 rounded-r-full opacity-70 z-10">
                     {formatTime(currentTime)} / {formatTime(duration)}

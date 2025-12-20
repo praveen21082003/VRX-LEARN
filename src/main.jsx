@@ -7,6 +7,11 @@ import { SpeedInsights } from "@vercel/speed-insights/react"
 import "./index.css";
 import App from "./App.jsx";
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
+
+
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <ContextProvider>
