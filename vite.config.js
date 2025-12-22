@@ -23,7 +23,7 @@ export default ({ mode }) => {
         manifest: {
           "name": "VRNexGen Learn",
           "short_name": "VRX learn",
-          "theme_color": "#3f3f3f",
+          "theme_color": "#FFFBF0ff",
           "background_color": "#FFFBF0ff",
           "display": "standalone",
           "orientation": "any",

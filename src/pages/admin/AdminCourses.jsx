@@ -75,6 +75,7 @@ function AdminCourses() {
                     message="Are you sure you want to delete this course?"
                     msg="⚠️ This action is irreversible and will permanently delete course data."
                     buttonName="Delete"
+                    closeButtonName="Cancel"
                     loadingMsg="Deleting..."
                     endpoint="/courses"
                     actionId={courseId}

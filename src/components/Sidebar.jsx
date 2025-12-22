@@ -243,6 +243,7 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
               message="Are you sure you want to log out?"
               msg=""
               buttonName="Logout"
+              closeButtonName="Cancel"
               loadingMsg="Loging out..."
               endpoint="/auth/logout"
               onSuccess={() => setShowLogout(false)}

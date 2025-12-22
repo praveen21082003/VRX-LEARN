@@ -199,6 +199,7 @@ function AdminUsers() {
                     message="Delete this user permanently?"
                     msg="⚠️ The user account will be permanently removed."
                     buttonName="Delete"
+                    closeButtonName="Cancel"
                     loadingMsg="Deleting..."
                     endpoint="/users"
                     actionId={userId}

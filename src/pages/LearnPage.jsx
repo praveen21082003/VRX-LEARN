@@ -224,6 +224,7 @@ function LearnPage({ user }) {
           message="Are you sure you want to log out?"
           msg="⚠️Security alert! Screenshot blocked. Repeated attempts will lock your account."
           buttonName="Logout"
+          closeButtonName="Cancel"
           loadingMsg="Loging out..."
           endpoint="/auth/logout"
           onSuccess={() => setShowLogout(false)}

@@ -173,6 +173,7 @@ function AdminEnrollments() {
                     message={`Delete  ${searchedUserData.fullname}'s enrollment permanently?`}
                     msg={`You are about to delete user enrollmets (${searchedUserData.email_id}). Proceed?`}
                     buttonName="Delete"
+                    closeButtonName="Cancel"
                     loadingMsg="Deleting..."
                     endpoint="/enrollments"
                     actionId={enrollmentId}
@@ -185,6 +186,7 @@ function AdminEnrollments() {
                     message="Delete Enrollments permanently?"
                     msg="⚠️ The selected enrollments will be permanently removed."
                     buttonName="Delete "
+                    closeButtonName="Cancel"
                     loadingMsg="Deleting..."
                     endpoint="/enrollments"
                     actionId={selectedDelete}

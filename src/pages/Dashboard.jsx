@@ -6,7 +6,7 @@ import MyCourses from "../components/MyCourses";
 import Footer from "../components/Footer";
 import DailyQuote from "../components/DailyQuot";
 import Userprofile from "../components/Userprofile";
-// import Ourcourses from "../components/Ourcourses";
+import NotificationPrompt from "../components/NotificationPrompt";
 
 const Dashboard = forwardRef(({ user, error }, ref) => {
   const [count, setCount] = useState(5);
@@ -15,6 +15,14 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   const [searchQuery, setsearchQuery] = useState("");
   const navigate = useNavigate();
   const coursesRef = useRef(null);
+  const [showPrompt, setShowPrompt] = useState(false);
+
+
+  useEffect(() => {
+    if (!localStorage.getItem("dailyReminderEnabled")) {
+      setShowPrompt(true)
+    }
+  }, [])
 
 
   // Redirect countdown when error occurs
@@ -84,6 +92,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   // ---------- Main Dashboard ----------
   return (
     <>
+      {showPrompt && <NotificationPrompt setShowPrompt={setShowPrompt} />}
       {/* Top Bar */}
       <div className="flex justify-between items-center w-full">
         {/* Search Bar */}
@@ -107,9 +116,9 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
         <div className="flex ml-8 w-[30%] sm:w-[25%] md:w-[20%] justify-end items-center">
           <Userprofile user={user} />
         </div>
-    
 
-      {/* <div className="flex sm:gap-10 items-center">
+
+        {/* <div className="flex sm:gap-10 items-center">
           <div className="relative">
             <button
               className="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-0 hover:dark:bg-[#1F2937]"
@@ -140,10 +149,10 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
             )}
           </div>
         </div> */}
-    </div >
+      </div >
 
-      {/* Welcome Section */ }
-      < div className = "bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg shadow-xl p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row items-center justify-between text-white mt-5 w-full dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 dark:text-gray-400" >
+      {/* Welcome Section */}
+      < div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg shadow-xl p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row items-center justify-between text-white mt-5 w-full dark:bg-gradient-to-r dark:from-gray-800 dark:to-gray-900 dark:text-gray-400" >
         <div className="lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4">
             Welcome to Your Learning Journey!
@@ -176,18 +185,18 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
         </div>
       </div >
 
-  {/* Courses Section */ }
-  < div ref = { coursesRef } >
-    <div ref={ref}>
-      <MyCourses searchQuery={searchQuery} />
-    </div>
-{/* <Ourcourses searchQuery={searchQuery} /> */ }
+      {/* Courses Section */}
+      < div ref={coursesRef} >
+        <div ref={ref}>
+          <MyCourses searchQuery={searchQuery} />
+        </div>
+        {/* <Ourcourses searchQuery={searchQuery} /> */}
       </div >
 
 
 
-  {/* Closing Section */ }
-  < div className = "bg-[#840227] rounded-lg shadow-xl flex justify-center flex-col lg:flex-row text-white my-8 gap-20" >
+      {/* Closing Section */}
+      < div className="bg-[#840227] rounded-lg shadow-xl flex justify-center flex-col lg:flex-row text-white my-8 gap-20" >
         <div className="flex justify-center lg:w-[40%]">
           <img
             src="/images/image3.jpg"
@@ -211,7 +220,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
         </div>
       </div >
 
-  <Footer />
+      <Footer />
     </>
   );
 });

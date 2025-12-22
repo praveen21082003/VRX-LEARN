@@ -4,11 +4,13 @@ import axiosInstance from "../api/axiosInstance";
 import DialogueBox from "../components/DialogueBox";
 import { LoaderCircle } from "lucide-react";
 import ReactDOM from "react-dom";
+import { requestNotificationPermission, showReminderNotification } from "../services/notificationService";
 
 function ConfirmationDialog({
   message,
   msg,
   buttonName,
+  closeButtonName,
   loadingMsg,
   endpoint,
   actionId,
@@ -16,7 +18,7 @@ function ConfirmationDialog({
   onSuccess,
 }) {
   const navigate = useNavigate();
-  const [successMsg, setSuccessMsg] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
   const [error, setError] = useState({
     code: null,
@@ -39,8 +41,8 @@ function ConfirmationDialog({
         response = await axiosInstance.delete(`${endpoint}/${actionId}`);
 
         if (response.status >= 200 && response.status < 300) {
-          setSuccessMsg(true);
-          setTimeout(() => setSuccessMsg(false), 3100);
+          setSuccessMsg("✔️ Deleted successfully.");
+          setTimeout(() => setSuccessMsg(""), 3100);
           return true;
         }
       }
@@ -56,8 +58,8 @@ function ConfirmationDialog({
         );
 
         if (allSuccess) {
-          setSuccessMsg(true);
-          setTimeout(() => setSuccessMsg(false), 3100);
+          setSuccessMsg("✔️ Deleted successfully.");
+          setTimeout(() => setSuccessMsg(""), 3100);
           return true;
         }
       }
@@ -70,6 +72,31 @@ function ConfirmationDialog({
           return true;
         }
       }
+
+      if (buttonName === "Enable") {
+        const permission =
+          Notification.permission === "granted"
+            ? "granted"
+            : await requestNotificationPermission();
+
+        if (permission === "granted") {
+          if (!localStorage.getItem("dailyReminderEnabled")) {
+            showReminderNotification();
+            localStorage.setItem("dailyReminderEnabled", "true");
+          }
+
+          setSuccessMsg(
+            "🎉 Great choice! Your daily learning reminder is now active."
+          );
+          setTimeout(() => setSuccessMsg(""), 3100);
+        } else {
+          setSuccessMsg(
+            "🔕 Notifications are blocked. Please enable them in browser settings."
+          );
+          setTimeout(() => setSuccessMsg(""), 4000);
+        }
+      }
+
 
       return false;
 
@@ -120,9 +147,9 @@ function ConfirmationDialog({
       )}
       {successMsg &&
         <WarningPopup
-          message={`✔️ Deleted successfully.`}
+          message={successMsg}
           show={true}
-          onClose={() => setSuccessMsg(false)}
+          onClose={() => setSuccessMsg("")}
         />
       }
 
@@ -156,7 +183,7 @@ function ConfirmationDialog({
               onClick={onClose}
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-6 rounded-lg transition-all"
             >
-              Cancel
+              {closeButtonName}
             </button>
           </div>
         </div>

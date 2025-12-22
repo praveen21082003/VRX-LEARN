@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Mail, LockKeyhole, LoaderCircle, Linkedin, Github, Youtube, Globe, TriangleAlert } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
 
@@ -6,19 +6,6 @@ function Login() {
   const [credentials, setCredentials] = useState({ email_id: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
-
-  function areCookiesAllowed() {
-    if (!navigator.cookieEnabled) return false;
-
-    document.cookie = "test_cookie=1; SameSite=Lax";
-    return document.cookie.includes("test_cookie");
-  }
-
-  if (!areCookiesAllowed()) {
-    alert("Please enable cookies to log in to the LMS portal.");
-  }
-
 
 
   const handleChange = (e) => {
@@ -67,7 +54,7 @@ function Login() {
             <h1 className="font-bold text-3xl text-center">Login</h1>
             {errorMessage && (
               <p className="flex gap-1 items-center text-red-500 text-sm text-center mt-2">
-                <TriangleAlert size={15}/>{errorMessage}
+                <TriangleAlert size={15} />{errorMessage}
               </p>
             )}
           </div>

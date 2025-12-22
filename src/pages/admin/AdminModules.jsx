@@ -117,6 +117,7 @@ function AdminModules({ user }) {
           message={`Are you sure you want to delete this ${active.toLowerCase()}?`}
           msg="⚠️ This action is irreversible."
           buttonName="Delete"
+          closeButtonName="Cancel"
           loadingMsg="Deleting..."
           endpoint={
             active === "Courses"
