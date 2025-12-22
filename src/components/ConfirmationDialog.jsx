@@ -96,6 +96,7 @@ function ConfirmationDialog({
           );
           setTimeout(() => setSuccessMsg(""), 4000);
         }
+        return true;
       }
 
 
