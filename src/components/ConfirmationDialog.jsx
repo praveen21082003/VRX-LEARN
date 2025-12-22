@@ -5,7 +5,7 @@ import DialogueBox from "../components/DialogueBox";
 import { LoaderCircle } from "lucide-react";
 import ReactDOM from "react-dom";
 import WarningPopup from "./WarningPopup";
-import { requestNotificationPermission, showReminderNotification } from "../services/notificationService";
+import { scheduleDailyReminder } from "../services/notificationService";
 
 function ConfirmationDialog({
   message,
@@ -32,7 +32,7 @@ function ConfirmationDialog({
 
   const [loading, setLoading] = useState(false);
 
-  async function fetchRemove(endpoint) {
+  async function handleAction(endpoint) {
 
     try {
       setLoading(true);
@@ -75,30 +75,40 @@ function ConfirmationDialog({
       }
 
       if (buttonName === "Enable") {
-        const permission =
-          Notification.permission === "granted"
-            ? "granted"
-            : await requestNotificationPermission();
+        const permission = Notification.permission;
+        const reminder = localStorage.getItem("dailyReminderEnabled");
 
         if (permission === "granted") {
-          if (!localStorage.getItem("dailyReminderEnabled")) {
-            showReminderNotification();
+          if (reminder !== "true") {
             localStorage.setItem("dailyReminderEnabled", "true");
+            scheduleDailyReminder();
+            setSuccessMsg("🎉 Daily reminder enabled!");
+          }
+          else {
+            setSuccessMsg("🥳 Daily reminder is already active.");
           }
 
-          setSuccessMsg(
-            "🎉 Great choice! Your daily learning reminder is now active."
-          );
-          setTimeout(() => setSuccessMsg(""), 3100);
+        } else if (permission === "default") {
+
+          const result = await Notification.requestPermission();
+
+          if (result === "granted") {
+            scheduleDailyReminder();
+            localStorage.setItem("dailyReminderEnabled", "true");
+            setSuccessMsg("🎉 Daily reminder enabled!");
+          } else if (result === "denied") {
+            setSuccessMsg("🔕 Notifications are blocked by the browser Please enable them from site settings");
+            return false;
+          }
+
         } else {
-          setSuccessMsg(
-            "🔕 Notifications are blocked. Please enable them in browser settings."
-          );
-          setTimeout(() => setSuccessMsg(""), 4000);
+          setSuccessMsg("🔕 Notifications are blocked in browser settings. Please enable them manually.");
+          localStorage.removeItem("dailyReminderEnabled");
+          return false;
         }
+        setTimeout(() => setSuccessMsg(""), 4000);
         return true;
       }
-
 
       return false;
 
@@ -122,12 +132,8 @@ function ConfirmationDialog({
 
   // HANDLE CONFIRM ACTION
   async function handleConfirm() {
-    const ok = await fetchRemove(endpoint);
+    const ok = await handleAction(endpoint);
     if (!ok) return;
-
-    // if (buttonName === "Logout") {
-    //   window.location.replace("/");
-    // }
 
     if (typeof onSuccess === "function") onSuccess();
 

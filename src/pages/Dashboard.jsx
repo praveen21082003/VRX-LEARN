@@ -19,10 +19,15 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
 
 
   useEffect(() => {
-    if (!localStorage.getItem("dailyReminderEnabled")) {
-      setShowPrompt(true)
+    const permission = Notification.permission;
+
+    if (
+      permission === "default" &&
+      localStorage.getItem("dailyReminderEnabled") !== "true"
+    ) {
+      setShowPrompt(true);
     }
-  }, [])
+  }, []);
 
 
   // Redirect countdown when error occurs
@@ -103,7 +108,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
             placeholder="Search (e.g., Python, Mainframe, etc.)"
             value={searchQuery}
             onChange={(e) => setsearchQuery(e.target.value)}
-            className="w-full text-[10px] sm:text-sm pl-5 sm:pl-10 pr-2 py-2 border rounded-md outline-none 
+            className="w-full text-[10px] lg:text-sm pl-5 sm:pl-10 pr-2 py-2 border rounded-md outline-none 
                       focus:ring-2 focus:ring-indigo-100 dark:bg-[#0A0A0A] dark:focus:ring-gray-600 dark:border-gray-700 dark:text-slate-300"
           />
           <div className="flex text-sm absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400">
