@@ -18,8 +18,11 @@ export default ({ mode }) => {
         },
       }),
       VitePWA({
+        strategies: "injectManifest",
         registerType: 'autoUpdate',
         injectRegister: 'auto',
+        srcDir: "src",
+        filename: "sw.js",
         manifest: {
           "name": "VRNexGen Learn",
           "short_name": "VRX learn",
@@ -29,7 +32,7 @@ export default ({ mode }) => {
           "orientation": "any",
           "scope": "/",
           "start_url": "/",
-          "description": "A smart, fast, and offline-ready learning platform designed to deliver courses, videos with a seamless app-like experience across all devices.",
+          "description": "A smart and fast online learning platform designed to deliver courses, videos with a seamless app-like experience across all devices.",
           "icons": [
             {
               "src": "icons/icon-192.png",
@@ -59,7 +62,7 @@ export default ({ mode }) => {
 
     preview: {
       host: true,
-      port: 4173,
+      port: 5173,
     }
   });
 };
