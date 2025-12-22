@@ -11,7 +11,7 @@ function Course({ id, url, name, description, author, enrollment }) {
 
     const handleStartLearning = (courseId) => {
         if (courseId) {
-            sessionStorage.setItem("fromLearnButton", id);
+            localStorage.setItem("fromLearnButton", id);
         }
         navigate(`/learn/${id}`);
     };

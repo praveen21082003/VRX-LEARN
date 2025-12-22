@@ -63,7 +63,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
 
 
   const handleStartLearning = () => {
-    const courseId = sessionStorage.getItem("fromLearnButton");
+    const courseId = localStorage.getItem("fromLearnButton");
     if (courseId) {
       navigate(`/learn/${courseId}`);
     }

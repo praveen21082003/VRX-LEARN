@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Mail, LockKeyhole, LoaderCircle, Linkedin, Github, Youtube, Globe, TriangleAlert } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
+import { areCookiesEnabled } from "../services/cookiesService";
 
 function Login() {
   const [credentials, setCredentials] = useState({ email_id: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -15,6 +15,9 @@ function Login() {
       [name]: value,
     }));
   };
+
+
+
 
   // Handle form submit
   const handleSubmit = async (e) => {
@@ -26,8 +29,17 @@ function Login() {
       return;
     }
 
+    if (!areCookiesEnabled()) {
+      setErrorMessage(
+        "🍪 Cookies are disabled. Please enable cookies to continue."
+      );
+      return;
+    }
+
     try {
       setLoading(true);
+
+
       const response = await axiosInstance.post("/auth/login", credentials);
       if (response.status === 200) {
         window.location.href = "/";
@@ -35,7 +47,7 @@ function Login() {
     } catch (error) {
       console.error(error);
       if (error.response?.status === 401) {
-        setErrorMessage("Invalid email or password.");
+        setErrorMessage(error.response.detail);
       } else {
         setErrorMessage("Something went wrong. Please try again later.");
       }
