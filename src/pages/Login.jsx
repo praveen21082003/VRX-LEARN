@@ -38,8 +38,6 @@ function Login() {
 
     try {
       setLoading(true);
-
-
       const response = await axiosInstance.post("/auth/login", credentials);
       if (response.status === 200) {
         window.location.href = "/";
@@ -47,7 +45,8 @@ function Login() {
     } catch (error) {
       console.error(error);
       if (error.response?.status === 401) {
-        setErrorMessage(error.response.detail);
+        const err = error.response.data.detail || "Check network and credentials"
+        setErrorMessage(err);
       } else {
         setErrorMessage("Something went wrong. Please try again later.");
       }
