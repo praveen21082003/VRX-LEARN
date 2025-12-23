@@ -254,8 +254,10 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
   const handleFullScreen = () => {
     if (!document.fullscreenElement) {
       containerRef.current.requestFullscreen();
+      isFullScreen(true);
     } else {
       document.exitFullscreen();
+      isFullScreen(false);
     }
   };
 
