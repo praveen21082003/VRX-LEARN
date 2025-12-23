@@ -18,34 +18,36 @@ export default ({ mode }) => {
         },
       }),
       VitePWA({
-        strategies: "injectManifest",
         registerType: 'autoUpdate',
         injectRegister: 'auto',
-        srcDir: "src",
-        filename: "sw.js",
+        workbox: {
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
+        },
         manifest: {
-          "name": "VRNexGen Learn",
-          "short_name": "VRX learn",
-          "theme_color": "#840227",
-          "background_color": "#FFFBF0ff",
-          "display": "standalone",
-          "orientation": "any",
-          "scope": "/",
-          "start_url": "/",
-          "description": "A smart and fast online learning platform designed to deliver courses, videos with a seamless app-like experience across all devices.",
-          "icons": [
+          name: "VRNexGen Learn",
+          short_name: "VRX Learn",
+          theme_color: "#840227",
+          background_color: "#FFFBF0",
+          display: "standalone",
+          start_url: "/",
+          scope: "/",
+          description:
+            "A smart online learning platform with daily learning reminders.",
+          icons: [
             {
-              "src": "icons/icon-192.png",
-              "sizes": "192x192",
-              "type": "image/png"
+              src: "/icons/icon-192.png",
+              sizes: "192x192",
+              type: "image/png",
             },
             {
-              "src": "icons/icon-512.png",
-              "sizes": "512x512",
-              "type": "image/png"
-            }
-          ]
-        }
+              src: "/icons/icon-512.png",
+              sizes: "512x512",
+              type: "image/png",
+            },
+          ],
+        },
       })
     ],
     resolve: {

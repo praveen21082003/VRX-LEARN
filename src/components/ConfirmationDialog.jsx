@@ -5,7 +5,6 @@ import DialogueBox from "../components/DialogueBox";
 import { LoaderCircle } from "lucide-react";
 import ReactDOM from "react-dom";
 import WarningPopup from "./WarningPopup";
-import { scheduleDailyReminder } from "../services/notificationService";
 
 function ConfirmationDialog({
   message,
@@ -81,8 +80,12 @@ function ConfirmationDialog({
         if (permission === "granted") {
           if (reminder !== "true") {
             localStorage.setItem("dailyReminderEnabled", "true");
-            scheduleDailyReminder();
             setSuccessMsg("🎉 Daily reminder enabled!");
+            const reg = await navigator.serviceWorker.ready;
+            reg.showNotification("🧪 Notification Enabled", {
+              body: "You will receive learning reminders",
+              icon: "/icons/icon-192.png",
+            });
           }
           else {
             setSuccessMsg("🥳 Daily reminder is already active.");
@@ -93,7 +96,6 @@ function ConfirmationDialog({
           const result = await Notification.requestPermission();
 
           if (result === "granted") {
-            scheduleDailyReminder();
             localStorage.setItem("dailyReminderEnabled", "true");
             setSuccessMsg("🎉 Daily reminder enabled!");
           } else if (result === "denied") {
