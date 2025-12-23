@@ -1,7 +1,7 @@
-import { lazy, useEffect, useState } from "react";
+import { lazy, useEffect, useState, Suspense } from "react";
 import { href, Link, useLocation, useNavigate } from "react-router-dom";
 
-const DarkModeToggle = lazy(()=> import('./DarkModeToggle'));
+const DarkModeToggle = lazy(() => import('./DarkModeToggle'));
 import WarningPopup from "./WarningPopup";
 
 import ConfirmationDialog from "./ConfirmationDialog";
@@ -63,8 +63,8 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
     { name: "Dashboard", icon: LayoutDashboard, href: "/admin/dashboard", title: "dashboard" },
     { name: "Users", icon: User, href: "/admin/users", title: "users" },
     { name: "Courses", icon: GraduationCap, href: "/admin/courses", title: "courses" },
-    { name: "Enrollments", icon: BookPlus, href: "/admin/enrollments", title: "enrollments"},
-    { name: "Module List", icon:ListTree, href: "/admin/modules", title: "module list"}
+    { name: "Enrollments", icon: BookPlus, href: "/admin/enrollments", title: "enrollments" },
+    { name: "Module List", icon: ListTree, href: "/admin/modules", title: "module list" }
   ];
 
 
@@ -210,9 +210,9 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen, myCourses
 
 
         {/* Navigation */}
-
-
-        <DarkModeToggle collapsed={collapsed} />
+        <Suspense>
+          <DarkModeToggle collapsed={collapsed} />
+        </Suspense>
 
         {/* Settings */}
         <div className="border-t px-2 py-4 space-y-2">
