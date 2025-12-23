@@ -22,8 +22,16 @@ export default ({ mode }) => {
         injectRegister: 'auto',
         workbox: {
           cleanupOutdatedCaches: true,
-          clientsClaim: true,
           skipWaiting: true,
+          clientsClaim: true,
+
+          runtimeCaching: [
+            {
+              urlPattern: ({ request }) =>
+                request.destination === "video",
+              handler: "NetworkOnly",
+            },
+          ],
         },
         manifest: {
           name: "VRNexGen Learn",
