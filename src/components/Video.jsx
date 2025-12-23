@@ -1,4 +1,4 @@
-import React, { lazy, useEffect, useRef, useState } from "react";
+import React, { Suspense, lazy, useEffect, useRef, useState } from "react";
 import {
   Play,
   Pause,
@@ -397,7 +397,9 @@ function ModuleVideo({ videoRef, video_URL, user, onNextVideo }) {
 
         <div className="absolute inset-0 pointer-events-none flex justify-center items-center z-10">
           <div className="watermark w-[80%] h-[80%]">
-            <Watermark user={user} />
+            <Suspense>
+              <Watermark user={user} />
+            </Suspense>
           </div>
         </div>
 
