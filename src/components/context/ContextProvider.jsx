@@ -11,9 +11,9 @@ export function ContextProvider({ children }) {
   // PDF context
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
-  const [scale, setScale] = useState(0.4);
+  const [scale, setScale] = useState(1);
   const [pdfBlobUrl, setPdfBlobUrl] = useState(null);
-  const [loading, setLoading] = useState(false);
+  
 
 
   return (
@@ -25,7 +25,6 @@ export function ContextProvider({ children }) {
       pageNumber, setPageNumber,
       scale, setScale,
       pdfBlobUrl, setPdfBlobUrl,
-      loading, setLoading,
     }}>
       {children}
     </Context.Provider>

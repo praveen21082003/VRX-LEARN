@@ -3,6 +3,7 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { ZoomIn, ZoomOut, Expand, Minimize } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
 import { useLearn } from "./context/ContextProvider";
+import PdfLoading from "./loading/PdfLoading";
 
 pdfjs.GlobalWorkerOptions.workerSrc =
   `https://unpkg.com/pdfjs-dist@5.4.296/build/pdf.worker.min.mjs`;
@@ -13,13 +14,13 @@ function PdfViewer({ fileId }) {
     pageNumber, setPageNumber,
     scale, setScale,
     pdfBlobUrl, setPdfBlobUrl,
-    loading, setLoading
   } = useLearn();
 
   const containerRef = useRef(null);
   const scrollRef = useRef(null);
   const pageRefs = useRef([]);
   const isTypingRef = useRef(false);
+  const [loading, setLoading] = useState(false);
 
   const [pageInput, setPageInput] = useState("1");
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -176,6 +177,12 @@ function PdfViewer({ fileId }) {
     });
   };
 
+  if (loading) {
+    return (
+      <PdfLoading />
+    )
+  }
+
 
 
 
@@ -184,21 +191,20 @@ function PdfViewer({ fileId }) {
       ref={containerRef}
       className="w-full h-full flex items-center flex-col bg-[#00000010] rounded-lg overflow-hidden"
     >
-
       {/* ----------- TOP CONTROLS ----------- */}
-      <div className="w-full flex justify-between items-center bg-black/40 text-white py-2 px-3">
+      <div className="w-full flex justify-between items-center text-sm sm:text-base bg-black/40 text-white py-2 px-3">
         {/* ZOOM */}
         <div className="flex gap-2 items-center">
-          <button onClick={zoomOut} className="p-2 bg-white/10 rounded-full">
+          <button onClick={zoomOut} className="p-1 sm:p-2 bg-white/10 rounded-full">
             <ZoomOut size={20} />
           </button>
           <span className="text-sm">
             {(scale * 100).toFixed(0)}%
           </span>
-          <button onClick={zoomIn} className="p-2 bg-white/10 rounded-full">
+          <button onClick={zoomIn} className="p-1 sm:p-2 bg-white/10 rounded-full">
             <ZoomIn size={20} />
           </button>
-          <button onClick={resetZoom} className="px-3 bg-gray-300 text-black rounded-md">
+          <button onClick={resetZoom} className="px-2 sm:px-3 py-1 bg-gray-300 text-black rounded-md">
             Reset
           </button>
         </div>
@@ -212,14 +218,14 @@ function PdfViewer({ fileId }) {
             onChange={onPageInputChange}
             onBlur={applyPageChange}
             onKeyDown={(e) => e.key === "Enter" && applyPageChange()}
-            className="w-10 text-center text-black rounded"
+            className="w-7 sm:w-10 text-center text-black rounded"
           />
           <span> of {numPages}</span>
 
           {/* FULLSCREEN */}
           <button
             onClick={toggleFullscreen}
-            className="ml-4 p-2 bg-white/10 rounded-full"
+            className="sm:ml-4 p-1 sm:p-2 bg-white/10 rounded-full"
           >
             {isFullScreen ? <Minimize /> : <Expand />}
           </button>
@@ -229,7 +235,7 @@ function PdfViewer({ fileId }) {
       {/* ----------- PDF SCROLL AREA ----------- */}
       <div
         ref={scrollRef}
-        className={`w-full h-full overflow-auto ${(scale < 1) && "items-center"} flex flex-col py-3`}
+        className={`w-full h-full overflow-auto ${(scale <= 1) && "items-center"} flex flex-col py-3`}
       >
         {pdfBlobUrl && (
           <Document
