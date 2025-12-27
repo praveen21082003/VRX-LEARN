@@ -2,7 +2,7 @@
 
 A fast, scalable, and modern **Learning Management System (LMS)** built with **React + Vite**, designed to deliver seamless online learning experiences for students, instructors, and administrators.
 
-🚀 **Live Demo:** https://your-lms-name.vercel.app  
+🚀 **Live Demo:**  https://learnvrnexgen.vercel.app/ 
 
 ---
 
