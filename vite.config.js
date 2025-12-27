@@ -20,19 +20,6 @@ export default ({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         injectRegister: 'auto',
-        workbox: {
-          cleanupOutdatedCaches: true,
-          skipWaiting: true,
-          clientsClaim: true,
-
-          runtimeCaching: [
-            {
-              urlPattern: ({ request }) =>
-                request.destination === "video",
-              handler: "NetworkOnly",
-            },
-          ],
-        },
         manifest: {
           name: "VRNexGen Learn",
           short_name: "VRX Learn",
@@ -54,6 +41,49 @@ export default ({ mode }) => {
               sizes: "512x512",
               type: "image/png",
             },
+          ],
+        },
+        workbox: {
+          cleanupOutdatedCaches: true,
+          skipWaiting: true,
+          clientsClaim: true,
+
+          runtimeCaching: [
+            {
+              urlPattern: ({ request }) =>
+                request.destination === "image",
+              handler: "CacheFirst",
+              options: {
+                cacheName: "image-cache",
+                expiration: {
+                  maxEntries: 200,
+                  maxAgeSeconds: 7 * 24 * 60 * 60 //7days
+                }
+              }
+            },
+            {
+              urlPattern: ({ request }) =>
+                request.destination === "video",
+              handler: "NetworkOnly",
+            },
+            {
+              urlPattern: ({ url, request }) =>
+                request.method === "GET" &&
+                url.origin.includes("onrender.com") &&
+                url.pathname === "/all_courses",
+              handler: "NetworkFirst",
+              options: {
+                cacheName: "courses-cache",
+                networkTimeoutSeconds: 5,
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 24 * 60 * 60, //1day
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            }
           ],
         },
       })

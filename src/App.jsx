@@ -21,6 +21,8 @@ const AdminEnrollments = lazy(() => import('./pages/admin/AdminEnrollments'));
 const AdminModules = lazy(() => import('./pages/admin/AdminModules'));
 
 import { AdminContextProvider } from "./components/context/AdminContextProvider";
+import { getToken } from "firebase/messaging";
+import { messaging } from "./services/firebase";
 
 
 function App() {
@@ -78,6 +80,26 @@ function App() {
 
     checkAuth();
   }, [isLoginPage]);
+
+
+  useEffect(() => {
+    async function enableNotifications() {
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        alert("Permission denied");
+        return;
+      }
+
+      const token = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      });
+
+      console.log("FCM TOKEN:", token);
+    }
+    enableNotifications();
+  }, [checkedAuth, isLoginPage]);
+
+
 
   if (!checkedAuth && !isLoginPage) {
     return (

@@ -73,45 +73,6 @@ function ConfirmationDialog({
         }
       }
 
-      if (buttonName === "Enable") {
-        const permission = Notification.permission;
-        const reminder = localStorage.getItem("dailyReminderEnabled");
-
-        if (permission === "granted") {
-          if (reminder !== "true") {
-            localStorage.setItem("dailyReminderEnabled", "true");
-            setSuccessMsg("🎉 Daily reminder enabled!");
-            const reg = await navigator.serviceWorker.ready;
-            reg.showNotification("🧪 Notification Enabled", {
-              body: "You will receive learning reminders",
-              icon: "/icons/icon-192.png",
-            });
-          }
-          else {
-            setSuccessMsg("🥳 Daily reminder is already active.");
-          }
-
-        } else if (permission === "default") {
-
-          const result = await Notification.requestPermission();
-
-          if (result === "granted") {
-            localStorage.setItem("dailyReminderEnabled", "true");
-            setSuccessMsg("🎉 Daily reminder enabled!");
-          } else if (result === "denied") {
-            setSuccessMsg("🔕 Notifications are blocked by the browser Please enable them from site settings");
-            return false;
-          }
-
-        } else {
-          setSuccessMsg("🔕 Notifications are blocked in browser settings. Please enable them manually.");
-          localStorage.removeItem("dailyReminderEnabled");
-          return false;
-        }
-        setTimeout(() => setSuccessMsg(""), 4000);
-        return true;
-      }
-
       return false;
 
     } catch (err) {

@@ -6,7 +6,6 @@ import MyCourses from "../components/MyCourses";
 import Footer from "../components/Footer";
 import DailyQuote from "../components/DailyQuot";
 import Userprofile from "../components/Userprofile";
-import NotificationPrompt from "../components/NotificationPrompt";
 
 const Dashboard = forwardRef(({ user, error }, ref) => {
   const [count, setCount] = useState(5);
@@ -18,16 +17,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   const [showPrompt, setShowPrompt] = useState(false);
 
 
-  useEffect(() => {
-    const permission = Notification.permission;
 
-    if (
-      permission === "default" &&
-      localStorage.getItem("dailyReminderEnabled") !== "true"
-    ) {
-      setShowPrompt(true);
-    }
-  }, []);
 
 
   // Redirect countdown when error occurs
@@ -97,7 +87,6 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   // ---------- Main Dashboard ----------
   return (
     <>
-      {showPrompt && <NotificationPrompt setShowPrompt={setShowPrompt} />}
       {/* Top Bar */}
       <div className="flex justify-between items-center w-full">
         {/* Search Bar */}

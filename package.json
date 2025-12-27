@@ -13,6 +13,7 @@
     "@tippyjs/react": "^4.2.6",
     "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.12.2",
+    "firebase": "^12.7.0",
     "lucide-react": "^0.547.0",
     "path-browserify": "^1.0.1",
     "pdfjs-dist": "^5.4.394",
