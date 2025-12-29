@@ -69,6 +69,7 @@ function ConfirmationDialog({
 
         if (response.status >= 200 && response.status < 300) {
           navigate("/")
+          localStorage.removeItem("fromLearnButton");
           return true;
         }
       }

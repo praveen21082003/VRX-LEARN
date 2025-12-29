@@ -6,6 +6,9 @@ import MyCourses from "../components/MyCourses";
 import Footer from "../components/Footer";
 import DailyQuote from "../components/DailyQuot";
 import Userprofile from "../components/Userprofile";
+import { getToken } from "firebase/messaging";
+import { messaging } from "../services/firebase";
+import WarningPopup from "../components/WarningPopup";
 
 const Dashboard = forwardRef(({ user, error }, ref) => {
   const [count, setCount] = useState(5);
@@ -14,10 +17,7 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   const [searchQuery, setsearchQuery] = useState("");
   const navigate = useNavigate();
   const coursesRef = useRef(null);
-  const [showPrompt, setShowPrompt] = useState(false);
-
-
-
+  const [showPopUp, setShowPopUp] = useState(false);
 
 
   // Redirect countdown when error occurs
@@ -43,6 +43,41 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
     return () => clearInterval(dotTimer);
   }, []);
 
+
+  useEffect(() => {
+    if (!user?.email_id) return;
+
+    const askedKey = `notification_prompted_${user.email_id}`;
+    if (localStorage.getItem(askedKey)) return;
+
+    async function enableNotifications() {
+      const permission = await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        setShowPopUp(true);
+        localStorage.setItem(askedKey, "true");
+        return;
+      }
+
+      try {
+        const token = await getToken(messaging, {
+          vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+        });
+
+        if (token) {
+          console.log("FCM TOKEN:", token);
+        }
+      } catch (err) {
+        console.error("FCM token error:", err);
+      }
+    }
+
+    enableNotifications();
+  }, [user?.email_id]);
+
+
+
+
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       if (coursesRef.current) {
@@ -58,6 +93,9 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
       navigate(`/learn/${courseId}`);
     }
   }
+  // -----------pop up ---------
+
+
 
   // ---------- Error ----------
   if (error.show) {
@@ -87,6 +125,13 @@ const Dashboard = forwardRef(({ user, error }, ref) => {
   // ---------- Main Dashboard ----------
   return (
     <>
+      {showPopUp &&
+        <WarningPopup
+          message="🔕 Notifications are disabled. You can enable them later from settings."
+          show={true}
+          onClose={() => setShowPopUp(false)}
+        />
+      }
       {/* Top Bar */}
       <div className="flex justify-between items-center w-full">
         {/* Search Bar */}
