@@ -12,16 +12,20 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const { title, body, url } = payload.data;
-  self.registration.showNotification(title,
-    {
-      body,
-      icon: "/icons/icon-192.png",
-      badge: "/icons/icon-192.png",
-      data: { url },
-    }
-  );
+  const data = payload?.data || {};
+
+  const title = data.title || "VRNexGen Learn";
+  const body = data.body || "Open the app to continue learning";
+  const url = data.url || "/dashboard";
+
+  self.registration.showNotification(title, {
+    body,
+    icon: "/icons/icon-192.png",
+    badge: "/icons/icon-192.png",
+    data: { url },
+  });
 });
+
 
 
 self.addEventListener("notificationclick", (event) => {

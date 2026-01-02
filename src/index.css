@@ -226,4 +226,8 @@ body {
   position: absolute;
 }
 
-
+.pdf-viewer .textLayer {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  cursor: text;
+}

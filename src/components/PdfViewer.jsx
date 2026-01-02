@@ -4,11 +4,19 @@ import { ZoomIn, ZoomOut, Expand, Minimize } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
 import { useLearn } from "./context/ContextProvider";
 import PdfLoading from "./loading/PdfLoading";
+import DialogueBox from "./DialogueBox";
 
 pdfjs.GlobalWorkerOptions.workerSrc =
   `https://unpkg.com/pdfjs-dist@5.4.296/build/pdf.worker.min.mjs`;
 
 function PdfViewer({ fileId }) {
+  const [error, setError] = useState({
+    code: null,
+    message: "",
+    detail: "",
+    show: false
+  });
+
   const {
     numPages, setNumPages,
     pageNumber, setPageNumber,
@@ -45,22 +53,49 @@ function PdfViewer({ fileId }) {
 
     const fetchPDF = async () => {
       setLoading(true);
+
       try {
-        const res = await axiosInstance.get(`/media/pdf/${fileId}`, {
+        const response = await axiosInstance.get(`/media/pdf/${fileId}`, {
           responseType: "arraybuffer",
         });
-        const blob = new Blob([res.data], { type: "application/pdf" });
+
+        const blob = new Blob([response.data], { type: "application/pdf" });
         const url = URL.createObjectURL(blob);
 
         pdfCache.current.set(fileId, url);
         setPdfBlobUrl(url);
-      } catch (err) {
-        console.error("PDF Load Error:", err);
+
+      } catch (error) {
+        const status = error.response?.status;
+        let detail = "Unable to load the PDF. Please try again.";
+
+        setPdfBlobUrl(null);
+        setNumPages(0);
+
+        if (error.response?.data instanceof ArrayBuffer) {
+          try {
+            const decoded = new TextDecoder("utf-8").decode(error.response.data);
+            const parsed = JSON.parse(decoded);
+            detail = parsed.detail || detail;
+          } catch (_) {
+            // ignore parse errors
+          }
+        }
+
+        setError({
+          code: status,
+          message:
+            status === 401
+              ? "Unauthorized access"
+              : "PDF loading failed",
+          detail,
+          show: true,
+        });
+
       } finally {
         setLoading(false);
       }
     };
-
     if (fileId) fetchPDF();
   }, [fileId]);
 
@@ -177,6 +212,7 @@ function PdfViewer({ fileId }) {
     });
   };
 
+
   if (loading) {
     return (
       <PdfLoading />
@@ -184,12 +220,25 @@ function PdfViewer({ fileId }) {
   }
 
 
+  if (error.show) {
+    return (
+      <DialogueBox
+        errorCode={error.code}
+        errorMessage={error.message}
+        error={error.detail}
+        onClose={() => {
+          setError(prev => ({ ...prev, show: false }));
+        }}
+      />
+    )
+  }
+
 
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex items-center flex-col bg-[#00000010] rounded-lg overflow-hidden"
+      className="pdf-viewer w-full h-full flex items-center flex-col bg-[#00000010] rounded-lg overflow-hidden"
     >
       {/* ----------- TOP CONTROLS ----------- */}
       <div className="w-full flex justify-between items-center text-sm sm:text-base bg-black/40 text-white py-2 px-3">
@@ -237,7 +286,7 @@ function PdfViewer({ fileId }) {
         ref={scrollRef}
         className={`w-full h-full overflow-auto ${(scale <= 1) && "items-center"} flex flex-col py-3`}
       >
-        {pdfBlobUrl && (
+        {pdfBlobUrl ? (
           <Document
             file={pdfBlobUrl}
             onLoadSuccess={({ numPages }) => setNumPages(numPages)}
@@ -258,6 +307,13 @@ function PdfViewer({ fileId }) {
               </div>
             ))}
           </Document>
+        ) : (
+          <div className="text-center text-red-500 space-y-1">
+            <p className="font-semibold">{error.detail}</p>
+            <p className="text-xs sm:text-sm text-gray-600">
+              Try opening a different PDF or contact support if the issue continues.
+            </p>
+          </div>
         )}
       </div>
     </div>

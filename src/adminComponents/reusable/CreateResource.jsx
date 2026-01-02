@@ -5,7 +5,8 @@ import WarningPopup from "../../components/WarningPopup";
 
 function CreateResource({ moduleId, moduleName }) {
     const { successMsg, setSuccessMsg, createResource, newResource, setNewResource, resourceLoading } = useAdmin();
-    const isPDF = newResource.type === "pdf";
+
+
 
 
     const [formError, setFormError] = useState({
@@ -13,6 +14,9 @@ function CreateResource({ moduleId, moduleName }) {
         type: "",
         url: "",
     });
+
+    const [createdType, setCreatedType] = useState(null);
+
 
     useEffect(() => {
         setNewResource((prev) => ({
@@ -39,8 +43,6 @@ function CreateResource({ moduleId, moduleName }) {
 
         if (!newResource.name.trim()) {
             errors.name = "Resource name cannot be empty.";
-        } else if (!/^[A-Z]/.test(newResource.name.trim())) {
-            errors.name = "Resource name must start with an uppercase letter.";
         }
 
         if (!newResource.type) {
@@ -57,6 +59,8 @@ function CreateResource({ moduleId, moduleName }) {
 
     const handleSubmit = () => {
         if (!checkFormError()) return;
+
+        setCreatedType(newResource.type);
         createResource();
     };
 
@@ -71,11 +75,14 @@ function CreateResource({ moduleId, moduleName }) {
                         <WarningPopup
                             message={`✔️ Resource "${newResource.name}" created successfully.`}
                             show={true}
-                            onClose={() => setSuccessMsg(false)}
+                            onClose={() => {
+                                setSuccessMsg(false);
+                                setCreatedType(null);
+                            }}
                         />
 
                         <div className="h-32 w-32 bg-green-700 border rounded-full flex justify-center items-center text-white shadow-2xl">
-                            {isPDF ? (
+                            {createdType === "pdf" ? (
                                 <FileText className="animate-bounce" size={60} />
                             ) : (
                                 <MonitorPlay className="animate-bounce" size={60} />

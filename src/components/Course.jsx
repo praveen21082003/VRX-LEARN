@@ -6,7 +6,7 @@ import Tippy from '@tippyjs/react/headless';
 
 
 
-function Course({ id, url, name, description, author, enrollment }) {
+function Course({ id, name, description, author, enrollment }) {
     const navigate = useNavigate("");
 
     const handleStartLearning = (courseId) => {
@@ -15,6 +15,7 @@ function Course({ id, url, name, description, author, enrollment }) {
         }
         navigate(`/learn/${id}`);
     };
+
 
 
     return (
@@ -26,12 +27,21 @@ function Course({ id, url, name, description, author, enrollment }) {
                     dark:hover:shadow-gray-700
             ">
             <div className="relative">
-                <img
-                    src={url}
-                    alt={name}
-                    className="w-full h-44 sm:h-28 object-cover transition-all duration-300"
-                />
+                <div className="w-full aspect-[3/2] overflow-hidden">
+                    <img
+                        src="/images/course_logo.png"
+                        alt={name}
+                        className="w-full h-full object-cover"
+                    />
+                </div>
+
+                <div className="absolute justify-center inset-y-0 right-5 w-[55%] flex items-center">
+                    <p className="text-gray-800 text-sm sm:text-base font-semibold px-4 leading-snug line-clamp-3">
+                        {name}
+                    </p>
+                </div>
             </div>
+
 
             <div className="p-3 flex flex-col justify-between flex-1">
                 <div className="w-full h-5 flex items-center justify-between text-gray-500">
@@ -46,7 +56,7 @@ function Course({ id, url, name, description, author, enrollment }) {
                 </div>
             </div>
 
-            <div className="flex justify-center px-1 h-24">
+            <div className="flex justify-center px-1 h-24 cursor-pointer">
                 <Tippy
                     arrow={true}
                     placement="auto"

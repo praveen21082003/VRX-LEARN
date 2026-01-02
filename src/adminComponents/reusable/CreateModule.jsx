@@ -15,9 +15,8 @@ function CreateModule({ courseId, courseName }) {
         const errors = {}
         if (!newModule.name.trim()) {
             errors.name = "module name cannot be empty."
-        } else if (!/^[A-Z]/.test(newModule.name.trim())) {
-            errors.name = "module name must start with an uppercase letter."
         }
+        
         setFormError(errors);
 
         return Object.keys(errors).length === 0;

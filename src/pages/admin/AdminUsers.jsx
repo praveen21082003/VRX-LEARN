@@ -213,6 +213,7 @@ function AdminUsers() {
                     msg="⚠️ The selected user accounts will be permanently removed."
                     buttonName="Delete "
                     loadingMsg="Deleting..."
+                    closeButtonName="Cancle"
                     endpoint="/users"
                     actionId={selectedDelete}
                     onSuccess={() => { setShowDeleteBox(false); fetchUsers(); setSelectedDelete([]); }}
