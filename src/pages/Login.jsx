@@ -74,7 +74,7 @@ function Login() {
     try {
       await axiosInstance.get("/auth/me");
       setCookieHelp(false);
-      window.location.reload();
+      window.location.replace(window.location.href);
     } catch (error) {
       setErrorMessage(
         "Cookies are still blocked. Please enable cookies and try again."

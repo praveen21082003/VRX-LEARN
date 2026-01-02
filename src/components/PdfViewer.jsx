@@ -6,6 +6,11 @@ import { useLearn } from "./context/ContextProvider";
 import PdfLoading from "./loading/PdfLoading";
 import DialogueBox from "./DialogueBox";
 
+
+// import * as pdfjsLib from "pdfjs-dist";
+// pdfjsLib.GlobalWorkerOptions.disableFontFace = true;
+
+
 pdfjs.GlobalWorkerOptions.workerSrc =
   `https://unpkg.com/pdfjs-dist@5.4.296/build/pdf.worker.min.mjs`;
 
