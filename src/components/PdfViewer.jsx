@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { ZoomIn, ZoomOut, Expand, Minimize } from "lucide-react";
+import { ZoomIn, ZoomOut, Expand, Minimize, ChevronRight, ChevronLeft } from "lucide-react";
 import axiosInstance from "../api/axiosInstance";
 import { useLearn } from "./context/ContextProvider";
 import PdfLoading from "./loading/PdfLoading";
@@ -197,10 +197,37 @@ function PdfViewer({ fileId }) {
     setPageInput(e.target.value);
   };
 
+  const scrollToPage = (page) => {
+    if (!page || page < 1 || page > numPages) return;
+
+    const el = pageRefs.current[page - 1];
+    if (!el) return;
+
+    el.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    setPageNumber(page);
+    setPageInput(String(page));
+  };
+
+
+  const handleNext = () => {
+    if (pageNumber < numPages) {
+      scrollToPage(pageNumber + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (pageNumber > 1) {
+      scrollToPage(pageNumber - 1);
+    }
+  };
 
   const applyPageChange = () => {
     isTypingRef.current = false;
-    if (pageInput === "") return setPageInput(string(pageNumber));
+    if (pageInput === "") return setPageInput(String(pageNumber));
 
     const val = Number(pageInput);
 
@@ -265,6 +292,12 @@ function PdfViewer({ fileId }) {
 
         {/* PAGE NAVIGATION */}
         <div className="flex items-center gap-1">
+          <button
+            onClick={handlePrev} disabled={pageNumber === 1}
+            className="px-2 sm:px-3 py-1 bg-white/10 text-white rounded-md"
+          >
+            <ChevronLeft />
+          </button>
           <span>Page</span>
           <input
             type="number"
@@ -275,6 +308,9 @@ function PdfViewer({ fileId }) {
             className="w-7 sm:w-10 text-center text-black rounded"
           />
           <span> of {numPages}</span>
+          <button onClick={handleNext} disabled={pageNumber === numPages} className="px-2 sm:px-3 py-1 bg-white/10 text-white rounded-md">
+            <ChevronRight />
+          </button>
 
           {/* FULLSCREEN */}
           <button
