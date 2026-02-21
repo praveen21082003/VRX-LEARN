@@ -189,6 +189,25 @@ function PdfViewer({ fileId }) {
   }, [numPages]);
 
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ignore when typing in input
+      if (e.target.tagName === "INPUT") return;
+
+      if (e.key === "ArrowRight") {
+        handleNext();
+      }
+
+      if (e.key === "ArrowLeft") {
+        handlePrev();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [pageNumber, numPages]);
+
+
   /* ----------------------------------------
      PAGE NUMBER CHANGE (input)
   ------------------------------------------ */
@@ -294,6 +313,7 @@ function PdfViewer({ fileId }) {
         <div className="flex items-center gap-1">
           <button
             onClick={handlePrev} disabled={pageNumber === 1}
+            title="Click Left Arrow"
             className="px-2 sm:px-3 py-1 bg-white/10 text-white rounded-md"
           >
             <ChevronLeft />
@@ -308,7 +328,7 @@ function PdfViewer({ fileId }) {
             className="w-7 sm:w-10 text-center text-black rounded"
           />
           <span> of {numPages}</span>
-          <button onClick={handleNext} disabled={pageNumber === numPages} className="px-2 sm:px-3 py-1 bg-white/10 text-white rounded-md">
+          <button onClick={handleNext} title="Click Right Arrow" disabled={pageNumber === numPages} className="px-2 sm:px-3 py-1 bg-white/10 text-white rounded-md">
             <ChevronRight />
           </button>
 
